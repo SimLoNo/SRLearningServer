@@ -55,6 +55,7 @@ builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSe
     options.UseSqlServer(SRConnectionString));*/
 
 builder.Services
+    .AddScoped<ITypeCategoryListRepository, TypeCategoryListRepository>()
     .AddScoped<ITypeRepository, TypeRepository>()
     .AddScoped<ICardRepository, CardRepository>()
     .AddScoped<IAttachmentRepository, AttachmentRepository>()

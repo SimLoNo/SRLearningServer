@@ -43,7 +43,7 @@ namespace SRLearningServer.Tests.ServicesTests
         [TestInitialize]
         public void TestInitialize()
         {
-            DateOnly date = DateOnly.FromDateTime(DateTime.UtcNow);
+            /*DateOnly date = DateOnly.FromDateTime(DateTime.UtcNow);
             _typeDto1 = _testDataGenerator.CreateTypeDto(1, "Signal", date, true, new());
             _type1 = _testDataGenerator.CreateType(1, "Signal", date, true, new());
 
@@ -54,7 +54,7 @@ namespace SRLearningServer.Tests.ServicesTests
             _card1 = _testDataGenerator.CreateCard(1, "Card1", "Card1 Text", date, true, new List<Components.Models.Type> { _type1 }, new());
 
             _attachmentDto1 = _testDataGenerator.CreateAttachmentDto(1, "Attachment1", "Attachment1 Url", date, true, new List<CardDto> { _cardDto1 }, new List<ResultDto> { _resultDto1 });
-            _attachment1 = _testDataGenerator.CreateAttachment(1, "Attachment1", "Attachment1 Url", date, true, new List<Card> { _card1 }, new List<Result> { _result1 });
+            _attachment1 = _testDataGenerator.CreateAttachment(1, "Attachment1", "Attachment1 Url", date, true, new List<Card> { _card1 }, new List<Result> { _result1 });*/
         }
 
         /*[TestMethod]

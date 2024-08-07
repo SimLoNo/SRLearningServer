@@ -139,7 +139,7 @@ namespace SRLearningServer.Tests.Utilities
             }
             return entity;
         }
-        public Result CreateResult(int id, string text, DateOnly updated, bool active, Attachment attachment, List<Card> cards)
+        public Result CreateResult(int id, string text, DateOnly updated, bool active, Attachment attachment)
         {
             Result entity = new()
             {
@@ -152,17 +152,10 @@ namespace SRLearningServer.Tests.Utilities
             {
                 entity.Attachment = attachment;
             }
-            if (!cards.IsNullOrEmpty())
-            {
-                foreach (Card card in cards)
-                {
-                    entity.Cards.Add(card);
-                }
-            }
             return entity;
         }
 
-        public Components.Models.Type CreateType(int id, string name, DateOnly updated, bool active, List<Card> cards)
+        public Components.Models.Type CreateType(int id, string name, DateOnly updated, bool active)
         {
             Components.Models.Type entity = new()
             {
@@ -171,13 +164,6 @@ namespace SRLearningServer.Tests.Utilities
                 LastUpdated = updated,
                 Active = active,
             };
-            if (!cards.IsNullOrEmpty())
-            {
-                foreach (Card card in cards)
-                {
-                    entity.Cards.Add(card);
-                }
-            }
             return entity;
         }
 
@@ -277,6 +263,18 @@ namespace SRLearningServer.Tests.Utilities
                     entity.Cards.Add(CreateCardFromDto(cardDto));
                 }
             }
+            return entity;
+        }
+
+        public TypeCategoryList CreateTypeCategoryList(int id, string name, DateOnly updated, bool active)
+        {
+            TypeCategoryList entity = new()
+            {
+                TypeCategoryListId = id,
+                TypeCategoryListName = name,
+                LastUpdated = updated,
+                Active = active,
+            };
             return entity;
         }
     }

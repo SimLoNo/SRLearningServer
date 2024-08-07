@@ -53,7 +53,14 @@ namespace SRLearningServer.Components.Repositories
                 }
 
                 // Remove old results
-                trackedTypeCategoryList.Types.ToList().RemoveAll(r => !typeCategoryListTypeIds.Contains(r.TypeId));
+                foreach (var type in trackedTypeCategoryList.Types.ToList())
+                {
+                    if (!typeCategoryList.Types.Any(t => t.TypeId == type.TypeId))
+                    {
+                        trackedTypeCategoryList.Types.Remove(type);
+                    }
+                }
+                //trackedTypeCategoryList.Types.ToList().RemoveAll(r => !typeCategoryListTypeIds.Contains(r.TypeId));
 
                 trackedTypeCategoryList.LastUpdated = DateOnly.FromDateTime(DateTime.Now);
 
