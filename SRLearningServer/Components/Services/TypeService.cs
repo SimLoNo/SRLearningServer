@@ -23,9 +23,17 @@ namespace SRLearningServer.Components.Services
 
         public TypeDto Create(TypeDto entity)
         {
-            Models.Type type = _dtoToDomainConverter.ConvertToDomainFromDto(entity);
-            type = Task.Run(() => _typeRepository.Create(type)).Result;
-            return _domainToDtoConverter.ConvertToDtoFromDomain(type, true);
+            try
+            {
+                Models.Type type = _dtoToDomainConverter.ConvertToDomainFromDto(entity);
+                type = Task.Run(() => _typeRepository.Create(type)).Result;
+                return _domainToDtoConverter.ConvertToDtoFromDomain(type, true);
+            }
+            catch (Exception ex)
+            {
+
+                return null;
+            }
         }
 
         public TypeDto Deactivate(TypeDto entity)
@@ -76,7 +84,7 @@ namespace SRLearningServer.Components.Services
             }
         }
 
-        public IEnumerable<TypeDto> GetAll()
+        public List<TypeDto> GetAll()
         {
             try
             {
@@ -109,7 +117,7 @@ namespace SRLearningServer.Components.Services
             catch (Exception ex)
             {
 
-                throw null;
+                return null;
             }
         }
     }

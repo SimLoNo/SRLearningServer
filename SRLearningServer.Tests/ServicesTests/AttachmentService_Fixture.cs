@@ -26,14 +26,19 @@ namespace SRLearningServer.Tests.ServicesTests
         private readonly TestDataGenerator _testDataGenerator = new();
 
         private AttachmentDto _attachmentDto1;
+        private AttachmentDto _attachmentDto2;
         private ResultDto _resultDto1;
         private CardDto _cardDto1;
         private TypeDto _typeDto1;
 
         private Attachment _attachment1;
+        private Attachment _attachment2;
         private Result _result1;
         private Card _card1;
         private Components.Models.Type _type1;
+
+        private DateOnly _currentDate = DateOnly.FromDateTime(DateTime.Now);
+        private DateOnly _oldDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-1));
 
         public AttachmentService_Fixture()
         {
@@ -43,157 +48,23 @@ namespace SRLearningServer.Tests.ServicesTests
         [TestInitialize]
         public void TestInitialize()
         {
-            /*DateOnly date = DateOnly.FromDateTime(DateTime.UtcNow);
-            _typeDto1 = _testDataGenerator.CreateTypeDto(1, "Signal", date, true, new());
-            _type1 = _testDataGenerator.CreateType(1, "Signal", date, true, new());
+            _attachmentDto1 = _testDataGenerator.CreateAttachmentDto(1, "Attachment1", "Url1", _currentDate, true);
+            _attachment1 = _testDataGenerator.CreateAttachmentFromDto(_attachmentDto1);
 
-            _resultDto1 = _testDataGenerator.CreateResultDto(1, "Result1", date, true, null, new List<CardDto>());
-            _result1 = _testDataGenerator.CreateResult(1, "Result1", date, true, null, new List<Card>());
-
-            _cardDto1 = _testDataGenerator.CreateCardDto(1, "Card1", "Card1 Text", date, true, new List<TypeDto> { _typeDto1 }, new());
-            _card1 = _testDataGenerator.CreateCard(1, "Card1", "Card1 Text", date, true, new List<Components.Models.Type> { _type1 }, new());
-
-            _attachmentDto1 = _testDataGenerator.CreateAttachmentDto(1, "Attachment1", "Attachment1 Url", date, true, new List<CardDto> { _cardDto1 }, new List<ResultDto> { _resultDto1 });
-            _attachment1 = _testDataGenerator.CreateAttachment(1, "Attachment1", "Attachment1 Url", date, true, new List<Card> { _card1 }, new List<Result> { _result1 });*/
+            _attachmentDto2 = _testDataGenerator.CreateAttachmentDto(2, "Attachment2", "Url2", _oldDate, false);
+            _attachment2 = _testDataGenerator.CreateAttachmentFromDto(_attachmentDto2);
         }
 
-        /*[TestMethod]
-        public void ConvertFromDto_WhenCalled_ReturnsAttachment()
-        {
-            // Arrange
-            AttachmentDto entityUsed = _attachmentDto1;
-            List<Card> cards = new();
-            List<Result> results = new();
-            results.Add(_result1);
-            cards.Add(_card1);
-            _domainToDtoConverter.Setup(x => x.ConvertFromDto(It.IsAny<List<ResultDto>>())).Returns( results );
-            _dtoToDomainConverter.Setup(x => x.ConvertFromDto(It.IsAny<List<CardDto>>())).Returns( cards );
-
-            // Act
-            Attachment attachment = _attachmentService.ConvertFromDto(entityUsed);
-
-            // Assert
-            Assert.IsNotNull(attachment);
-            Assert.AreEqual(entityUsed.AttachmentId, attachment.AttachmentId);
-            Assert.AreEqual(entityUsed.AttachmentName, attachment.AttachmentName);
-            Assert.AreEqual(entityUsed.AttachmentUrl, attachment.AttachmentUrl);
-            Assert.AreEqual(entityUsed.LastUpdated, attachment.LastUpdated);
-            Assert.AreEqual(entityUsed.Active, attachment.Active);
-
-            Assert.AreEqual(entityUsed.Cards.Count, attachment.Cards.Count);
-            Card card = attachment.Cards.FirstOrDefault();
-            Assert.IsNotNull(card);
-            Assert.AreEqual(entityUsed.Cards.FirstOrDefault().CardId, card.CardId);
-            Assert.AreEqual(entityUsed.Cards.FirstOrDefault().CardName, card.CardName);
-            Assert.AreEqual(entityUsed.Cards.FirstOrDefault().CardText, card.CardText);
-            //Assert.AreEqual(entityUsed.Cards.FirstOrDefault().AttachmentId, card.AttachmentId);
-            Assert.AreEqual(entityUsed.Cards.FirstOrDefault().LastUpdated, card.LastUpdated);
-            Assert.AreEqual(entityUsed.Cards.FirstOrDefault().Active, card.Active);
-            Assert.AreEqual(entityUsed.Cards.FirstOrDefault().Types.FirstOrDefault().TypeId, card.Types.FirstOrDefault().TypeId);
-            Assert.AreEqual(entityUsed.Cards.FirstOrDefault().Types.FirstOrDefault().CardTypeName, card.Types.FirstOrDefault().CardTypeName);
-            Assert.AreEqual(entityUsed.Cards.FirstOrDefault().Types.FirstOrDefault().LastUpdated, card.Types.FirstOrDefault().LastUpdated);
-            Assert.AreEqual(entityUsed.Cards.FirstOrDefault().Types.FirstOrDefault().Active, card.Types.FirstOrDefault().Active);
-            Assert.AreEqual(entityUsed.Cards.FirstOrDefault().Types.FirstOrDefault().Cards.Count, card.Types.FirstOrDefault().Cards.Count);
-
-            Assert.AreEqual(entityUsed.Results.Count, attachment.Results.Count);
-            Result result = attachment.Results.FirstOrDefault();
-            Assert.IsNotNull(result);
-            Assert.AreEqual(entityUsed.Results.FirstOrDefault().ResultId, result.ResultId);
-            Assert.AreEqual(entityUsed.Results.FirstOrDefault().ResultText, result.ResultText);
-            //Assert.AreEqual(entityUsed.Results.FirstOrDefault().AttachmentId, result.AttachmentId);
-            Assert.AreEqual(entityUsed.Results.FirstOrDefault().LastUpdated, result.LastUpdated);
-            Assert.AreEqual(entityUsed.Results.FirstOrDefault().Active, result.Active);
-            Assert.IsNull(result.Attachment);
-
-        }
+        
 
         [TestMethod]
-        public void ConvertToDto_WhenCalledWithRelations_ReturnsAttachmentDtoWithDtoRelations()
-        {
-            // Arrange
-            Attachment entityUsed = _attachment1;
-            List<CardDto> cards = new();
-            List<ResultDto> results = new();
-            results.Add(_resultDto1);
-            cards.Add(_cardDto1);
-            _domainToDtoConverter.Setup(x => x.ConvertToDto(It.IsAny<List<Result>>(), It.IsAny<bool>())).Returns(results);
-            _dtoToDomainConverter.Setup(x => x.ConvertToDto(It.IsAny<List<Card>>(), It.IsAny<bool>())).Returns(cards);
-
-            // Act
-            AttachmentDto attachment = _attachmentService.ConvertToDto(entityUsed, true);
-
-            // Assert
-            Assert.IsNotNull(attachment);
-            Assert.AreEqual(entityUsed.AttachmentId, attachment.AttachmentId);
-            Assert.AreEqual(entityUsed.AttachmentName, attachment.AttachmentName);
-            Assert.AreEqual(entityUsed.AttachmentUrl, attachment.AttachmentUrl);
-            Assert.AreEqual(entityUsed.LastUpdated, attachment.LastUpdated);
-            Assert.AreEqual(entityUsed.Active, attachment.Active);
-
-            Assert.AreEqual(entityUsed.Cards.Count, attachment.Cards.Count);
-            CardDto card = attachment.Cards.FirstOrDefault();
-            Assert.IsNotNull(card);
-            Assert.AreEqual(entityUsed.Cards.FirstOrDefault().CardId, card.CardId);
-            Assert.AreEqual(entityUsed.Cards.FirstOrDefault().CardName, card.CardName);
-            Assert.AreEqual(entityUsed.Cards.FirstOrDefault().CardText, card.CardText);
-            //Assert.AreEqual(entityUsed.Cards.FirstOrDefault().AttachmentId, card.AttachmentId);
-            Assert.AreEqual(entityUsed.Cards.FirstOrDefault().LastUpdated, card.LastUpdated);
-            Assert.AreEqual(entityUsed.Cards.FirstOrDefault().Active, card.Active);
-            Assert.AreEqual(entityUsed.Cards.FirstOrDefault().Types.FirstOrDefault().TypeId, card.Types.FirstOrDefault().TypeId);
-            Assert.AreEqual(entityUsed.Cards.FirstOrDefault().Types.FirstOrDefault().CardTypeName, card.Types.FirstOrDefault().CardTypeName);
-            Assert.AreEqual(entityUsed.Cards.FirstOrDefault().Types.FirstOrDefault().LastUpdated, card.Types.FirstOrDefault().LastUpdated);
-            Assert.AreEqual(entityUsed.Cards.FirstOrDefault().Types.FirstOrDefault().Active, card.Types.FirstOrDefault().Active);
-            Assert.AreEqual(entityUsed.Cards.FirstOrDefault().Types.FirstOrDefault().Cards.Count, card.Types.FirstOrDefault().Cards.Count);
-
-            Assert.AreEqual(entityUsed.Results.Count, attachment.Results.Count);
-            ResultDto result = attachment.Results.FirstOrDefault();
-            Assert.IsNotNull(result);
-            Assert.AreEqual(entityUsed.Results.FirstOrDefault().ResultId, result.ResultId);
-            Assert.AreEqual(entityUsed.Results.FirstOrDefault().ResultText, result.ResultText);
-            //Assert.AreEqual(entityUsed.Results.FirstOrDefault().AttachmentId, result.AttachmentId);
-            Assert.AreEqual(entityUsed.Results.FirstOrDefault().LastUpdated, result.LastUpdated);
-            Assert.AreEqual(entityUsed.Results.FirstOrDefault().Active, result.Active);
-            Assert.IsNull(result.Attachment);
-
-        }
-
-        [TestMethod]
-        public void ConvertToDto_WhenCalledWithoutRelations_ReturnsAttachmentDtoOnly()
-        {
-            // Arrange
-            Attachment entityUsed = _attachment1;
-            List<CardDto> cards = new();
-            List<ResultDto> results = new();
-            results.Add(_resultDto1);
-            cards.Add(_cardDto1);
-            _domainToDtoConverter.Setup(x => x.ConvertToDto(It.IsAny<List<Result>>(), It.IsAny<bool>())).Returns(results);
-            _dtoToDomainConverter.Setup(x => x.ConvertToDto(It.IsAny<List<Card>>(), It.IsAny<bool>())).Returns(cards);
-
-            // Act
-            AttachmentDto attachment = _attachmentService.ConvertToDto(entityUsed, false);
-
-            // Assert
-            Assert.IsNotNull(attachment);
-            Assert.AreEqual(entityUsed.AttachmentId, attachment.AttachmentId);
-            Assert.AreEqual(entityUsed.AttachmentName, attachment.AttachmentName);
-            Assert.AreEqual(entityUsed.AttachmentUrl, attachment.AttachmentUrl);
-            Assert.AreEqual(entityUsed.LastUpdated, attachment.LastUpdated);
-            Assert.AreEqual(entityUsed.Active, attachment.Active);
-
-            Assert.AreEqual(0, attachment.Cards.Count);
-
-            Assert.AreEqual(0, attachment.Results.Count);
-
-        }*/
-
-        /*[TestMethod]
         public void Create_AttachmentDto_ReturnsAttachmentDto()
         {
             //Arrange
             AttachmentDto entityUsed = _attachmentDto1;
             Attachment returnedAttachment = _attachment1;
-            entityUsed.AttachmentId = new();
-            _dtoToDomainConverter.Setup(x => x.ConvertToAttachmentFromAttachmentDto(It.IsAny<AttachmentDto>())).Returns(returnedAttachment);
+            _dtoToDomainConverter.Setup(x => x.ConvertToDomainFromDto(It.IsAny<AttachmentDto>())).Returns(returnedAttachment);
+            _domainToDtoConverter.Setup(x => x.ConvertToDtoFromDomain(It.IsAny<Attachment>(), It.IsAny<bool>())).Returns(entityUsed);
             _attachmentRepository.Setup(x => x.Create(It.IsAny<Attachment>())).Returns(Task.FromResult(returnedAttachment));
             //Act
             var result = _attachmentService.Create(entityUsed);
@@ -209,12 +80,30 @@ namespace SRLearningServer.Tests.ServicesTests
         }
 
         [TestMethod]
+        public void Create_AttachmentDtoThatisNotCreated_ReturnsNull()
+        {
+            //Arrange
+            AttachmentDto entityUsed = _attachmentDto1;
+            Attachment returnedAttachment = _attachment1;
+            _dtoToDomainConverter.Setup(x => x.ConvertToDomainFromDto(It.IsAny<AttachmentDto>())).Returns(returnedAttachment);
+            _domainToDtoConverter.Setup(x => x.ConvertToDtoFromDomain(It.IsAny<Attachment>(), It.IsAny<bool>())).Returns(entityUsed);
+            _attachmentRepository.Setup(x => x.Create(It.IsAny<Attachment>())).Returns(() => null);
+            //Act
+            var result = _attachmentService.Create(entityUsed);
+            //Assert
+            Assert.IsNull(result);
+
+        }
+
+        [TestMethod]
         public void Deactivate_AttachmentDto_ReturnsAttachmentDto()
         {
             //Arrange
             AttachmentDto entityUsed = _attachmentDto1;
             Attachment returnedAttachment = _attachment1;
             returnedAttachment.Active = false;
+            entityUsed.Active = false;
+            _domainToDtoConverter.Setup(x => x.ConvertToDtoFromDomain(It.IsAny<Attachment>(), It.IsAny<bool>())).Returns(entityUsed);
             _attachmentRepository.Setup(x => x.Deactivate(It.IsAny<int>())).Returns(Task.FromResult(returnedAttachment));
             //Act
             var result = _attachmentService.Deactivate(entityUsed.AttachmentId);
@@ -234,8 +123,11 @@ namespace SRLearningServer.Tests.ServicesTests
         {
             //Arrange
             Attachment returnedAttachment = _attachment1;
+            AttachmentDto entityUsed = _attachmentDto1;
             int idUsed = returnedAttachment.AttachmentId;
             returnedAttachment.Active = false;
+            entityUsed.Active = false;
+            _domainToDtoConverter.Setup(x => x.ConvertToDtoFromDomain(It.IsAny<Attachment>(), It.IsAny<bool>())).Returns(entityUsed);
             _attachmentRepository.Setup(x => x.Deactivate(It.IsAny<int>())).Returns(Task.FromResult(returnedAttachment));
             //Act
             var result = _attachmentService.Deactivate(idUsed);
@@ -255,6 +147,8 @@ namespace SRLearningServer.Tests.ServicesTests
         {
             //Arrange
             int idUsed = _attachment1.AttachmentId;
+            AttachmentDto entityUsed = _attachmentDto1;
+            _domainToDtoConverter.Setup(x => x.ConvertToDtoFromDomain(It.IsAny<Attachment>(), It.IsAny<bool>())).Returns(entityUsed);
             _attachmentRepository.Setup(x => x.Deactivate(It.IsAny<int>())).Returns(Task.FromResult<Attachment>(null));
             //Act
             var result = _attachmentService.Deactivate(idUsed);
@@ -268,6 +162,7 @@ namespace SRLearningServer.Tests.ServicesTests
         {
             //Arrange
             AttachmentDto entityUsed = _attachmentDto1;
+            _domainToDtoConverter.Setup(x => x.ConvertToDtoFromDomain(It.IsAny<Attachment>(), It.IsAny<bool>())).Returns(entityUsed);
             _attachmentRepository.Setup(x => x.Deactivate(It.IsAny<int>())).Returns(Task.FromResult<Attachment>(null));
             //Act
             var result = _attachmentService.Deactivate(entityUsed.AttachmentId);
@@ -282,6 +177,8 @@ namespace SRLearningServer.Tests.ServicesTests
             //Arrange
             AttachmentDto entityUsed = _attachmentDto1;
             Attachment returnedAttachment = _attachment1;
+            _dtoToDomainConverter.Setup(x => x.ConvertToDomainFromDto(It.IsAny<AttachmentDto>())).Returns(returnedAttachment);
+            _domainToDtoConverter.Setup(x => x.ConvertToDtoFromDomain(It.IsAny<Attachment>(), It.IsAny<bool>())).Returns(entityUsed);
             _attachmentRepository.Setup(x => x.Delete(It.IsAny<Attachment>())).Returns(Task.FromResult(returnedAttachment));
             //Act
             var result = _attachmentService.Delete(entityUsed);
@@ -301,12 +198,132 @@ namespace SRLearningServer.Tests.ServicesTests
             //Arrange
             AttachmentDto entityUsed = _attachmentDto1;
             Attachment returnedAttachment = _attachment1;
+            _dtoToDomainConverter.Setup(x => x.ConvertToDomainFromDto(It.IsAny<AttachmentDto>())).Returns(returnedAttachment);
             _attachmentRepository.Setup(x => x.Delete(It.IsAny<Attachment>())).Returns(Task.FromResult<Attachment>(null));
             //Act
             var result = _attachmentService.Delete(entityUsed);
             //Assert
             Assert.IsNull(result);
-        }*/
+        }
+
+        [TestMethod]
+        public void Get_int_ReturnsAttachmentDto()
+        {
+            //Arrange
+            AttachmentDto entityUsed = _attachmentDto1;
+            Attachment returnedAttachment = _attachment1;
+            _domainToDtoConverter.Setup(x => x.ConvertToDtoFromDomain(It.IsAny<Attachment>(), It.IsAny<bool>())).Returns(entityUsed);
+            _attachmentRepository.Setup(x => x.Get(It.IsAny<int>())).Returns(Task.FromResult(returnedAttachment));
+            //Act
+            var result = _attachmentService.Get(entityUsed.AttachmentId);
+            //Assert
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOfType(result, typeof(AttachmentDto));
+            Assert.AreEqual(entityUsed.AttachmentName, result.AttachmentName);
+            Assert.AreEqual(entityUsed.AttachmentUrl, result.AttachmentUrl);
+            Assert.AreEqual(entityUsed.LastUpdated, result.LastUpdated);
+            Assert.AreEqual(entityUsed.Active, result.Active);
+            Assert.AreEqual(returnedAttachment.AttachmentId, result.AttachmentId);
+        }
+        [TestMethod]
+        public void Get_int_ReturnsNull()
+        {
+            //Arrange
+            AttachmentDto entityUsed = _attachmentDto1;
+            _domainToDtoConverter.Setup(x => x.ConvertToDtoFromDomain(It.IsAny<Attachment>(), It.IsAny<bool>())).Returns(entityUsed);
+            _attachmentRepository.Setup(x => x.Get(It.IsAny<int>())).Returns(Task.FromResult<Attachment>(null));
+            //Act
+            var result = _attachmentService.Get(entityUsed.AttachmentId);
+            //Assert
+            Assert.IsNull(result);
+        }
+        [TestMethod]
+        public void Get_int_ReturnsNullWhenIdIsZero()
+        {
+            //Arrange
+            AttachmentDto entityUsed = _attachmentDto1;
+            _domainToDtoConverter.Setup(x => x.ConvertToDtoFromDomain(It.IsAny<Attachment>(), It.IsAny<bool>())).Returns(entityUsed);
+            _attachmentRepository.Setup(x => x.Get(It.IsAny<int>())).Returns(Task.FromResult<Attachment>(null));
+            //Act
+            var result = _attachmentService.Get(0);
+            //Assert
+            Assert.IsNull(result);
+        }
+        [TestMethod]
+        public void GetAll_ReturnsListOfAttachments()
+        {
+            //Arrange
+            List<AttachmentDto> entityUsed = new List<AttachmentDto> { _attachmentDto1, _attachmentDto2 };
+            List<Attachment> returnedAttachments = new List<Attachment> { _attachment1, _attachment2 };
+            _domainToDtoConverter.Setup(x => x.ConvertToDtoFromDomain(It.IsAny<List<Attachment>>(), It.IsAny<bool>())).Returns(entityUsed);
+            _attachmentRepository.Setup(x => x.GetAll()).Returns(Task.FromResult(returnedAttachments));
+            //Act
+            var result = _attachmentService.GetAll();
+            //Assert
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOfType(result, typeof(List<AttachmentDto>));
+            Assert.AreEqual(entityUsed.Count, result.Count);
+            Assert.AreEqual(entityUsed[0].AttachmentName, result[0].AttachmentName);
+            Assert.AreEqual(entityUsed[0].AttachmentUrl, result[0].AttachmentUrl);
+            Assert.AreEqual(entityUsed[0].LastUpdated, result[0].LastUpdated);
+            Assert.AreEqual(entityUsed[0].Active, result[0].Active);
+            Assert.AreEqual(returnedAttachments[0].AttachmentId, result[0].AttachmentId);
+        }
+
+        [TestMethod]
+        public void GetAll_ReturnsNull_WhenNoAttachmentsFound()
+        {
+            //Arrange
+            List<AttachmentDto> entityUsed = new List<AttachmentDto> { _attachmentDto1, _attachmentDto2 };
+            List<Attachment> returnedAttachments = new List<Attachment> { _attachment1, _attachment2 };
+            _domainToDtoConverter.Setup(x => x.ConvertToDtoFromDomain(It.IsAny<List<Attachment>>(), It.IsAny<bool>())).Returns(entityUsed);
+            _attachmentRepository.Setup(x => x.GetAll()).Returns(() => null);
+            //Act
+            var result = _attachmentService.GetAll();
+            //Assert
+            Assert.IsNull(result);
+        }
+
+        [TestMethod]
+        public void Update_AttachmentToUpdate_ReturnsUpdatedAttachment()
+        {
+            //Arrange
+            var entityUsed = _attachmentDto1;
+            var returnedAttachment = _attachment2;
+            var updatedAttachment = _attachmentDto2;
+
+            _dtoToDomainConverter.Setup(x => x.ConvertToDomainFromDto(It.IsAny<AttachmentDto>())).Returns(returnedAttachment);
+            _domainToDtoConverter.Setup(x => x.ConvertToDtoFromDomain(It.IsAny<Attachment>(), It.IsAny<bool>())).Returns(updatedAttachment);
+            _attachmentRepository.Setup(x => x.Update(It.IsAny<Attachment>())).Returns(Task.FromResult(returnedAttachment));
+
+            //Act
+            var result = _attachmentService.Update(entityUsed);
+            //Assert
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOfType(result, typeof(AttachmentDto));
+            Assert.AreEqual(updatedAttachment.AttachmentName, result.AttachmentName);
+            Assert.AreEqual(updatedAttachment.AttachmentUrl, result.AttachmentUrl);
+            Assert.AreEqual(updatedAttachment.LastUpdated, result.LastUpdated);
+            Assert.AreEqual(updatedAttachment.Active, result.Active);
+        }
+
+        [TestMethod]
+        public void Update_AttachmentNotUpdated_ReturnsNull()
+        {
+            //Arrange
+            var entityUsed = _attachmentDto1;
+            var returnedAttachment = _attachment2;
+            var updatedAttachment = _attachmentDto2;
+
+            _dtoToDomainConverter.Setup(x => x.ConvertToDomainFromDto(It.IsAny<AttachmentDto>())).Returns(returnedAttachment);
+            _domainToDtoConverter.Setup(x => x.ConvertToDtoFromDomain(It.IsAny<Attachment>(), It.IsAny<bool>())).Returns(updatedAttachment);
+            _attachmentRepository.Setup(x => x.Update(It.IsAny<Attachment>())).Returns(() => null);
+
+            //Act
+            var result = _attachmentService.Update(entityUsed);
+            //Assert
+            Assert.IsNull(result);
+        }
 
 
 

@@ -107,7 +107,7 @@ namespace SRLearningServer.Components.Repositories
         /// </summary>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<IEnumerable<TEntity>> GetAll()
+        public async Task<List<TEntity>> GetAll()
         {
             try
             {

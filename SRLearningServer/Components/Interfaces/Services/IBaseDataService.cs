@@ -4,35 +4,7 @@
 
     public interface IBaseDataService<U>
     {
-        /*/// <summary>
-        /// Takes a list of DTOs and converts them to entities
-        /// </summary>
-        /// <param name="entities"></param>
-        /// <returns></returns>
-        public IEnumerable<T> ConvertFromDto(IEnumerable<U> entities);
-
-        /// <summary>
-        /// Takes a list of entities and converts them to DTOs. If convertRelations is true, it will also convert the entities' relations.
-        /// </summary>
-        /// <param name="entities"></param>
-        /// <param name="convertRelations"></param>
-        /// <returns></returns>
-        public IEnumerable<U> ConvertToDto(IEnumerable<T> entities, bool convertRelations = false);
-
-        /// <summary>
-        /// Takes a single Dto and convert it to an entity
-        /// </summary>
-        /// <param name="entity"></param>
-        /// <returns></returns>
-        public T ConvertFromDto(U entity);
-
-        /// <summary>
-        /// Takes a single entity and converts it to a DTO. If convertRelations is true, it will also convert the entity's relations
-        /// </summary>
-        /// <param name="entity"></param>
-        /// <param name="convertRelations"></param>
-        /// <returns></returns>
-        public U ConvertToDto(T entity, bool convertRelations = false);*/
+        
 
         /// <summary>
         /// Gets a single entity by its id
@@ -73,7 +45,7 @@
         /// Get all entities of the given type from the database, including inactive entities.
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<U> GetAll();
+        public List<U> GetAll();
 
         /// <summary>
         /// Updates an entity in the database.

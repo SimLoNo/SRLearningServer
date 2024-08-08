@@ -12,7 +12,7 @@ namespace SRLearningServer.Components.Interfaces.Converters
         /// <param name="entities"></param>
         /// <param name="convertRelations"></param>
         /// <returns></returns>
-        public IEnumerable<AttachmentDto> ConvertToDtoFromDomain(IEnumerable<Models.Attachment> entities, bool convertRelations = false);
+        public List<AttachmentDto> ConvertToDtoFromDomain(IEnumerable<Models.Attachment> entities, bool convertRelations = false);
 
 
         /// <summary>
@@ -30,7 +30,7 @@ namespace SRLearningServer.Components.Interfaces.Converters
         /// <param name="entities"></param>
         /// <param name="convertRelations"></param>
         /// <returns></returns>
-        public IEnumerable<CardDto> ConvertToDtoFromDomain(IEnumerable<Card> entities, bool convertRelations = false);
+        public List<CardDto> ConvertToDtoFromDomain(IEnumerable<Card> entities, bool convertRelations = false);
 
 
         /// <summary>
@@ -48,7 +48,7 @@ namespace SRLearningServer.Components.Interfaces.Converters
         /// <param name="entities"></param>
         /// <param name="convertRelations"></param>
         /// <returns></returns>
-        public IEnumerable<ResultDto> ConvertToDtoFromDomain(IEnumerable<Result> entities, bool convertRelations = false);
+        public List<ResultDto> ConvertToDtoFromDomain(IEnumerable<Result> entities, bool convertRelations = false);
 
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace SRLearningServer.Components.Interfaces.Converters
         /// <param name="entities"></param>
         /// <param name="convertRelations"></param>
         /// <returns></returns>
-        public IEnumerable<TypeDto> ConvertToDtoFromDomain(IEnumerable<Models.Type> entities, bool convertRelations = false);
+        public List<TypeDto> ConvertToDtoFromDomain(IEnumerable<Models.Type> entities, bool convertRelations = false);
 
 
         /// <summary>

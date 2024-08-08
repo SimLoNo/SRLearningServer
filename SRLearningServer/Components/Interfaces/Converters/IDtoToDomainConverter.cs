@@ -6,12 +6,12 @@ namespace SRLearningServer.Components.Interfaces.Converters
     public interface IDtoToDomainConverter
     {
         /// <summary>
-         /// Takes an IEnumerable of AttachmentDto and converts them to an IEnumerable of Attachment. If convertRelations is true, it will also convert the AttachmentDto's relations
+         /// Takes an List of AttachmentDto and converts them to an List of Attachment. If convertRelations is true, it will also convert the AttachmentDto's relations
          /// </summary>
          /// <param name="entities"></param>
          /// <param name="convertRelations"></param>
          /// <returns></returns>
-        public IEnumerable<Attachment> ConvertToDomainFromDto(IEnumerable<AttachmentDto> entities);
+        public List<Attachment> ConvertToDomainFromDto(List<AttachmentDto> entities);
 
 
         /// <summary>
@@ -24,12 +24,12 @@ namespace SRLearningServer.Components.Interfaces.Converters
 
 
         /// <summary>
-        /// Takes an IEnumerable of CardDto and converts them to an IEnumerable of Card. If convertRelations is true, it will also convert the CardDto's relations
+        /// Takes an List of CardDto and converts them to an List of Card. If convertRelations is true, it will also convert the CardDto's relations
         /// </summary>
         /// <param name="entities"></param>
         /// <param name="convertRelations"></param>
         /// <returns></returns>
-        public IEnumerable<Card> ConvertToDomainFromDto(IEnumerable<CardDto> entities);
+        public List<Card> ConvertToDomainFromDto(List<CardDto> entities);
 
 
         /// <summary>
@@ -42,12 +42,12 @@ namespace SRLearningServer.Components.Interfaces.Converters
 
 
         /// <summary>
-        /// Takes an IEnumerable of ResultDto and converts them to an IEnumerable of Result. If convertRelations is true, it will also convert the ResultDto's relations
+        /// Takes an List of ResultDto and converts them to an List of Result. If convertRelations is true, it will also convert the ResultDto's relations
         /// </summary>
         /// <param name="entities"></param>
         /// <param name="convertRelations"></param>
         /// <returns></returns>
-        public IEnumerable<Result> ConvertToDomainFromDto(IEnumerable<ResultDto> entities);
+        public List<Result> ConvertToDomainFromDto(List<ResultDto> entities);
 
 
         /// <summary>
@@ -60,12 +60,12 @@ namespace SRLearningServer.Components.Interfaces.Converters
 
 
         /// <summary>
-        /// Takes an IEnumerable of TypeDto and converts them to an IEnumerable of Type. If convertRelations is true, it will also convert the TypeDto's relations
+        /// Takes an List of TypeDto and converts them to an List of Type. If convertRelations is true, it will also convert the TypeDto's relations
         /// </summary>
         /// <param name="entities"></param>
         /// <param name="convertRelations"></param>
         /// <returns></returns>
-        public IEnumerable<Models.Type> ConvertToDomainFromDto(IEnumerable<TypeDto> entities);
+        public List<Models.Type> ConvertToDomainFromDto(List<TypeDto> entities);
 
 
         /// <summary>

@@ -30,6 +30,10 @@ namespace SRLearningServer.Components.Services
             {
                 Attachment newAttachment = _dtoToDomainConverter.ConvertToDomainFromDto(entity);
                 newAttachment = Task.Run(() => _attachmentRepository.Create(newAttachment)).Result;
+                if (newAttachment is null)
+                {
+                    return null;
+                }
                 return _domainToDtoConverter.ConvertToDtoFromDomain(newAttachment, true);
 
             }
@@ -50,6 +54,10 @@ namespace SRLearningServer.Components.Services
             try
             {
                 Attachment attachment = Task.Run(() => _attachmentRepository.Deactivate(id)).Result;
+                if (attachment is null)
+                {
+                    return null;
+                }
                 return _domainToDtoConverter.ConvertToDtoFromDomain(attachment, true);
             }
             catch (Exception ex)
@@ -65,6 +73,10 @@ namespace SRLearningServer.Components.Services
             {
                 Attachment attachment = _dtoToDomainConverter.ConvertToDomainFromDto(entity);
                 attachment = Task.Run(() => _attachmentRepository.Delete(attachment)).Result;
+                if (attachment is null)
+                {
+                    return null;
+                }
                 return _domainToDtoConverter.ConvertToDtoFromDomain(attachment, true);
             }
             catch (Exception ex)
@@ -78,8 +90,17 @@ namespace SRLearningServer.Components.Services
         {
             try
             {
-                Attachment attachment = Task.Run(() => _attachmentRepository.Get(id)).Result;
-                return _domainToDtoConverter.ConvertToDtoFromDomain(attachment, true);
+                if (id > 0)
+                {
+                    Attachment attachment = Task.Run(() => _attachmentRepository.Get(id)).Result;
+                    if (attachment is null)
+                    {
+                        return null;
+                    }
+                    return _domainToDtoConverter.ConvertToDtoFromDomain(attachment, true);
+                }
+                return null;
+
             }
             catch (Exception ex)
             {
@@ -88,7 +109,7 @@ namespace SRLearningServer.Components.Services
             }
         }
 
-        public IEnumerable<AttachmentDto> GetAll()
+        public List<AttachmentDto> GetAll()
         {
             try
             {
@@ -121,7 +142,7 @@ namespace SRLearningServer.Components.Services
             catch (Exception ex)
             {
 
-                throw null;
+                return null;
             }
         }
     }

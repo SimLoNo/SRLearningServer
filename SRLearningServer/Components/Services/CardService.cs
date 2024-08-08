@@ -86,7 +86,7 @@ namespace SRLearningServer.Components.Services
             }
         }
 
-        public IEnumerable<CardDto> GetAll()
+        public List<CardDto> GetAll()
         {
             try
             {

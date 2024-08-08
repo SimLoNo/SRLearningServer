@@ -7,7 +7,7 @@ namespace SRLearningServer.Components.Converters
 {
     public class DtoToDomainConverter : IDtoToDomainConverter
     {
-        public IEnumerable<Attachment> ConvertToDomainFromDto(IEnumerable<AttachmentDto> entities)
+        public List<Attachment> ConvertToDomainFromDto(List<AttachmentDto> entities)
         {
             if (entities.IsNullOrEmpty())
             {
@@ -70,7 +70,7 @@ namespace SRLearningServer.Components.Converters
             }
         }
 
-        public IEnumerable<Card> ConvertToDomainFromDto(IEnumerable<CardDto> entities)
+        public List<Card> ConvertToDomainFromDto(List<CardDto> entities)
         {
             List<Card> cards = new();
             try
@@ -130,7 +130,7 @@ namespace SRLearningServer.Components.Converters
             }
         }
 
-        public IEnumerable<Result> ConvertToDomainFromDto(IEnumerable<ResultDto> entities)
+        public List<Result> ConvertToDomainFromDto(List<ResultDto> entities)
         {
             List<Result> results = new();
             try
@@ -182,7 +182,7 @@ namespace SRLearningServer.Components.Converters
             }
         }
 
-        public IEnumerable<Models.Type> ConvertToDomainFromDto(IEnumerable<TypeDto> entities)
+        public List<Models.Type> ConvertToDomainFromDto(List<TypeDto> entities)
         {
             List<Models.Type> types = new();
             try

@@ -1,4 +1,5 @@
-﻿using SRLearningServer.Components.Interfaces.Converters;
+﻿using Microsoft.IdentityModel.Tokens;
+using SRLearningServer.Components.Interfaces.Converters;
 using SRLearningServer.Components.Interfaces.Repositories;
 using SRLearningServer.Components.Interfaces.Services;
 using SRLearningServer.Components.Models;
@@ -43,37 +44,115 @@ namespace SRLearningServer.Components.Services
 
         public TypeCategoryList Deactivate(TypeCategoryList entity)
         {
-            throw new NotImplementedException();
+            return Deactivate(entity.TypeCategoryListId);
         }
 
         public TypeCategoryList Deactivate(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                TypeCategoryList typeCategoryList = Task.Run(() => _typeCategoryListRepository.Deactivate(id)).Result;
+                if (typeCategoryList == null)
+                {
+                    return null;
+                }
+                return typeCategoryList;
+            }
+            catch (Exception ex)
+            {
+
+                return null;
+            }
         }
 
         public TypeCategoryList Delete(TypeCategoryList entity)
         {
-            throw new NotImplementedException();
+            try
+            {
+                TypeCategoryList typeCategoryList = Task.Run(() => _typeCategoryListRepository.Delete(entity)).Result;
+                if (typeCategoryList == null)
+                {
+                    return null;
+                }
+                return typeCategoryList;
+            }
+            catch (Exception ex)
+            {
+
+                return null;
+            }
         }
 
         public TypeCategoryList Get(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                TypeCategoryList typeCategoryList = Task.Run(() => _typeCategoryListRepository.Get(id)).Result;
+                if (typeCategoryList == null)
+                {
+                    return null;
+                }
+                return typeCategoryList;
+            }
+            catch (Exception ex)
+            {
+
+                return null;
+            }
         }
 
-        public IEnumerable<TypeCategoryList> GetAll()
+        public List<TypeCategoryList> GetAll()
         {
-            throw new NotImplementedException();
+            try
+            {
+                List<TypeCategoryList> list = Task.Run(() => _typeCategoryListRepository.GetAll()).Result;
+                if (list.IsNullOrEmpty())
+                {
+                    return null;
+                }
+                return list;
+            }
+            catch (Exception ex)
+            {
+
+                return null;
+            }
         }
 
         public TypeCategoryList GetByName(string name)
         {
-            throw new NotImplementedException();
+            try
+            {
+                TypeCategoryList typeCategoryList = Task.Run(() => _typeCategoryListRepository.GetByName(name)).Result;
+                if (typeCategoryList == null)
+                {
+                    return null;
+                }
+                return typeCategoryList;
+            }
+            catch (Exception ex)
+            {
+
+                return null;
+            }
         }
 
         public TypeCategoryList Update(TypeCategoryList entity)
         {
-            throw new NotImplementedException();
+            try
+            {
+                TypeCategoryList typeCategoryList = Task.Run(() => _typeCategoryListRepository.Update(entity)).Result;
+                if (typeCategoryList == null)
+                {
+                    return null;
+                }
+                return typeCategoryList;
+            }
+            catch (Exception ex)
+            {
+
+                return null;
+            }
         }
     }
 }

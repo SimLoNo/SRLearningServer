@@ -28,6 +28,10 @@ namespace SRLearningServer.Components.Services
             {
                 Result result = _dtoToDomainConverter.ConvertToDomainFromDto(entity);
                 result = Task.Run(() => _resultRepository.Create(result)).Result;
+                if(result is null)
+                {
+                    return null;
+                }
                 return _domainToDtoConverter.ConvertToDtoFromDomain(result, true);
             }
             catch (Exception ex)
@@ -47,6 +51,10 @@ namespace SRLearningServer.Components.Services
             try
             {
                 Result result = Task.Run(() => _resultRepository.Deactivate(id)).Result;
+                if (result is null)
+                {
+                    return null;
+                }
                 return _domainToDtoConverter.ConvertToDtoFromDomain(result, true);
             }
             catch (Exception ex)
@@ -62,6 +70,10 @@ namespace SRLearningServer.Components.Services
             {
                 Result result = _dtoToDomainConverter.ConvertToDomainFromDto(entity);
                 result = Task.Run(() => _resultRepository.Delete(result)).Result;
+                if (result is null)
+                {
+                    return null;
+                }
                 return _domainToDtoConverter.ConvertToDtoFromDomain(result, true);
             }
             catch (Exception ex)
@@ -76,6 +88,10 @@ namespace SRLearningServer.Components.Services
             try
             {
                 Result result = Task.Run(() => _resultRepository.Get(id)).Result;
+                if (result is null)
+                {
+                    return null;
+                }
                 return _domainToDtoConverter.ConvertToDtoFromDomain(result, true);
             }
             catch (Exception ex)
@@ -85,7 +101,7 @@ namespace SRLearningServer.Components.Services
             }
         }
 
-        public IEnumerable<ResultDto> GetAll()
+        public List<ResultDto> GetAll()
         {
             try
             {
@@ -118,7 +134,7 @@ namespace SRLearningServer.Components.Services
             catch (Exception ex)
             {
 
-                throw null;
+                return null;
             }
         }
     }
