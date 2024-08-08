@@ -51,6 +51,51 @@ namespace SRLearningServer.Migrations.SR
                         {
                             CardsCardId = 1,
                             ResultsResultId = 3
+                        },
+                        new
+                        {
+                            CardsCardId = 2,
+                            ResultsResultId = 1
+                        },
+                        new
+                        {
+                            CardsCardId = 2,
+                            ResultsResultId = 2
+                        },
+                        new
+                        {
+                            CardsCardId = 2,
+                            ResultsResultId = 3
+                        },
+                        new
+                        {
+                            CardsCardId = 3,
+                            ResultsResultId = 1
+                        },
+                        new
+                        {
+                            CardsCardId = 3,
+                            ResultsResultId = 2
+                        },
+                        new
+                        {
+                            CardsCardId = 3,
+                            ResultsResultId = 3
+                        },
+                        new
+                        {
+                            CardsCardId = 4,
+                            ResultsResultId = 1
+                        },
+                        new
+                        {
+                            CardsCardId = 4,
+                            ResultsResultId = 2
+                        },
+                        new
+                        {
+                            CardsCardId = 4,
+                            ResultsResultId = 3
                         });
                 });
 
@@ -78,6 +123,56 @@ namespace SRLearningServer.Migrations.SR
                         {
                             CardsCardId = 1,
                             TypesTypeId = 2
+                        },
+                        new
+                        {
+                            CardsCardId = 1,
+                            TypesTypeId = 11
+                        },
+                        new
+                        {
+                            CardsCardId = 2,
+                            TypesTypeId = 1
+                        },
+                        new
+                        {
+                            CardsCardId = 2,
+                            TypesTypeId = 2
+                        },
+                        new
+                        {
+                            CardsCardId = 2,
+                            TypesTypeId = 11
+                        },
+                        new
+                        {
+                            CardsCardId = 3,
+                            TypesTypeId = 1
+                        },
+                        new
+                        {
+                            CardsCardId = 3,
+                            TypesTypeId = 2
+                        },
+                        new
+                        {
+                            CardsCardId = 3,
+                            TypesTypeId = 14
+                        },
+                        new
+                        {
+                            CardsCardId = 4,
+                            TypesTypeId = 1
+                        },
+                        new
+                        {
+                            CardsCardId = 4,
+                            TypesTypeId = 2
+                        },
+                        new
+                        {
+                            CardsCardId = 4,
+                            TypesTypeId = 13
                         });
                 });
 
@@ -115,7 +210,23 @@ namespace SRLearningServer.Migrations.SR
                             Active = true,
                             AttachmentName = "Attachment1",
                             AttachmentUrl = "Icon1234.png",
-                            LastUpdated = new DateOnly(2024, 8, 7)
+                            LastUpdated = new DateOnly(2024, 8, 8)
+                        },
+                        new
+                        {
+                            AttachmentId = 2,
+                            Active = true,
+                            AttachmentName = "Attachment2",
+                            AttachmentUrl = "Icon1235.png",
+                            LastUpdated = new DateOnly(2024, 8, 8)
+                        },
+                        new
+                        {
+                            AttachmentId = 3,
+                            Active = true,
+                            AttachmentName = "Attachment3",
+                            AttachmentUrl = "Icon1236.png",
+                            LastUpdated = new DateOnly(2024, 8, 8)
                         });
                 });
 
@@ -157,9 +268,33 @@ namespace SRLearningServer.Migrations.SR
                         {
                             CardId = 1,
                             Active = true,
-                            CardName = "Signal 1",
-                            CardText = "Signal 1",
-                            LastUpdated = new DateOnly(2024, 8, 7)
+                            CardName = "I signal Kør uden SI",
+                            CardText = "I signal uden efterfølgende SI signal med denne visning betyder?",
+                            LastUpdated = new DateOnly(2024, 8, 8)
+                        },
+                        new
+                        {
+                            CardId = 2,
+                            Active = true,
+                            CardName = "I signal Kør med SI",
+                            CardText = "I signal med efterfølgende SI signal med denne visning betyder?",
+                            LastUpdated = new DateOnly(2024, 8, 8)
+                        },
+                        new
+                        {
+                            CardId = 3,
+                            Active = true,
+                            CardName = "I signal Kør med begrænset hastighed med SI",
+                            CardText = "I signal med efterfølgende SI signal med denne visning betyder?",
+                            LastUpdated = new DateOnly(2024, 8, 8)
+                        },
+                        new
+                        {
+                            CardId = 4,
+                            Active = true,
+                            CardName = "I signal stop",
+                            CardText = "I signal med denne visning betyder?",
+                            LastUpdated = new DateOnly(2024, 8, 8)
                         });
                 });
 
@@ -203,14 +338,14 @@ namespace SRLearningServer.Migrations.SR
                         {
                             ResultId = 2,
                             Active = true,
-                            LastUpdated = new DateOnly(2024, 8, 7),
+                            LastUpdated = new DateOnly(2024, 8, 8),
                             ResultText = "er der foran signalet et standsningsmærke, skal der standses med forenden ud for mærket"
                         },
                         new
                         {
                             ResultId = 3,
                             Active = true,
-                            LastUpdated = new DateOnly(2024, 8, 7),
+                            LastUpdated = new DateOnly(2024, 8, 8),
                             ResultText = "viderekørsel må kun ske ved indrangering eller for rangertræk efter tilladelse fra stationsbestyreren"
                         });
                 });
@@ -234,12 +369,7 @@ namespace SRLearningServer.Migrations.SR
                     b.Property<DateOnly>("LastUpdated")
                         .HasColumnType("date");
 
-                    b.Property<int?>("TypeCategoryListId")
-                        .HasColumnType("int");
-
                     b.HasKey("TypeId");
-
-                    b.HasIndex("TypeCategoryListId");
 
                     b.ToTable("Types");
 
@@ -249,14 +379,70 @@ namespace SRLearningServer.Migrations.SR
                             TypeId = 1,
                             Active = true,
                             CardTypeName = "Signal",
-                            LastUpdated = new DateOnly(2024, 8, 7)
+                            LastUpdated = new DateOnly(2024, 8, 8)
                         },
                         new
                         {
                             TypeId = 2,
                             Active = true,
+                            CardTypeName = "I signal",
+                            LastUpdated = new DateOnly(2024, 8, 8)
+                        },
+                        new
+                        {
+                            TypeId = 3,
+                            Active = true,
+                            CardTypeName = "SI signal",
+                            LastUpdated = new DateOnly(2024, 8, 8)
+                        },
+                        new
+                        {
+                            TypeId = 4,
+                            Active = true,
+                            CardTypeName = "PU signal",
+                            LastUpdated = new DateOnly(2024, 8, 8)
+                        },
+                        new
+                        {
+                            TypeId = 5,
+                            Active = true,
+                            CardTypeName = "SU signal",
+                            LastUpdated = new DateOnly(2024, 8, 8)
+                        },
+                        new
+                        {
+                            TypeId = 6,
+                            Active = true,
+                            CardTypeName = "U signal",
+                            LastUpdated = new DateOnly(2024, 8, 8)
+                        },
+                        new
+                        {
+                            TypeId = 11,
+                            Active = true,
+                            CardTypeName = "Kør",
+                            LastUpdated = new DateOnly(2024, 8, 8)
+                        },
+                        new
+                        {
+                            TypeId = 12,
+                            Active = true,
+                            CardTypeName = "Kør igennem",
+                            LastUpdated = new DateOnly(2024, 8, 8)
+                        },
+                        new
+                        {
+                            TypeId = 13,
+                            Active = true,
                             CardTypeName = "Stop",
-                            LastUpdated = new DateOnly(2024, 8, 7)
+                            LastUpdated = new DateOnly(2024, 8, 8)
+                        },
+                        new
+                        {
+                            TypeId = 14,
+                            Active = true,
+                            CardTypeName = "Kør med begrænset hastighed",
+                            LastUpdated = new DateOnly(2024, 8, 8)
                         });
                 });
 
@@ -282,6 +468,84 @@ namespace SRLearningServer.Migrations.SR
                     b.HasKey("TypeCategoryListId");
 
                     b.ToTable("TypeCategoryLists");
+
+                    b.HasData(
+                        new
+                        {
+                            TypeCategoryListId = 1,
+                            Active = true,
+                            LastUpdated = new DateOnly(2024, 8, 8),
+                            TypeCategoryListName = "Signaler"
+                        },
+                        new
+                        {
+                            TypeCategoryListId = 2,
+                            Active = true,
+                            LastUpdated = new DateOnly(2024, 8, 8),
+                            TypeCategoryListName = "SignalVisninger"
+                        });
+                });
+
+            modelBuilder.Entity("TypeTypeCategoryList", b =>
+                {
+                    b.Property<int>("TypeCategoryListsTypeCategoryListId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TypesTypeId")
+                        .HasColumnType("int");
+
+                    b.HasKey("TypeCategoryListsTypeCategoryListId", "TypesTypeId");
+
+                    b.HasIndex("TypesTypeId");
+
+                    b.ToTable("TypeTypeCategoryList");
+
+                    b.HasData(
+                        new
+                        {
+                            TypeCategoryListsTypeCategoryListId = 1,
+                            TypesTypeId = 2
+                        },
+                        new
+                        {
+                            TypeCategoryListsTypeCategoryListId = 1,
+                            TypesTypeId = 3
+                        },
+                        new
+                        {
+                            TypeCategoryListsTypeCategoryListId = 1,
+                            TypesTypeId = 4
+                        },
+                        new
+                        {
+                            TypeCategoryListsTypeCategoryListId = 1,
+                            TypesTypeId = 5
+                        },
+                        new
+                        {
+                            TypeCategoryListsTypeCategoryListId = 1,
+                            TypesTypeId = 6
+                        },
+                        new
+                        {
+                            TypeCategoryListsTypeCategoryListId = 2,
+                            TypesTypeId = 11
+                        },
+                        new
+                        {
+                            TypeCategoryListsTypeCategoryListId = 2,
+                            TypesTypeId = 12
+                        },
+                        new
+                        {
+                            TypeCategoryListsTypeCategoryListId = 2,
+                            TypesTypeId = 13
+                        },
+                        new
+                        {
+                            TypeCategoryListsTypeCategoryListId = 2,
+                            TypesTypeId = 14
+                        });
                 });
 
             modelBuilder.Entity("CardResult", b =>
@@ -332,11 +596,19 @@ namespace SRLearningServer.Migrations.SR
                     b.Navigation("Attachment");
                 });
 
-            modelBuilder.Entity("SRLearningServer.Components.Models.Type", b =>
+            modelBuilder.Entity("TypeTypeCategoryList", b =>
                 {
                     b.HasOne("SRLearningServer.Components.Models.TypeCategoryList", null)
-                        .WithMany("Types")
-                        .HasForeignKey("TypeCategoryListId");
+                        .WithMany()
+                        .HasForeignKey("TypeCategoryListsTypeCategoryListId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SRLearningServer.Components.Models.Type", null)
+                        .WithMany()
+                        .HasForeignKey("TypesTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("SRLearningServer.Components.Models.Attachment", b =>
@@ -344,11 +616,6 @@ namespace SRLearningServer.Migrations.SR
                     b.Navigation("Cards");
 
                     b.Navigation("Results");
-                });
-
-            modelBuilder.Entity("SRLearningServer.Components.Models.TypeCategoryList", b =>
-                {
-                    b.Navigation("Types");
                 });
 #pragma warning restore 612, 618
         }

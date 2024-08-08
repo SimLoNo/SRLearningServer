@@ -45,6 +45,21 @@ namespace SRLearningServer.Migrations.SR
                 });
 
             migrationBuilder.CreateTable(
+                name: "Types",
+                columns: table => new
+                {
+                    TypeId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CardTypeName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    LastUpdated = table.Column<DateOnly>(type: "date", nullable: false),
+                    Active = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Types", x => x.TypeId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Cards",
                 columns: table => new
                 {
@@ -88,47 +103,26 @@ namespace SRLearningServer.Migrations.SR
                 });
 
             migrationBuilder.CreateTable(
-                name: "Types",
+                name: "TypeTypeCategoryList",
                 columns: table => new
                 {
-                    TypeId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    CardTypeName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    LastUpdated = table.Column<DateOnly>(type: "date", nullable: false),
-                    Active = table.Column<bool>(type: "bit", nullable: false),
-                    TypeCategoryListId = table.Column<int>(type: "int", nullable: true)
+                    TypeCategoryListsTypeCategoryListId = table.Column<int>(type: "int", nullable: false),
+                    TypesTypeId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Types", x => x.TypeId);
+                    table.PrimaryKey("PK_TypeTypeCategoryList", x => new { x.TypeCategoryListsTypeCategoryListId, x.TypesTypeId });
                     table.ForeignKey(
-                        name: "FK_Types_TypeCategoryLists_TypeCategoryListId",
-                        column: x => x.TypeCategoryListId,
+                        name: "FK_TypeTypeCategoryList_TypeCategoryLists_TypeCategoryListsTypeCategoryListId",
+                        column: x => x.TypeCategoryListsTypeCategoryListId,
                         principalTable: "TypeCategoryLists",
-                        principalColumn: "TypeCategoryListId");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "CardResult",
-                columns: table => new
-                {
-                    CardsCardId = table.Column<int>(type: "int", nullable: false),
-                    ResultsResultId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CardResult", x => new { x.CardsCardId, x.ResultsResultId });
-                    table.ForeignKey(
-                        name: "FK_CardResult_Cards_CardsCardId",
-                        column: x => x.CardsCardId,
-                        principalTable: "Cards",
-                        principalColumn: "CardId",
+                        principalColumn: "TypeCategoryListId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_CardResult_Results_ResultsResultId",
-                        column: x => x.ResultsResultId,
-                        principalTable: "Results",
-                        principalColumn: "ResultId",
+                        name: "FK_TypeTypeCategoryList_Types_TypesTypeId",
+                        column: x => x.TypesTypeId,
+                        principalTable: "Types",
+                        principalColumn: "TypeId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -156,15 +150,50 @@ namespace SRLearningServer.Migrations.SR
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "CardResult",
+                columns: table => new
+                {
+                    CardsCardId = table.Column<int>(type: "int", nullable: false),
+                    ResultsResultId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CardResult", x => new { x.CardsCardId, x.ResultsResultId });
+                    table.ForeignKey(
+                        name: "FK_CardResult_Cards_CardsCardId",
+                        column: x => x.CardsCardId,
+                        principalTable: "Cards",
+                        principalColumn: "CardId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CardResult_Results_ResultsResultId",
+                        column: x => x.ResultsResultId,
+                        principalTable: "Results",
+                        principalColumn: "ResultId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.InsertData(
                 table: "Attachments",
                 columns: new[] { "AttachmentId", "Active", "AttachmentName", "AttachmentUrl", "LastUpdated" },
-                values: new object[] { 1, true, "Attachment1", "Icon1234.png", new DateOnly(2024, 8, 7) });
+                values: new object[,]
+                {
+                    { 1, true, "Attachment1", "Icon1234.png", new DateOnly(2024, 8, 8) },
+                    { 2, true, "Attachment2", "Icon1235.png", new DateOnly(2024, 8, 8) },
+                    { 3, true, "Attachment3", "Icon1236.png", new DateOnly(2024, 8, 8) }
+                });
 
             migrationBuilder.InsertData(
                 table: "Cards",
                 columns: new[] { "CardId", "Active", "AttachmentId", "CardName", "CardText", "LastUpdated" },
-                values: new object[] { 1, true, null, "Signal 1", "Signal 1", new DateOnly(2024, 8, 7) });
+                values: new object[,]
+                {
+                    { 1, true, null, "I signal Kør uden SI", "I signal uden efterfølgende SI signal med denne visning betyder?", new DateOnly(2024, 8, 8) },
+                    { 2, true, null, "I signal Kør med SI", "I signal med efterfølgende SI signal med denne visning betyder?", new DateOnly(2024, 8, 8) },
+                    { 3, true, null, "I signal Kør med begrænset hastighed med SI", "I signal med efterfølgende SI signal med denne visning betyder?", new DateOnly(2024, 8, 8) },
+                    { 4, true, null, "I signal stop", "I signal med denne visning betyder?", new DateOnly(2024, 8, 8) }
+                });
 
             migrationBuilder.InsertData(
                 table: "Results",
@@ -172,17 +201,34 @@ namespace SRLearningServer.Migrations.SR
                 values: new object[,]
                 {
                     { 1, true, null, new DateOnly(1, 1, 1), "stands foran signalet" },
-                    { 2, true, null, new DateOnly(2024, 8, 7), "er der foran signalet et standsningsmærke, skal der standses med forenden ud for mærket" },
-                    { 3, true, null, new DateOnly(2024, 8, 7), "viderekørsel må kun ske ved indrangering eller for rangertræk efter tilladelse fra stationsbestyreren" }
+                    { 2, true, null, new DateOnly(2024, 8, 8), "er der foran signalet et standsningsmærke, skal der standses med forenden ud for mærket" },
+                    { 3, true, null, new DateOnly(2024, 8, 8), "viderekørsel må kun ske ved indrangering eller for rangertræk efter tilladelse fra stationsbestyreren" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "TypeCategoryLists",
+                columns: new[] { "TypeCategoryListId", "Active", "LastUpdated", "TypeCategoryListName" },
+                values: new object[,]
+                {
+                    { 1, true, new DateOnly(2024, 8, 8), "Signaler" },
+                    { 2, true, new DateOnly(2024, 8, 8), "SignalVisninger" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Types",
-                columns: new[] { "TypeId", "Active", "CardTypeName", "LastUpdated", "TypeCategoryListId" },
+                columns: new[] { "TypeId", "Active", "CardTypeName", "LastUpdated" },
                 values: new object[,]
                 {
-                    { 1, true, "Signal", new DateOnly(2024, 8, 7), null },
-                    { 2, true, "Stop", new DateOnly(2024, 8, 7), null }
+                    { 1, true, "Signal", new DateOnly(2024, 8, 8) },
+                    { 2, true, "I signal", new DateOnly(2024, 8, 8) },
+                    { 3, true, "SI signal", new DateOnly(2024, 8, 8) },
+                    { 4, true, "PU signal", new DateOnly(2024, 8, 8) },
+                    { 5, true, "SU signal", new DateOnly(2024, 8, 8) },
+                    { 6, true, "U signal", new DateOnly(2024, 8, 8) },
+                    { 11, true, "Kør", new DateOnly(2024, 8, 8) },
+                    { 12, true, "Kør igennem", new DateOnly(2024, 8, 8) },
+                    { 13, true, "Stop", new DateOnly(2024, 8, 8) },
+                    { 14, true, "Kør med begrænset hastighed", new DateOnly(2024, 8, 8) }
                 });
 
             migrationBuilder.InsertData(
@@ -192,7 +238,16 @@ namespace SRLearningServer.Migrations.SR
                 {
                     { 1, 1 },
                     { 1, 2 },
-                    { 1, 3 }
+                    { 1, 3 },
+                    { 2, 1 },
+                    { 2, 2 },
+                    { 2, 3 },
+                    { 3, 1 },
+                    { 3, 2 },
+                    { 3, 3 },
+                    { 4, 1 },
+                    { 4, 2 },
+                    { 4, 3 }
                 });
 
             migrationBuilder.InsertData(
@@ -201,7 +256,33 @@ namespace SRLearningServer.Migrations.SR
                 values: new object[,]
                 {
                     { 1, 1 },
-                    { 1, 2 }
+                    { 1, 2 },
+                    { 1, 11 },
+                    { 2, 1 },
+                    { 2, 2 },
+                    { 2, 11 },
+                    { 3, 1 },
+                    { 3, 2 },
+                    { 3, 14 },
+                    { 4, 1 },
+                    { 4, 2 },
+                    { 4, 13 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "TypeTypeCategoryList",
+                columns: new[] { "TypeCategoryListsTypeCategoryListId", "TypesTypeId" },
+                values: new object[,]
+                {
+                    { 1, 2 },
+                    { 1, 3 },
+                    { 1, 4 },
+                    { 1, 5 },
+                    { 1, 6 },
+                    { 2, 11 },
+                    { 2, 12 },
+                    { 2, 13 },
+                    { 2, 14 }
                 });
 
             migrationBuilder.CreateIndex(
@@ -225,9 +306,9 @@ namespace SRLearningServer.Migrations.SR
                 column: "AttachmentId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Types_TypeCategoryListId",
-                table: "Types",
-                column: "TypeCategoryListId");
+                name: "IX_TypeTypeCategoryList_TypesTypeId",
+                table: "TypeTypeCategoryList",
+                column: "TypesTypeId");
         }
 
         /// <inheritdoc />
@@ -240,19 +321,22 @@ namespace SRLearningServer.Migrations.SR
                 name: "CardType");
 
             migrationBuilder.DropTable(
+                name: "TypeTypeCategoryList");
+
+            migrationBuilder.DropTable(
                 name: "Results");
 
             migrationBuilder.DropTable(
                 name: "Cards");
 
             migrationBuilder.DropTable(
+                name: "TypeCategoryLists");
+
+            migrationBuilder.DropTable(
                 name: "Types");
 
             migrationBuilder.DropTable(
                 name: "Attachments");
-
-            migrationBuilder.DropTable(
-                name: "TypeCategoryLists");
         }
     }
 }

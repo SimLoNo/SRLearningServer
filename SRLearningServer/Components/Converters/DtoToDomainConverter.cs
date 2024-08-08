@@ -203,6 +203,13 @@ namespace SRLearningServer.Components.Converters
                             type.Cards.Add(card);
                         }
                     }
+                    if (!dto.TypeCategoryLists.IsNullOrEmpty())
+                    {
+                        foreach (TypeCategoryList tcl in ConvertToDomainFromDto(dto.TypeCategoryLists))
+                        {
+                            type.TypeCategoryLists.Add(tcl);
+                        }
+                    }
                     types.Add(type);
                 }
                 return types;
@@ -219,6 +226,45 @@ namespace SRLearningServer.Components.Converters
             List<TypeDto> entities = new() { entity };
             List<Models.Type> types = ConvertToDomainFromDto(entities).ToList();
             return types[0];
+        }
+
+        public List<TypeCategoryList> ConvertToDomainFromDto(List<TypeCategoryListDto> entities)
+        {
+            List<TypeCategoryList> typeCategoryLists = new();
+            try
+            {
+                foreach (TypeCategoryListDto dto in entities)
+                {
+                    TypeCategoryList typeCategoryList = new()
+                    {
+                        TypeCategoryListId = dto.TypeCategoryListId,
+                        TypeCategoryListName = dto.TypeCategoryListName,
+                        LastUpdated = dto.LastUpdated,
+                        Active = dto.Active
+                    };
+                    if (!dto.Types.IsNullOrEmpty())
+                    {
+                        foreach (Models.Type tcl in ConvertToDomainFromDto(dto.Types))
+                        {
+                            typeCategoryList.Types.Add(tcl);
+                        }
+                    }
+                    typeCategoryLists.Add(typeCategoryList);
+                }
+                return typeCategoryLists;
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public TypeCategoryList ConvertToDomainFromDto(TypeCategoryListDto entity)
+        {
+            List<TypeCategoryListDto> entities = new() { entity };
+            List<TypeCategoryList> typeCategoryLists = ConvertToDomainFromDto(entities).ToList();
+            return typeCategoryLists[0];
         }
     }
 }

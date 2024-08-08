@@ -43,7 +43,7 @@ namespace SRLearningServer.Components.Repositories
                 var trackedTypeIds = new HashSet<int>(trackedTypeCategoryList.Types.Select(r => r.TypeId));
                 var typeCategoryListTypeIds = new HashSet<int>(typeCategoryList.Types.Select(r => r.TypeId));
 
-                // Add new results
+                // Add new Types
                 foreach (var type in typeCategoryList.Types)
                 {
                     if (!trackedTypeIds.Contains(type.TypeId))
@@ -52,7 +52,7 @@ namespace SRLearningServer.Components.Repositories
                     }
                 }
 
-                // Remove old results
+                // Remove old Types
                 foreach (var type in trackedTypeCategoryList.Types.ToList())
                 {
                     if (!typeCategoryList.Types.Any(t => t.TypeId == type.TypeId))

@@ -14,5 +14,6 @@ namespace SRLearningServer.Components.Models
         public bool Active { get; set; }
 
         public ICollection<Card> Cards { get;} = [];
+        public ICollection<TypeCategoryList> TypeCategoryLists { get; } = [];
     }
 }

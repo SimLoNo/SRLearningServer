@@ -83,6 +83,24 @@ namespace SRLearningServer.Components.Repositories
                         trackedType.Cards.Remove(card);
                     }
                 }
+
+                //Add new TypeCategoryLists
+                foreach (TypeCategoryList tcl in type.TypeCategoryLists)
+                {
+                    if (!trackedType.TypeCategoryLists.Any(c => c.TypeCategoryListId == tcl.TypeCategoryListId))
+                    {
+                        trackedType.TypeCategoryLists.Add(tcl);
+                    }
+                }
+                //Removes old TypeCategoryLists
+                foreach (TypeCategoryList tcl in trackedType.TypeCategoryLists.ToList())
+                {
+                    if (!type.TypeCategoryLists.Any(c => c.TypeCategoryListId == tcl.TypeCategoryListId))
+                    {
+                        trackedType.TypeCategoryLists.Remove(tcl);
+                    }
+                }
+
                 trackedType.LastUpdated = DateOnly.FromDateTime(DateTime.Now);
                 await _context.SaveChangesAsync();
                 return trackedType;

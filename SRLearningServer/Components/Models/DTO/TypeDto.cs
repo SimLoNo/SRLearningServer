@@ -11,5 +11,6 @@ namespace SRLearningServer.Components.Models.DTO
         public bool Active { get; set; }
 
         public List<CardDto> Cards { get; } = [];
+        public List<TypeCategoryListDto> TypeCategoryLists { get; } = [];
     }
 }
