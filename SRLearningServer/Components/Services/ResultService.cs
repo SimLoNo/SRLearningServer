@@ -14,7 +14,7 @@ namespace SRLearningServer.Components.Services
         private readonly IDtoToDomainConverter _dtoToDomainConverter;
         private readonly IResultRepository _resultRepository;
 
-        public ResultService(IDomainToDtoConverter domainToDtoConverter, IDtoToDomainConverter dtoToDomainConverter, IResultRepository resultRepository)
+        public ResultService(IDtoToDomainConverter dtoToDomainConverter, IDomainToDtoConverter domainToDtoConverter, IResultRepository resultRepository)
         {
             _domainToDtoConverter = domainToDtoConverter;
             _dtoToDomainConverter = dtoToDomainConverter;
@@ -26,9 +26,9 @@ namespace SRLearningServer.Components.Services
         {
             try
             {
-                Result result = _dtoToDomainConverter.ConvertToResultFromResultDto(entity);
+                Result result = _dtoToDomainConverter.ConvertToDomainFromDto(entity);
                 result = Task.Run(() => _resultRepository.Create(result)).Result;
-                return _domainToDtoConverter.ConvertToResultDtoFromResult(result, true);
+                return _domainToDtoConverter.ConvertToDtoFromDomain(result, true);
             }
             catch (Exception ex)
             {
@@ -47,7 +47,7 @@ namespace SRLearningServer.Components.Services
             try
             {
                 Result result = Task.Run(() => _resultRepository.Deactivate(id)).Result;
-                return _domainToDtoConverter.ConvertToResultDtoFromResult(result, true);
+                return _domainToDtoConverter.ConvertToDtoFromDomain(result, true);
             }
             catch (Exception ex)
             {
@@ -60,9 +60,9 @@ namespace SRLearningServer.Components.Services
         {
             try
             {
-                Result result = _dtoToDomainConverter.ConvertToResultFromResultDto(entity);
+                Result result = _dtoToDomainConverter.ConvertToDomainFromDto(entity);
                 result = Task.Run(() => _resultRepository.Delete(result)).Result;
-                return _domainToDtoConverter.ConvertToResultDtoFromResult(result, true);
+                return _domainToDtoConverter.ConvertToDtoFromDomain(result, true);
             }
             catch (Exception ex)
             {
@@ -76,7 +76,7 @@ namespace SRLearningServer.Components.Services
             try
             {
                 Result result = Task.Run(() => _resultRepository.Get(id)).Result;
-                return _domainToDtoConverter.ConvertToResultDtoFromResult(result, true);
+                return _domainToDtoConverter.ConvertToDtoFromDomain(result, true);
             }
             catch (Exception ex)
             {
@@ -94,7 +94,7 @@ namespace SRLearningServer.Components.Services
                 {
                     return null;
                 }
-                return _domainToDtoConverter.ConvertToResultDtoFromResult(results, true);
+                return _domainToDtoConverter.ConvertToDtoFromDomain(results, true);
             }
             catch (Exception ex)
             {

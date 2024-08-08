@@ -11,7 +11,7 @@ namespace SRLearningServer.Components.Interfaces.Converters
          /// <param name="entities"></param>
          /// <param name="convertRelations"></param>
          /// <returns></returns>
-        public IEnumerable<Attachment> ConvertToAttachmentFromAttachmentDto(IEnumerable<AttachmentDto> entities);
+        public IEnumerable<Attachment> ConvertToDomainFromDto(IEnumerable<AttachmentDto> entities);
 
 
         /// <summary>
@@ -20,7 +20,7 @@ namespace SRLearningServer.Components.Interfaces.Converters
         /// <param name="entity"></param>
         /// <param name="convertRelations"></param>
         /// <returns></returns>
-        public Attachment ConvertToAttachmentFromAttachmentDto(AttachmentDto entity);
+        public Attachment ConvertToDomainFromDto(AttachmentDto entity);
 
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace SRLearningServer.Components.Interfaces.Converters
         /// <param name="entities"></param>
         /// <param name="convertRelations"></param>
         /// <returns></returns>
-        public IEnumerable<Card> ConvertToCardFromCardDto(IEnumerable<CardDto> entities);
+        public IEnumerable<Card> ConvertToDomainFromDto(IEnumerable<CardDto> entities);
 
 
         /// <summary>
@@ -38,7 +38,7 @@ namespace SRLearningServer.Components.Interfaces.Converters
         /// <param name="entity"></param>
         /// <param name="convertRelations"></param>
         /// <returns></returns>
-        public Card ConvertToCardFromCardDto(CardDto entity);
+        public Card ConvertToDomainFromDto(CardDto entity);
 
 
         /// <summary>
@@ -47,7 +47,7 @@ namespace SRLearningServer.Components.Interfaces.Converters
         /// <param name="entities"></param>
         /// <param name="convertRelations"></param>
         /// <returns></returns>
-        public IEnumerable<Result> ConvertToResultFromResultDto(IEnumerable<ResultDto> entities);
+        public IEnumerable<Result> ConvertToDomainFromDto(IEnumerable<ResultDto> entities);
 
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace SRLearningServer.Components.Interfaces.Converters
         /// <param name="entity"></param>
         /// <param name="convertRelations"></param>
         /// <returns></returns>
-        public Result ConvertToResultFromResultDto(ResultDto entity);
+        public Result ConvertToDomainFromDto(ResultDto entity);
 
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace SRLearningServer.Components.Interfaces.Converters
         /// <param name="entities"></param>
         /// <param name="convertRelations"></param>
         /// <returns></returns>
-        public IEnumerable<Models.Type> ConvertToTypeFromTypeDto(IEnumerable<TypeDto> entities);
+        public IEnumerable<Models.Type> ConvertToDomainFromDto(IEnumerable<TypeDto> entities);
 
 
         /// <summary>
@@ -74,6 +74,6 @@ namespace SRLearningServer.Components.Interfaces.Converters
         /// <param name="entity"></param>
         /// <param name="convertRelations"></param>
         /// <returns></returns>
-        public Models.Type ConvertToTypeFromTypeDto(TypeDto entity);
+        public Models.Type ConvertToDomainFromDto(TypeDto entity);
     }
 }

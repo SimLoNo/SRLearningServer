@@ -14,7 +14,7 @@ namespace SRLearningServer.Components.Services
         private readonly IDomainToDtoConverter _domainToDtoConverter;
         private readonly IDtoToDomainConverter _dtoToDomainConverter;
         private readonly ITypeRepository _typeRepository;
-        public TypeService(IDomainToDtoConverter domainToDtoConverter, IDtoToDomainConverter dtoToDomainConverter, ITypeRepository typeRepository)
+        public TypeService(IDtoToDomainConverter dtoToDomainConverter, IDomainToDtoConverter domainToDtoConverter, ITypeRepository typeRepository)
         {
             _domainToDtoConverter = domainToDtoConverter;
             _dtoToDomainConverter = dtoToDomainConverter;
@@ -23,9 +23,9 @@ namespace SRLearningServer.Components.Services
 
         public TypeDto Create(TypeDto entity)
         {
-            Models.Type type = _dtoToDomainConverter.ConvertToTypeFromTypeDto(entity);
+            Models.Type type = _dtoToDomainConverter.ConvertToDomainFromDto(entity);
             type = Task.Run(() => _typeRepository.Create(type)).Result;
-            return _domainToDtoConverter.ConvertToTypeDtoFromType(type, true);
+            return _domainToDtoConverter.ConvertToDtoFromDomain(type, true);
         }
 
         public TypeDto Deactivate(TypeDto entity)
@@ -38,7 +38,7 @@ namespace SRLearningServer.Components.Services
             try
             {
                 Models.Type type = Task.Run(() => _typeRepository.Deactivate(id)).Result;
-                return _domainToDtoConverter.ConvertToTypeDtoFromType(type, true);
+                return _domainToDtoConverter.ConvertToDtoFromDomain(type, true);
             }
             catch (Exception ex)
             {
@@ -51,9 +51,9 @@ namespace SRLearningServer.Components.Services
         {
             try
             {
-                Models.Type type = _dtoToDomainConverter.ConvertToTypeFromTypeDto(entity);
+                Models.Type type = _dtoToDomainConverter.ConvertToDomainFromDto(entity);
                 type = Task.Run(() => _typeRepository.Delete(type)).Result;
-                return _domainToDtoConverter.ConvertToTypeDtoFromType(type, true);
+                return _domainToDtoConverter.ConvertToDtoFromDomain(type, true);
             }
             catch (Exception ex)
             {
@@ -67,7 +67,7 @@ namespace SRLearningServer.Components.Services
             try
             {
                 Models.Type type = Task.Run(() => _typeRepository.Get(id)).Result;
-                return _domainToDtoConverter.ConvertToTypeDtoFromType(type, true);
+                return _domainToDtoConverter.ConvertToDtoFromDomain(type, true);
             }
             catch (Exception ex)
             {
@@ -85,7 +85,7 @@ namespace SRLearningServer.Components.Services
                 {
                     return null;
                 }
-                return _domainToDtoConverter.ConvertToTypeDtoFromType(types, true);
+                return _domainToDtoConverter.ConvertToDtoFromDomain(types, true);
             }
             catch (Exception ex)
             {

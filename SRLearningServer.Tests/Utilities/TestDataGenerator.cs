@@ -11,7 +11,7 @@ namespace SRLearningServer.Tests.Utilities
 {
     public class TestDataGenerator
     {
-        public AttachmentDto CreateAttachmentDto(int id, string name, string url, DateOnly updated, bool active, List<CardDto> cards, List<ResultDto> results)
+        public AttachmentDto CreateAttachmentDto(int id, string name, string url, DateOnly updated, bool active)
         {
             AttachmentDto dto = new()
             {
@@ -21,17 +21,9 @@ namespace SRLearningServer.Tests.Utilities
                 LastUpdated = updated,
                 Active = active,
             };
-            if (!cards.IsNullOrEmpty())
-            {
-                dto.Cards.AddRange(cards);
-            }
-            if (!results.IsNullOrEmpty())
-            {
-                dto.Results.AddRange(results);
-            }
             return dto;
         }
-        public CardDto CreateCardDto(int id, string name, string text, DateOnly updated, bool active, List<TypeDto> types, List<ResultDto> results)
+        public CardDto CreateCardDto(int id, string name, string text, DateOnly updated, bool active)
         {
             CardDto dto = new()
             {
@@ -41,17 +33,9 @@ namespace SRLearningServer.Tests.Utilities
                 LastUpdated = updated,
                 Active = active,
             };
-            if (!types.IsNullOrEmpty())
-            {
-                dto.Types.AddRange(types);
-            }
-            if (!results.IsNullOrEmpty())
-            {
-                dto.Results.AddRange(results);
-            }
             return dto;
         }
-        public ResultDto CreateResultDto(int id, string text, DateOnly updated, bool active, AttachmentDto attachment, List<CardDto> cards)
+        public ResultDto CreateResultDto(int id, string text, DateOnly updated, bool active)
         {
             ResultDto dto = new()
             {
@@ -60,18 +44,10 @@ namespace SRLearningServer.Tests.Utilities
                 LastUpdated = updated,
                 Active = active,
             };
-            if (attachment is not null)
-            {
-                dto.Attachment = attachment;
-            }
-            if (!cards.IsNullOrEmpty())
-            {
-                dto.Cards.AddRange(cards);
-            }
             return dto;
         }
 
-        public TypeDto CreateTypeDto(int id, string name, DateOnly updated, bool active, List<CardDto> cards)
+        public TypeDto CreateTypeDto(int id, string name, DateOnly updated, bool active)
         {
             TypeDto dto = new()
             {
@@ -80,14 +56,10 @@ namespace SRLearningServer.Tests.Utilities
                 LastUpdated = updated,
                 Active = active,
             };
-            if (!cards.IsNullOrEmpty())
-            {
-                dto.Cards.AddRange(cards);
-            }
             return dto;
         }
 
-        public Attachment CreateAttachment(int id, string name, string url, DateOnly updated, bool active, List<Card> cards, List<Result> results)
+        public Attachment CreateAttachment(int id, string name, string url, DateOnly updated, bool active)
         {
             Attachment entity = new()
             {
@@ -97,23 +69,9 @@ namespace SRLearningServer.Tests.Utilities
                 LastUpdated = updated,
                 Active = active,
             };
-            if (!cards.IsNullOrEmpty())
-            {
-                foreach (Card card in cards)
-                {
-                    entity.Cards.Add(card);
-                }
-            }
-            if (!results.IsNullOrEmpty())
-            {
-                foreach (Result result in results)
-                {
-                    entity.Results.Add(result);
-                }
-            }
             return entity;
         }
-        public Card CreateCard(int id, string name, string text, DateOnly updated, bool active, List<Components.Models.Type> types, List<Result> results)
+        public Card CreateCard(int id, string name, string text, DateOnly updated, bool active)
         {
             Card entity = new()
             {
@@ -123,23 +81,9 @@ namespace SRLearningServer.Tests.Utilities
                 LastUpdated = updated,
                 Active = active,
             };
-            if (!types.IsNullOrEmpty())
-            {
-                foreach (Components.Models.Type type in types)
-                {
-                    entity.Types.Add(type);
-                }
-            }
-            if (!results.IsNullOrEmpty())
-            {
-                foreach (Result result in results)
-                {
-                    entity.Results.Add(result);
-                }
-            }
             return entity;
         }
-        public Result CreateResult(int id, string text, DateOnly updated, bool active, Attachment attachment)
+        public Result CreateResult(int id, string text, DateOnly updated, bool active)
         {
             Result entity = new()
             {
@@ -148,10 +92,6 @@ namespace SRLearningServer.Tests.Utilities
                 LastUpdated = updated,
                 Active = active,
             };
-            if (attachment is not null)
-            {
-                entity.Attachment = attachment;
-            }
             return entity;
         }
 
@@ -177,20 +117,6 @@ namespace SRLearningServer.Tests.Utilities
                 LastUpdated = dto.LastUpdated,
                 Active = dto.Active,
             };
-            if (!dto.Cards.IsNullOrEmpty())
-            {
-                foreach (CardDto cardDto in dto.Cards)
-                {
-                    entity.Cards.Add(CreateCardFromDto(cardDto));
-                }
-            }
-            if (!dto.Results.IsNullOrEmpty())
-            {
-                foreach (ResultDto resultDto in dto.Results)
-                {
-                    entity.Results.Add(CreateResultFromDto(resultDto));
-                }
-            }
             return entity;
         }
         public Card CreateCardFromDto(CardDto dto)
@@ -204,24 +130,6 @@ namespace SRLearningServer.Tests.Utilities
                 LastUpdated = dto.LastUpdated,
                 Active = dto.Active,
             };
-            if (!dto.Types.IsNullOrEmpty())
-            {
-                foreach (TypeDto typeDto in dto.Types) 
-                {
-                    entity.Types.Add(CreateTypeFromDto(typeDto));
-                }
-            }
-            if (!dto.Results.IsNullOrEmpty())
-            {
-                foreach (ResultDto resultDto in dto.Results)
-                {
-                    entity.Results.Add(CreateResultFromDto(resultDto));
-                }
-            }
-            if(dto.Attachment is not null)
-            {
-                entity.Attachment = CreateAttachmentFromDto(dto.Attachment);
-            }
             return entity;
         }
         public Result CreateResultFromDto(ResultDto dto)
@@ -230,21 +138,9 @@ namespace SRLearningServer.Tests.Utilities
             {
                 ResultId = dto.ResultId,
                 ResultText = dto.ResultText,
-                //AttachmentId = dto.AttachmentId,
                 LastUpdated = dto.LastUpdated,
                 Active = dto.Active,
             };
-            if (!dto.Cards.IsNullOrEmpty())
-            {
-                foreach (CardDto cardDto in dto.Cards)
-                {
-                    entity.Cards.Add(CreateCardFromDto(cardDto));
-                }
-            }
-            if (dto.Attachment is not null)
-            {
-                entity.Attachment = CreateAttachmentFromDto(dto.Attachment);
-            }
             return entity;
         }
         public Components.Models.Type CreateTypeFromDto(TypeDto dto)
@@ -256,13 +152,6 @@ namespace SRLearningServer.Tests.Utilities
                 LastUpdated = dto.LastUpdated,
                 Active = dto.Active,
             };
-            if (!dto.Cards.IsNullOrEmpty())
-            {
-                foreach (CardDto cardDto in dto.Cards)
-                {
-                    entity.Cards.Add(CreateCardFromDto(cardDto));
-                }
-            }
             return entity;
         }
 

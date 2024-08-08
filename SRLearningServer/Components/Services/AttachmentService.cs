@@ -27,9 +27,9 @@ namespace SRLearningServer.Components.Services
         {
             try
             {
-                Attachment newAttachment = _dtoToDomainConverter.ConvertToAttachmentFromAttachmentDto(entity);
+                Attachment newAttachment = _dtoToDomainConverter.ConvertToDomainFromDto(entity);
                 newAttachment = Task.Run(() => _attachmentRepository.Create(newAttachment)).Result;
-                return _domainToDtoConverter.ConvertToAttachmentDtoFromAttachment(newAttachment, true);
+                return _domainToDtoConverter.ConvertToDtoFromDomain(newAttachment, true);
 
             }
             catch (Exception ex)
@@ -49,7 +49,7 @@ namespace SRLearningServer.Components.Services
             try
             {
                 Attachment attachment = Task.Run(() => _attachmentRepository.Deactivate(id)).Result;
-                return _domainToDtoConverter.ConvertToAttachmentDtoFromAttachment(attachment, true);
+                return _domainToDtoConverter.ConvertToDtoFromDomain(attachment, true);
             }
             catch (Exception ex)
             {
@@ -62,9 +62,9 @@ namespace SRLearningServer.Components.Services
         {
             try
             {
-                Attachment attachment = _dtoToDomainConverter.ConvertToAttachmentFromAttachmentDto(entity);
+                Attachment attachment = _dtoToDomainConverter.ConvertToDomainFromDto(entity);
                 attachment = Task.Run(() => _attachmentRepository.Delete(attachment)).Result;
-                return _domainToDtoConverter.ConvertToAttachmentDtoFromAttachment(attachment, true);
+                return _domainToDtoConverter.ConvertToDtoFromDomain(attachment, true);
             }
             catch (Exception ex)
             {
@@ -78,7 +78,7 @@ namespace SRLearningServer.Components.Services
             try
             {
                 Attachment attachment = Task.Run(() => _attachmentRepository.Get(id)).Result;
-                return _domainToDtoConverter.ConvertToAttachmentDtoFromAttachment(attachment, true);
+                return _domainToDtoConverter.ConvertToDtoFromDomain(attachment, true);
             }
             catch (Exception ex)
             {
@@ -96,7 +96,7 @@ namespace SRLearningServer.Components.Services
                 {
                     return null;
                 }
-                return _domainToDtoConverter.ConvertToAttachmentDtoFromAttachment(attachments, true);
+                return _domainToDtoConverter.ConvertToDtoFromDomain(attachments, true);
             }
             catch (Exception ex)
             {

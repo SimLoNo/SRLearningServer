@@ -7,7 +7,7 @@ namespace SRLearningServer.Components.Converters
 {
     public class DtoToDomainConverter : IDtoToDomainConverter
     {
-        public IEnumerable<Attachment> ConvertToAttachmentFromAttachmentDto(IEnumerable<AttachmentDto> entities)
+        public IEnumerable<Attachment> ConvertToDomainFromDto(IEnumerable<AttachmentDto> entities)
         {
             if (entities.IsNullOrEmpty())
             {
@@ -28,14 +28,14 @@ namespace SRLearningServer.Components.Converters
                     };
                     if (!dto.Results.IsNullOrEmpty())
                     {
-                        foreach (Result result in ConvertToResultFromResultDto(dto.Results))
+                        foreach (Result result in ConvertToDomainFromDto(dto.Results))
                         {
                             attachment.Results.Add(result);
                         }
                     }
                     if (!dto.Cards.IsNullOrEmpty())
                     {
-                        foreach (Card card in ConvertToCardFromCardDto(dto.Cards))
+                        foreach (Card card in ConvertToDomainFromDto(dto.Cards))
                         {
                             attachment.Cards.Add(card);
                         }
@@ -51,7 +51,7 @@ namespace SRLearningServer.Components.Converters
             }
         }
 
-        public Attachment ConvertToAttachmentFromAttachmentDto(AttachmentDto entity)
+        public Attachment ConvertToDomainFromDto(AttachmentDto entity)
         {
             if (entity is null)
             {
@@ -60,7 +60,7 @@ namespace SRLearningServer.Components.Converters
             try
             {
                 List<AttachmentDto> attachmentDtos = new() { entity };
-                List<Attachment> attachments = ConvertToAttachmentFromAttachmentDto(attachmentDtos).ToList();
+                List<Attachment> attachments = ConvertToDomainFromDto(attachmentDtos).ToList();
                 return attachments[0];
             }
             catch (Exception ex)
@@ -70,7 +70,7 @@ namespace SRLearningServer.Components.Converters
             }
         }
 
-        public IEnumerable<Card> ConvertToCardFromCardDto(IEnumerable<CardDto> entities)
+        public IEnumerable<Card> ConvertToDomainFromDto(IEnumerable<CardDto> entities)
         {
             List<Card> cards = new();
             try
@@ -88,21 +88,21 @@ namespace SRLearningServer.Components.Converters
                     };
                     if (!cardDto.Types.IsNullOrEmpty())
                     {
-                        foreach (Components.Models.Type type in ConvertToTypeFromTypeDto(cardDto.Types))
+                        foreach (Components.Models.Type type in ConvertToDomainFromDto(cardDto.Types))
                         {
                             newCard.Types.Add(type);
                         }
                     }
                     if (!cardDto.Results.IsNullOrEmpty())
                     {
-                        foreach (Result result in ConvertToResultFromResultDto(cardDto.Results))
+                        foreach (Result result in ConvertToDomainFromDto(cardDto.Results))
                         {
                             newCard.Results.Add(result);
                         }
                     }
                     if (cardDto.Attachment is not null)
                     {
-                        newCard.Attachment = ConvertToAttachmentFromAttachmentDto(cardDto.Attachment);
+                        newCard.Attachment = ConvertToDomainFromDto(cardDto.Attachment);
                     }
                     cards.Add(newCard);
                 }
@@ -115,12 +115,12 @@ namespace SRLearningServer.Components.Converters
             }
         }
 
-        public Card ConvertToCardFromCardDto(CardDto entity)
+        public Card ConvertToDomainFromDto(CardDto entity)
         {
             try
             {
                 List<CardDto> entities = new() { entity };
-                List<Card> cards = ConvertToCardFromCardDto(entities).ToList();
+                List<Card> cards = ConvertToDomainFromDto(entities).ToList();
                 return cards[0];
             }
             catch (Exception ex)
@@ -130,7 +130,7 @@ namespace SRLearningServer.Components.Converters
             }
         }
 
-        public IEnumerable<Result> ConvertToResultFromResultDto(IEnumerable<ResultDto> entities)
+        public IEnumerable<Result> ConvertToDomainFromDto(IEnumerable<ResultDto> entities)
         {
             List<Result> results = new();
             try
@@ -147,11 +147,11 @@ namespace SRLearningServer.Components.Converters
                     };
                     if (dto.Attachment is not null)
                     {
-                        result.Attachment = ConvertToAttachmentFromAttachmentDto(dto.Attachment);
+                        result.Attachment = ConvertToDomainFromDto(dto.Attachment);
                     }
                     if (!dto.Cards.IsNullOrEmpty())
                     {
-                        foreach (Card card in ConvertToCardFromCardDto(dto.Cards))
+                        foreach (Card card in ConvertToDomainFromDto(dto.Cards))
                         {
                             result.Cards.Add(card);
                         }
@@ -167,12 +167,12 @@ namespace SRLearningServer.Components.Converters
             }
         }
 
-        public Result ConvertToResultFromResultDto(ResultDto entity)
+        public Result ConvertToDomainFromDto(ResultDto entity)
         {
             try
             {
                 List<ResultDto> entities = new() { entity };
-                List<Result> results = ConvertToResultFromResultDto(entities).ToList();
+                List<Result> results = ConvertToDomainFromDto(entities).ToList();
                 return results[0];
             }
             catch (Exception ex)
@@ -182,7 +182,7 @@ namespace SRLearningServer.Components.Converters
             }
         }
 
-        public IEnumerable<Models.Type> ConvertToTypeFromTypeDto(IEnumerable<TypeDto> entities)
+        public IEnumerable<Models.Type> ConvertToDomainFromDto(IEnumerable<TypeDto> entities)
         {
             List<Models.Type> types = new();
             try
@@ -198,7 +198,7 @@ namespace SRLearningServer.Components.Converters
                     };
                     if (!dto.Cards.IsNullOrEmpty())
                     {
-                        foreach (Card card in ConvertToCardFromCardDto(dto.Cards))
+                        foreach (Card card in ConvertToDomainFromDto(dto.Cards))
                         {
                             type.Cards.Add(card);
                         }
@@ -214,10 +214,10 @@ namespace SRLearningServer.Components.Converters
             }
         }
 
-        public Models.Type ConvertToTypeFromTypeDto(TypeDto entity)
+        public Models.Type ConvertToDomainFromDto(TypeDto entity)
         {
             List<TypeDto> entities = new() { entity };
-            List<Models.Type> types = ConvertToTypeFromTypeDto(entities).ToList();
+            List<Models.Type> types = ConvertToDomainFromDto(entities).ToList();
             return types[0];
         }
     }
