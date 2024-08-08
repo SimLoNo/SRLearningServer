@@ -6,6 +6,6 @@ namespace SRLearningServer.Components.Interfaces.Repositories
     {
 
         public Task<TypeCategoryList> GetByName(string name);
-        public Task<TypeCategoryList> Update(TypeCategoryList typeCategoryList);
+        //public Task<TypeCategoryList> Update(TypeCategoryList typeCategoryList);
     }
 }

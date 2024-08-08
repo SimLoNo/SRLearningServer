@@ -1,4 +1,5 @@
 ﻿using Humanizer;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.IdentityModel.Tokens;
 using SRLearningServer.Components.Interfaces.Converters;
 using SRLearningServer.Components.Interfaces.Repositories;
@@ -35,7 +36,7 @@ namespace SRLearningServer.Components.Services
             catch (Exception ex)
             {
 
-                throw new Exception(ex.Message);
+                return null;
             }
         }
 
@@ -54,7 +55,7 @@ namespace SRLearningServer.Components.Services
             catch (Exception ex)
             {
 
-                throw new Exception(ex.Message);
+                return null;
             }
         }
 
@@ -69,7 +70,7 @@ namespace SRLearningServer.Components.Services
             catch (Exception ex)
             {
 
-                throw new Exception(ex.Message);
+                return null;
             }
         }
 
@@ -83,7 +84,7 @@ namespace SRLearningServer.Components.Services
             catch (Exception ex)
             {
 
-                throw new Exception(ex.Message);
+                return null;
             }
         }
 
@@ -101,7 +102,26 @@ namespace SRLearningServer.Components.Services
             catch (Exception ex)
             {
 
-                throw new Exception(ex.Message);
+                return null;
+            }
+        }
+
+        public AttachmentDto Update(AttachmentDto entity)
+        {
+            try
+            {
+                Attachment attachment = _dtoToDomainConverter.ConvertToDomainFromDto(entity);
+                attachment = Task.Run(() => _attachmentRepository.Update(attachment)).Result;
+                if (attachment is null)
+                {
+                    return null;
+                }
+                return _domainToDtoConverter.ConvertToDtoFromDomain(attachment);
+            }
+            catch (Exception ex)
+            {
+
+                throw null;
             }
         }
     }

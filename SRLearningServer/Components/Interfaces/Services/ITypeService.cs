@@ -2,7 +2,7 @@
 
 namespace SRLearningServer.Components.Interfaces.Services
 {
-    public interface ITypeService : IBaseDataService<Models.Type, TypeDto>
+    public interface ITypeService : IBaseDataService<TypeDto>
     {
     }
 }

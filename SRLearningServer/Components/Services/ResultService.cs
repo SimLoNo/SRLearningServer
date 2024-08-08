@@ -33,7 +33,7 @@ namespace SRLearningServer.Components.Services
             catch (Exception ex)
             {
 
-                throw new Exception(ex.Message);
+                return null;
             }
         }
 
@@ -52,7 +52,7 @@ namespace SRLearningServer.Components.Services
             catch (Exception ex)
             {
 
-                throw new Exception(ex.Message);
+                return null;
             }
         }
 
@@ -67,7 +67,7 @@ namespace SRLearningServer.Components.Services
             catch (Exception ex)
             {
 
-                throw new Exception(ex.Message);
+                return null;
             }
         }
 
@@ -81,7 +81,7 @@ namespace SRLearningServer.Components.Services
             catch (Exception ex)
             {
 
-                throw new Exception(ex.Message);
+                return null;
             }
         }
 
@@ -99,7 +99,26 @@ namespace SRLearningServer.Components.Services
             catch (Exception ex)
             {
 
-                throw new Exception(ex.Message);
+                return null;
+            }
+        }
+
+        public ResultDto Update(ResultDto entity)
+        {
+            try
+            {
+                Result result = _dtoToDomainConverter.ConvertToDomainFromDto(entity);
+                result = Task.Run(() => _resultRepository.Update(result)).Result;
+                if (result is null)
+                {
+                    return null;
+                }
+                return _domainToDtoConverter.ConvertToDtoFromDomain(result);
+            }
+            catch (Exception ex)
+            {
+
+                throw null;
             }
         }
     }

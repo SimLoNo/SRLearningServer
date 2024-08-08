@@ -3,7 +3,7 @@ using SRLearningServer.Components.Models.DTO;
 
 namespace SRLearningServer.Components.Interfaces.Services
 {
-    public interface IResultService : IBaseDataService<Result, ResultDto>
+    public interface IResultService : IBaseDataService<ResultDto>
     {
     }
 }

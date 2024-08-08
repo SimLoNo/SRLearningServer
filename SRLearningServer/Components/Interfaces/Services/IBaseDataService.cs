@@ -2,7 +2,7 @@
 {
 
 
-    public interface IBaseDataService<T, U>
+    public interface IBaseDataService<U>
     {
         /*/// <summary>
         /// Takes a list of DTOs and converts them to entities
@@ -74,5 +74,12 @@
         /// </summary>
         /// <returns></returns>
         public IEnumerable<U> GetAll();
+
+        /// <summary>
+        /// Updates an entity in the database.
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        public U Update(U entity);
     }
 }

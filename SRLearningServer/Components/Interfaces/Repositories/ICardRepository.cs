@@ -12,7 +12,7 @@ namespace SRLearningServer.Components.Interfaces.Repositories
         /// <param name="typeId"></param>
         /// <returns></returns>
         Task<List<Card>> GetByType(List<List<Models.Type>> typeId);
-        Task<Card> Update(Card card);
+        //Task<Card> Update(Card card);
 
     }
 }

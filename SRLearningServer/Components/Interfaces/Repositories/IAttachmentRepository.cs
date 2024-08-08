@@ -5,6 +5,6 @@ namespace SRLearningServer.Components.Interfaces.Repositories
     public interface IAttachmentRepository : IBaseRepository<Attachment>
     {
 
-        Task<Attachment> Update(Attachment attachment);
+        //Task<Attachment> Update(Attachment attachment);
     }
 }

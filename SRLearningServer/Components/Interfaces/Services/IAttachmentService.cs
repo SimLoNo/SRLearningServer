@@ -3,7 +3,7 @@ using SRLearningServer.Components.Models.DTO;
 
 namespace SRLearningServer.Components.Interfaces.Services
 {
-    public interface IAttachmentService : IBaseDataService<Attachment, AttachmentDto>
+    public interface IAttachmentService : IBaseDataService<AttachmentDto>
     {
         /*/// <summary>
         /// Takes a single attachment and converts it to a DTO. If convertRelations is true, it will also convert the attachment's relations

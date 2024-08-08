@@ -34,7 +34,7 @@ namespace SRLearningServer.Components.Services
             catch (Exception ex)
             {
 
-                throw new Exception(ex.Message);
+                return null;
             }
         }
 
@@ -53,7 +53,7 @@ namespace SRLearningServer.Components.Services
             catch (Exception ex)
             {
 
-                throw new Exception(ex.Message);
+                return null;
             }
         }
 
@@ -68,7 +68,7 @@ namespace SRLearningServer.Components.Services
             catch (Exception ex)
             {
 
-                throw new Exception(ex.Message);
+                return null;
             }   
         }
 
@@ -82,7 +82,7 @@ namespace SRLearningServer.Components.Services
             catch (Exception ex)
             {
 
-                throw new Exception(ex.Message);
+                return null;
             }
         }
 
@@ -100,30 +100,58 @@ namespace SRLearningServer.Components.Services
             catch (Exception ex)
             {
 
-                throw new Exception(ex.Message);
+                return null;
             }
         }
 
         public List<CardDto> GetByType(List<List<TypeDto>> typeId)
         {
-            List<List<Models.Type>> typeList = new List<List<Models.Type>>();
-            foreach (List<TypeDto> type in typeId)
+            try
             {
-                foreach (TypeDto t in type)
+                List<List<Models.Type>> typeList = new List<List<Models.Type>>();
+                foreach (List<TypeDto> type in typeId)
                 {
-                    if(t.TypeId !> 0)
+                    foreach (TypeDto t in type)
                     {
-                        type.Remove(t);
+                        if (t.TypeId! > 0)
+                        {
+                            type.Remove(t);
+                        }
                     }
+                    typeList.Add(_dtoToDomainConverter.ConvertToDomainFromDto(type).ToList());
                 }
-                typeList.Add(_dtoToDomainConverter.ConvertToDomainFromDto(type).ToList());
+                List<Card> cards = Task.Run(() => _cardRepository.GetByType(typeList)).Result.ToList();
+                if (cards.IsNullOrEmpty())
+                {
+                    return null;
+                }
+                return _domainToDtoConverter.ConvertToDtoFromDomain(cards, true).ToList();
             }
-            List<Card> cards = Task.Run(() => _cardRepository.GetByType(typeList)).Result.ToList();
-            if (cards.IsNullOrEmpty())
+            catch (Exception ex)
             {
+
                 return null;
             }
-            return _domainToDtoConverter.ConvertToDtoFromDomain(cards, true).ToList();
+            
+        }
+
+        public CardDto Update(CardDto entity)
+        {
+            try
+            {
+                Card card = _dtoToDomainConverter.ConvertToDomainFromDto(entity);
+                card = Task.Run(() => _cardRepository.Update(card)).Result;
+                if (card is null)
+                {
+                    return null;
+                }
+                return _domainToDtoConverter.ConvertToDtoFromDomain(card);
+            }
+            catch (Exception ex)
+            {
+
+                throw null;
+            }
         }
     }
 }
