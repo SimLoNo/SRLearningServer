@@ -1,4 +1,5 @@
-﻿using SRLearningServer.Components.Models;
+﻿using Microsoft.IdentityModel.Tokens;
+using SRLearningServer.Components.Models;
 using SRLearningServer.Components.Models.DTO;
 using System.Net.Mail;
 
@@ -76,5 +77,21 @@ namespace SRLearningServer.Components.Interfaces.Converters
         /// <param name="convertRelations"></param>
         /// <returns></returns>
         public TypeDto ConvertToDtoFromDomain(Models.Type entity, bool convertRelations = false);
+
+        /// <summary>
+        /// Takes an IEnumerable of TypeCategoryList and converts them to an IEnumerable of TypeCategoryListDto. If convertRelations is true, it will also convert the TypeCategoryList's relations
+        /// </summary>
+        /// <param name="entities"></param>
+        /// <param name="convertRelations"></param>
+        /// <returns></returns>
+        public List<TypeCategoryListDto> ConvertToDtoFromDomain(IEnumerable<TypeCategoryList> entities, bool convertRelations = false);
+
+        /// <summary>
+        /// Takes a single TypeCategoryList and converts it to an TypeCategoryListDto. If convertRelations is true, it will also convert the TypeCategoryList's relations
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <param name="convertRelations"></param>
+        /// <returns></returns>
+        public TypeCategoryListDto ConvertToDtoFromDomain(TypeCategoryList entity, bool convertRelations = false);
     }
 }

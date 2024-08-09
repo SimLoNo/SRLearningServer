@@ -24,12 +24,12 @@ namespace SRLearningServer.Components.Services
 
         }
 
-        public AttachmentDto Create(AttachmentDto entity)
+        public async Task<AttachmentDto> Create(AttachmentDto entity)
         {
             try
             {
                 Attachment newAttachment = _dtoToDomainConverter.ConvertToDomainFromDto(entity);
-                newAttachment = Task.Run(() => _attachmentRepository.Create(newAttachment)).Result;
+                newAttachment = await _attachmentRepository.Create(newAttachment);
                 if (newAttachment is null)
                 {
                     return null;
@@ -44,16 +44,16 @@ namespace SRLearningServer.Components.Services
             }
         }
 
-        public AttachmentDto Deactivate(AttachmentDto entity)
+        public async Task<AttachmentDto> Deactivate(AttachmentDto entity)
         {
-            return Deactivate(entity.AttachmentId);
+            return await Deactivate(entity.AttachmentId);
         }
 
-        public AttachmentDto Deactivate(int id)
+        public async Task<AttachmentDto> Deactivate(int id)
         {
             try
             {
-                Attachment attachment = Task.Run(() => _attachmentRepository.Deactivate(id)).Result;
+                Attachment attachment = await _attachmentRepository.Deactivate(id);
                 if (attachment is null)
                 {
                     return null;
@@ -67,12 +67,12 @@ namespace SRLearningServer.Components.Services
             }
         }
 
-        public AttachmentDto Delete(AttachmentDto entity)
+        public async Task<AttachmentDto> Delete(AttachmentDto entity)
         {
             try
             {
                 Attachment attachment = _dtoToDomainConverter.ConvertToDomainFromDto(entity);
-                attachment = Task.Run(() => _attachmentRepository.Delete(attachment)).Result;
+                attachment = await _attachmentRepository.Delete(attachment);
                 if (attachment is null)
                 {
                     return null;
@@ -86,13 +86,13 @@ namespace SRLearningServer.Components.Services
             }
         }
 
-        public AttachmentDto Get(int id)
+        public async Task<AttachmentDto> Get(int id)
         {
             try
             {
                 if (id > 0)
                 {
-                    Attachment attachment = Task.Run(() => _attachmentRepository.Get(id)).Result;
+                    Attachment attachment = await _attachmentRepository.Get(id);
                     if (attachment is null)
                     {
                         return null;
@@ -109,11 +109,11 @@ namespace SRLearningServer.Components.Services
             }
         }
 
-        public List<AttachmentDto> GetAll()
+        public async Task<List<AttachmentDto>> GetAll()
         {
             try
             {
-                List<Attachment> attachments = Task.Run(() => _attachmentRepository.GetAll()).Result.ToList();
+                List<Attachment> attachments = await _attachmentRepository.GetAll();
                 if (attachments.IsNullOrEmpty())
                 {
                     return null;
@@ -127,12 +127,12 @@ namespace SRLearningServer.Components.Services
             }
         }
 
-        public AttachmentDto Update(AttachmentDto entity)
+        public async Task<AttachmentDto> Update(AttachmentDto entity)
         {
             try
             {
                 Attachment attachment = _dtoToDomainConverter.ConvertToDomainFromDto(entity);
-                attachment = Task.Run(() => _attachmentRepository.Update(attachment)).Result;
+                attachment = await _attachmentRepository.Update(attachment);
                 if (attachment is null)
                 {
                     return null;

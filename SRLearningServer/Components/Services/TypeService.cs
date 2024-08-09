@@ -21,12 +21,12 @@ namespace SRLearningServer.Components.Services
             _typeRepository = typeRepository;
         }
 
-        public TypeDto Create(TypeDto entity)
+        public async Task<TypeDto> Create(TypeDto entity)
         {
             try
             {
                 Models.Type type = _dtoToDomainConverter.ConvertToDomainFromDto(entity);
-                type = Task.Run(() => _typeRepository.Create(type)).Result;
+                type = await _typeRepository.Create(type);
                 return _domainToDtoConverter.ConvertToDtoFromDomain(type, true);
             }
             catch (Exception ex)
@@ -36,16 +36,16 @@ namespace SRLearningServer.Components.Services
             }
         }
 
-        public TypeDto Deactivate(TypeDto entity)
+        public async Task<TypeDto> Deactivate(TypeDto entity)
         {
-            return Deactivate(entity.TypeId);
+            return await Deactivate(entity.TypeId);
         }
 
-        public TypeDto Deactivate(int id)
+        public async Task<TypeDto> Deactivate(int id)
         {
             try
             {
-                Models.Type type = Task.Run(() => _typeRepository.Deactivate(id)).Result;
+                Models.Type type = await _typeRepository.Deactivate(id);
                 return _domainToDtoConverter.ConvertToDtoFromDomain(type, true);
             }
             catch (Exception ex)
@@ -55,12 +55,12 @@ namespace SRLearningServer.Components.Services
             }
         }
 
-        public TypeDto Delete(TypeDto entity)
+        public async Task<TypeDto> Delete(TypeDto entity)
         {
             try
             {
                 Models.Type type = _dtoToDomainConverter.ConvertToDomainFromDto(entity);
-                type = Task.Run(() => _typeRepository.Delete(type)).Result;
+                type = await _typeRepository.Delete(type);
                 return _domainToDtoConverter.ConvertToDtoFromDomain(type, true);
             }
             catch (Exception ex)
@@ -70,11 +70,11 @@ namespace SRLearningServer.Components.Services
             }
         }
 
-        public TypeDto Get(int id)
+        public async Task<TypeDto> Get(int id)
         {
             try
             {
-                Models.Type type = Task.Run(() => _typeRepository.Get(id)).Result;
+                Models.Type type = await _typeRepository.Get(id);
                 return _domainToDtoConverter.ConvertToDtoFromDomain(type, true);
             }
             catch (Exception ex)
@@ -84,11 +84,11 @@ namespace SRLearningServer.Components.Services
             }
         }
 
-        public List<TypeDto> GetAll()
+        public async Task<List<TypeDto>> GetAll()
         {
             try
             {
-                List<Models.Type> types = Task.Run(() => _typeRepository.GetAll()).Result.ToList();
+                List<Models.Type> types = await _typeRepository.GetAll();
                 if (types.IsNullOrEmpty())
                 {
                     return null;
@@ -102,12 +102,12 @@ namespace SRLearningServer.Components.Services
             }
         }
 
-        public TypeDto Update(TypeDto entity)
+        public async Task<TypeDto> Update(TypeDto entity)
         {
             try
             {
                 Models.Type type = _dtoToDomainConverter.ConvertToDomainFromDto(entity);
-                type = Task.Run(() => _typeRepository.Update(type)).Result;
+                type = await _typeRepository.Update(type);
                 if (type is null)
                 {
                     return null;

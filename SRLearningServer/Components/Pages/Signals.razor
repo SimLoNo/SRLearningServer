@@ -1,4 +1,9 @@
 ﻿@page "/signals"
+@using SRLearningServer.Components.Interfaces.Services
+@using SRLearningServer.Components.Models.DTO
+@using SRLearningServer.Components.Models.WebpageModels
+@inject ICardService _cardService
+@inject ITypeCategoryListService _typeCategoryListService
 
 <PageTitle>Home</PageTitle>
 
@@ -6,5 +11,70 @@
 
 
 @code {
+    private string signalListName = "Signaler";
+    private string aspectListName = "SignalVisninger";
+    private CardDto currentCard = new();
+    private List<CardDto> cards = new();
+    private TypeCategoryListDto signals = new();
+    private TypeCategoryListDto aspects = new();
+    private List<SignalModel> signalSelection = new();
+    private string errorMessage;
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            signals = await _typeCategoryListService.GetByName(signalListName);
+            aspects = await _typeCategoryListService.GetByName(aspectListName);
+            foreach (TypeDto signalType in signals.Types)
+            {
+                SignalModel signal = new SignalModel()
+                    {
+                        SignalType = signalType,
+                        SignalAspects = aspects.Types
+                    };
+
+                signalSelection.Add(signal);
+            }
+        }
+        catch (Exception ex)
+        {
+
+            errorMessage = $"Error on getting signals or aspects: {ex.Message}";
+        }
+        finally
+        {
+
+            isLoading = false;
+        }
+    }
+
+    private void ToggleAspectSelection(TypeDto signal, TypeDto aspect)
+    {
+        int signalSelectionIndex = signalSelection.FindIndex(s => s.SignalType.TypeId == signal.TypeId);
+        if(signalSelectionIndex != -1)
+        {
+            if (signalSelection[signalSelectionIndex].SignalAspects.Contains(aspect))
+            {
+                signalSelection[signalSelectionIndex].SignalAspects.Remove(aspect);
+            }
+            else
+            {
+                signalSelection[signalSelectionIndex].SignalAspects.Add(aspect);
+            }
+        }
+
+    }
+
+    private bool IsAspectSelected(int signalId, TypeDto aspect)
+    {
+        int signalSelectionIndex = signalSelection.FindIndex(s => s.SignalType.TypeId == signalId);
+        if (signalSelectionIndex != -1)
+        {
+            return signalSelection[signalSelectionIndex].SignalAspects.Contains(aspect);
+        }
+        return false;
+    }
 
 }

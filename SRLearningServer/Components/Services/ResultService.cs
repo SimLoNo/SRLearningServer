@@ -22,12 +22,12 @@ namespace SRLearningServer.Components.Services
         }
         
 
-        public ResultDto Create(ResultDto entity)
+        public async Task<ResultDto> Create(ResultDto entity)
         {
             try
             {
                 Result result = _dtoToDomainConverter.ConvertToDomainFromDto(entity);
-                result = Task.Run(() => _resultRepository.Create(result)).Result;
+                result = await _resultRepository.Create(result);
                 if(result is null)
                 {
                     return null;
@@ -41,16 +41,16 @@ namespace SRLearningServer.Components.Services
             }
         }
 
-        public ResultDto Deactivate(ResultDto entity)
+        public async Task<ResultDto> Deactivate(ResultDto entity)
         {
-          return Deactivate(entity.ResultId);
+          return await Deactivate(entity.ResultId);
         }
 
-        public ResultDto Deactivate(int id)
+        public async Task<ResultDto> Deactivate(int id)
         {
             try
             {
-                Result result = Task.Run(() => _resultRepository.Deactivate(id)).Result;
+                Result result = await _resultRepository.Deactivate(id);
                 if (result is null)
                 {
                     return null;
@@ -64,12 +64,12 @@ namespace SRLearningServer.Components.Services
             }
         }
 
-        public ResultDto Delete(ResultDto entity)
+        public async Task<ResultDto> Delete(ResultDto entity)
         {
             try
             {
                 Result result = _dtoToDomainConverter.ConvertToDomainFromDto(entity);
-                result = Task.Run(() => _resultRepository.Delete(result)).Result;
+                result = await _resultRepository.Delete(result);
                 if (result is null)
                 {
                     return null;
@@ -83,11 +83,11 @@ namespace SRLearningServer.Components.Services
             }
         }
 
-        public ResultDto Get(int id)
+        public async Task<ResultDto> Get(int id)
         {
             try
             {
-                Result result = Task.Run(() => _resultRepository.Get(id)).Result;
+                Result result = await _resultRepository.Get(id);
                 if (result is null)
                 {
                     return null;
@@ -101,11 +101,11 @@ namespace SRLearningServer.Components.Services
             }
         }
 
-        public List<ResultDto> GetAll()
+        public async Task<List<ResultDto>> GetAll()
         {
             try
             {
-                List<Result> results = Task.Run(() => _resultRepository.GetAll()).Result.ToList();
+                List<Result> results = await _resultRepository.GetAll();
                 if (results.IsNullOrEmpty())
                 {
                     return null;
@@ -119,12 +119,12 @@ namespace SRLearningServer.Components.Services
             }
         }
 
-        public ResultDto Update(ResultDto entity)
+        public async Task<ResultDto> Update(ResultDto entity)
         {
             try
             {
                 Result result = _dtoToDomainConverter.ConvertToDomainFromDto(entity);
-                result = Task.Run(() => _resultRepository.Update(result)).Result;
+                result = await _resultRepository.Update(result);
                 if (result is null)
                 {
                     return null;

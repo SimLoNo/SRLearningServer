@@ -5,6 +5,6 @@ namespace SRLearningServer.Components.Interfaces.Services
 {
     public interface ICardService : IBaseDataService<CardDto>
     {
-        List<CardDto> GetByType(List<List<TypeDto>> typeId);
+        public Task<List<CardDto>> GetByType(List<List<TypeDto>> typeId);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using SRLearningServer.Components.Models.DTO;
 using SRLearningServer.Components.Models;
+using Microsoft.IdentityModel.Tokens;
 
 namespace SRLearningServer.Components.Interfaces.Converters
 {
@@ -75,5 +76,19 @@ namespace SRLearningServer.Components.Interfaces.Converters
         /// <param name="convertRelations"></param>
         /// <returns></returns>
         public Models.Type ConvertToDomainFromDto(TypeDto entity);
+
+        /// <summary>
+        /// Takes a list of TypeCategoryListDto and converts them to a list of TypeCategoryList
+        /// </summary>
+        /// <param name="entities"></param>
+        /// <returns></returns>
+        public List<TypeCategoryList> ConvertToDomainFromDto(List<TypeCategoryListDto> entities);
+
+        /// <summary>
+        /// Takes a single TypeCategoryListDto and converts it to a TypeCategoryList
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        public TypeCategoryList ConvertToDomainFromDto(TypeCategoryListDto entity);
     }
 }

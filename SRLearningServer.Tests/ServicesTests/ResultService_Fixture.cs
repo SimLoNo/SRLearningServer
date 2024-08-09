@@ -53,7 +53,7 @@ namespace SRLearningServer.Tests.ServicesTests
 
 
         [TestMethod]
-        public void Create_ResultDto_ReturnsResultDto()
+        public async Task Create_ResultDto_ReturnsResultDto()
         {
             //Arrange
             ResultDto entityUsed = _resultDto1;
@@ -62,7 +62,7 @@ namespace SRLearningServer.Tests.ServicesTests
             _domainToDtoConverter.Setup(x => x.ConvertToDtoFromDomain(It.IsAny<Result>(), It.IsAny<bool>())).Returns(entityUsed);
             _resultRepository.Setup(x => x.Create(It.IsAny<Result>())).Returns(Task.FromResult(returnedResult));
             //Act
-            var result = _resultService.Create(entityUsed);
+            var result = await _resultService.Create(entityUsed);
             //Assert
             Assert.IsNotNull(result);
             Assert.IsInstanceOfType(result, typeof(ResultDto));
@@ -74,7 +74,7 @@ namespace SRLearningServer.Tests.ServicesTests
         }
 
         [TestMethod]
-        public void Create_ResultDtoThatisNotCreated_ReturnsNull()
+        public async Task Create_ResultDtoThatisNotCreated_ReturnsNull()
         {
             //Arrange
             ResultDto entityUsed = _resultDto1;
@@ -83,14 +83,14 @@ namespace SRLearningServer.Tests.ServicesTests
             _domainToDtoConverter.Setup(x => x.ConvertToDtoFromDomain(It.IsAny<Result>(), It.IsAny<bool>())).Returns(entityUsed);
             _resultRepository.Setup(x => x.Create(It.IsAny<Result>())).Returns(() => null);
             //Act
-            var result = _resultService.Create(entityUsed);
+            var result = await _resultService.Create(entityUsed);
             //Assert
             Assert.IsNull(result);
 
         }
 
         [TestMethod]
-        public void Deactivate_ResultDto_ReturnsResultDto()
+        public async Task Deactivate_ResultDto_ReturnsResultDto()
         {
             //Arrange
             ResultDto entityUsed = _resultDto1;
@@ -100,7 +100,7 @@ namespace SRLearningServer.Tests.ServicesTests
             _domainToDtoConverter.Setup(x => x.ConvertToDtoFromDomain(It.IsAny<Result>(), It.IsAny<bool>())).Returns(entityUsed);
             _resultRepository.Setup(x => x.Deactivate(It.IsAny<int>())).Returns(Task.FromResult(returnedResult));
             //Act
-            var result = _resultService.Deactivate(entityUsed.ResultId);
+            var result = await _resultService.Deactivate(entityUsed.ResultId);
             //Assert
             Assert.IsNotNull(result);
             Assert.IsInstanceOfType(result, typeof(ResultDto));
@@ -112,7 +112,7 @@ namespace SRLearningServer.Tests.ServicesTests
         }
 
         [TestMethod]
-        public void Deactivate_int_ReturnsResultDto()
+        public async Task Deactivate_int_ReturnsResultDto()
         {
             //Arrange
             Result returnedResult = _result1;
@@ -123,7 +123,7 @@ namespace SRLearningServer.Tests.ServicesTests
             _domainToDtoConverter.Setup(x => x.ConvertToDtoFromDomain(It.IsAny<Result>(), It.IsAny<bool>())).Returns(entityUsed);
             _resultRepository.Setup(x => x.Deactivate(It.IsAny<int>())).Returns(Task.FromResult(returnedResult));
             //Act
-            var result = _resultService.Deactivate(idUsed);
+            var result = await _resultService.Deactivate(idUsed);
             //Assert
             Assert.IsNotNull(result);
             Assert.IsInstanceOfType(result, typeof(ResultDto));
@@ -135,7 +135,7 @@ namespace SRLearningServer.Tests.ServicesTests
         }
 
         [TestMethod]
-        public void Deactivate_ResultDto_ReturnsNull()
+        public async Task Deactivate_ResultDto_ReturnsNull()
         {
             //Arrange
             int idUsed = _result1.ResultId;
@@ -143,28 +143,28 @@ namespace SRLearningServer.Tests.ServicesTests
             _domainToDtoConverter.Setup(x => x.ConvertToDtoFromDomain(It.IsAny<Result>(), It.IsAny<bool>())).Returns(entityUsed);
             _resultRepository.Setup(x => x.Deactivate(It.IsAny<int>())).Returns(Task.FromResult<Result>(null));
             //Act
-            var result = _resultService.Deactivate(idUsed);
+            var result = await _resultService.Deactivate(idUsed);
             //Assert
             Assert.IsNull(result);
 
         }
 
         [TestMethod]
-        public void Deactivate_int_ReturnsNull()
+        public async Task Deactivate_int_ReturnsNull()
         {
             //Arrange
             ResultDto entityUsed = _resultDto1;
             _domainToDtoConverter.Setup(x => x.ConvertToDtoFromDomain(It.IsAny<Result>(), It.IsAny<bool>())).Returns(entityUsed);
             _resultRepository.Setup(x => x.Deactivate(It.IsAny<int>())).Returns(Task.FromResult<Result>(null));
             //Act
-            var result = _resultService.Deactivate(entityUsed.ResultId);
+            var result = await _resultService.Deactivate(entityUsed.ResultId);
             //Assert
             Assert.IsNull(result);
 
         }
 
         [TestMethod]
-        public void Delete_ResultDto_ReturnsResultDto()
+        public async Task Delete_ResultDto_ReturnsResultDto()
         {
             //Arrange
             ResultDto entityUsed = _resultDto1;
@@ -173,7 +173,7 @@ namespace SRLearningServer.Tests.ServicesTests
             _domainToDtoConverter.Setup(x => x.ConvertToDtoFromDomain(It.IsAny<Result>(), It.IsAny<bool>())).Returns(entityUsed);
             _resultRepository.Setup(x => x.Delete(It.IsAny<Result>())).Returns(Task.FromResult(returnedResult));
             //Act
-            var result = _resultService.Delete(entityUsed);
+            var result = await _resultService.Delete(entityUsed);
             //Assert
             Assert.IsNotNull(result);
             Assert.IsInstanceOfType(result, typeof(ResultDto));
@@ -184,7 +184,7 @@ namespace SRLearningServer.Tests.ServicesTests
         }
 
         [TestMethod]
-        public void Delete_ResultDto_ReturnsNull()
+        public async Task Delete_ResultDto_ReturnsNull()
         {
             //Arrange
             ResultDto entityUsed = _resultDto1;
@@ -192,13 +192,13 @@ namespace SRLearningServer.Tests.ServicesTests
             _dtoToDomainConverter.Setup(x => x.ConvertToDomainFromDto(It.IsAny<ResultDto>())).Returns(returnedResult);
             _resultRepository.Setup(x => x.Delete(It.IsAny<Result>())).Returns(Task.FromResult<Result>(null));
             //Act
-            var result = _resultService.Delete(entityUsed);
+            var result = await _resultService.Delete(entityUsed);
             //Assert
             Assert.IsNull(result);
         }
 
         [TestMethod]
-        public void Get_int_ReturnsResultDto()
+        public async Task Get_int_ReturnsResultDto()
         {
             //Arrange
             ResultDto entityUsed = _resultDto1;
@@ -206,7 +206,7 @@ namespace SRLearningServer.Tests.ServicesTests
             _domainToDtoConverter.Setup(x => x.ConvertToDtoFromDomain(It.IsAny<Result>(), It.IsAny<bool>())).Returns(entityUsed);
             _resultRepository.Setup(x => x.Get(It.IsAny<int>())).Returns(Task.FromResult(returnedResult));
             //Act
-            var result = _resultService.Get(entityUsed.ResultId);
+            var result = await _resultService.Get(entityUsed.ResultId);
             //Assert
             Assert.IsNotNull(result);
             Assert.IsInstanceOfType(result, typeof(ResultDto));
@@ -216,31 +216,31 @@ namespace SRLearningServer.Tests.ServicesTests
             Assert.AreEqual(returnedResult.ResultId, result.ResultId);
         }
         [TestMethod]
-        public void Get_int_ReturnsNull()
+        public async Task Get_int_ReturnsNull()
         {
             //Arrange
             ResultDto entityUsed = _resultDto1;
             _domainToDtoConverter.Setup(x => x.ConvertToDtoFromDomain(It.IsAny<Result>(), It.IsAny<bool>())).Returns(entityUsed);
             _resultRepository.Setup(x => x.Get(It.IsAny<int>())).Returns(Task.FromResult<Result>(null));
             //Act
-            var result = _resultService.Get(entityUsed.ResultId);
+            var result = await _resultService.Get(entityUsed.ResultId);
             //Assert
             Assert.IsNull(result);
         }
         [TestMethod]
-        public void Get_int_ReturnsNullWhenIdIsZero()
+        public async Task Get_int_ReturnsNullWhenIdIsZero()
         {
             //Arrange
             ResultDto entityUsed = _resultDto1;
             _domainToDtoConverter.Setup(x => x.ConvertToDtoFromDomain(It.IsAny<Result>(), It.IsAny<bool>())).Returns(entityUsed);
             _resultRepository.Setup(x => x.Get(It.IsAny<int>())).Returns(Task.FromResult<Result>(null));
             //Act
-            var result = _resultService.Get(0);
+            var result = await _resultService.Get(0);
             //Assert
             Assert.IsNull(result);
         }
         [TestMethod]
-        public void GetAll_ReturnsListOfResults()
+        public async Task GetAll_ReturnsListOfResults()
         {
             //Arrange
             List<ResultDto> entityUsed = new List<ResultDto> { _resultDto1, _resultDto2 };
@@ -248,7 +248,7 @@ namespace SRLearningServer.Tests.ServicesTests
             _domainToDtoConverter.Setup(x => x.ConvertToDtoFromDomain(It.IsAny<List<Result>>(), It.IsAny<bool>())).Returns(entityUsed);
             _resultRepository.Setup(x => x.GetAll()).Returns(Task.FromResult(returnedResults));
             //Act
-            var result = _resultService.GetAll();
+            var result = await _resultService.GetAll();
             //Assert
             Assert.IsNotNull(result);
             Assert.IsInstanceOfType(result, typeof(List<ResultDto>));
@@ -260,7 +260,7 @@ namespace SRLearningServer.Tests.ServicesTests
         }
 
         [TestMethod]
-        public void GetAll_ReturnsNull_WhenNoResultsFound()
+        public async Task GetAll_ReturnsNull_WhenNoResultsFound()
         {
             //Arrange
             List<ResultDto> entityUsed = new List<ResultDto> { _resultDto1, _resultDto2 };
@@ -268,13 +268,13 @@ namespace SRLearningServer.Tests.ServicesTests
             _domainToDtoConverter.Setup(x => x.ConvertToDtoFromDomain(It.IsAny<List<Result>>(), It.IsAny<bool>())).Returns(entityUsed);
             _resultRepository.Setup(x => x.GetAll()).Returns(() => null);
             //Act
-            var result = _resultService.GetAll();
+            var result = await _resultService.GetAll();
             //Assert
             Assert.IsNull(result);
         }
 
         [TestMethod]
-        public void Update_ResultToUpdate_ReturnsUpdatedResult()
+        public async Task Update_ResultToUpdate_ReturnsUpdatedResult()
         {
             //Arrange
             var entityUsed = _resultDto1;
@@ -286,7 +286,7 @@ namespace SRLearningServer.Tests.ServicesTests
             _resultRepository.Setup(x => x.Update(It.IsAny<Result>())).Returns(Task.FromResult(returnedResult));
 
             //Act
-            var result = _resultService.Update(entityUsed);
+            var result = await _resultService.Update(entityUsed);
             //Assert
             Assert.IsNotNull(result);
             Assert.IsInstanceOfType(result, typeof(ResultDto));
@@ -296,7 +296,7 @@ namespace SRLearningServer.Tests.ServicesTests
         }
 
         [TestMethod]
-        public void Update_ResultNotUpdated_ReturnsNull()
+        public async Task Update_ResultNotUpdated_ReturnsNull()
         {
             //Arrange
             var entityUsed = _resultDto1;
@@ -308,7 +308,7 @@ namespace SRLearningServer.Tests.ServicesTests
             _resultRepository.Setup(x => x.Update(It.IsAny<Result>())).Returns(() => null);
 
             //Act
-            var result = _resultService.Update(entityUsed);
+            var result = await _resultService.Update(entityUsed);
             //Assert
             Assert.IsNull(result);
         }

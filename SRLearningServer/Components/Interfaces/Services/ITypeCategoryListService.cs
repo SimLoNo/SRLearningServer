@@ -1,10 +1,11 @@
 ﻿using SRLearningServer.Components.Models;
+using SRLearningServer.Components.Models.DTO;
 
 namespace SRLearningServer.Components.Interfaces.Services
 {
-    public interface ITypeCategoryListService : IBaseDataService<TypeCategoryList>
+    public interface ITypeCategoryListService : IBaseDataService<TypeCategoryListDto>
     {
 
-        public TypeCategoryList GetByName(string name);
+        public Task<TypeCategoryListDto> GetByName(string name);
     }
 }

@@ -22,12 +22,12 @@ namespace SRLearningServer.Components.Services
             _cardRepository = cardRepository;
         }
 
-        public CardDto Create(CardDto entity)
+        public async Task<CardDto> Create(CardDto entity)
         {
             try
             {
                 Card card = _dtoToDomainConverter.ConvertToDomainFromDto(entity);
-                card = Task.Run(() => _cardRepository.Create(card)).Result;
+                card = await _cardRepository.Create(card);
                 return _domainToDtoConverter.ConvertToDtoFromDomain(card, true);
 
             }
@@ -38,16 +38,16 @@ namespace SRLearningServer.Components.Services
             }
         }
 
-        public CardDto Deactivate(CardDto entity)
+        public async Task<CardDto> Deactivate(CardDto entity)
         {
-            return Deactivate(entity.CardId);
+            return await Deactivate(entity.CardId);
         }
 
-        public CardDto Deactivate(int id)
+        public async Task<CardDto> Deactivate(int id)
         {
             try
             {
-                Card card = Task.Run(() => _cardRepository.Deactivate(id)).Result;
+                Card card = await _cardRepository.Deactivate(id);
                 return _domainToDtoConverter.ConvertToDtoFromDomain(card, true);
             }
             catch (Exception ex)
@@ -57,12 +57,12 @@ namespace SRLearningServer.Components.Services
             }
         }
 
-        public CardDto Delete(CardDto entity)
+        public async Task<CardDto> Delete(CardDto entity)
         {
             try
             {
                 Card card = _dtoToDomainConverter.ConvertToDomainFromDto(entity);
-                card = Task.Run(() => _cardRepository.Delete(card)).Result;
+                card = await _cardRepository.Delete(card);
                 return _domainToDtoConverter.ConvertToDtoFromDomain(card, true);
             }
             catch (Exception ex)
@@ -72,11 +72,11 @@ namespace SRLearningServer.Components.Services
             }   
         }
 
-        public CardDto Get(int id)
+        public async Task<CardDto> Get(int id)
         {
             try
             {
-                Card card = Task.Run(() => _cardRepository.Get(id)).Result;
+                Card card = await _cardRepository.Get(id);
                 return _domainToDtoConverter.ConvertToDtoFromDomain(card, true);
             }
             catch (Exception ex)
@@ -86,11 +86,11 @@ namespace SRLearningServer.Components.Services
             }
         }
 
-        public List<CardDto> GetAll()
+        public async Task<List<CardDto>> GetAll()
         {
             try
             {
-                List<Card> cards = Task.Run(() => _cardRepository.GetAll()).Result.ToList();
+                List<Card> cards = await _cardRepository.GetAll();
                 if (cards.IsNullOrEmpty())
                 {
                     return null;
@@ -104,7 +104,7 @@ namespace SRLearningServer.Components.Services
             }
         }
 
-        public List<CardDto> GetByType(List<List<TypeDto>> typeId)
+        public async Task<List<CardDto>> GetByType(List<List<TypeDto>> typeId)
         {
             try
             {
@@ -120,7 +120,7 @@ namespace SRLearningServer.Components.Services
                     }
                     typeList.Add(_dtoToDomainConverter.ConvertToDomainFromDto(type).ToList());
                 }
-                List<Card> cards = Task.Run(() => _cardRepository.GetByType(typeList)).Result.ToList();
+                List<Card> cards = await _cardRepository.GetByType(typeList);
                 if (cards.IsNullOrEmpty())
                 {
                     return null;
@@ -135,12 +135,12 @@ namespace SRLearningServer.Components.Services
             
         }
 
-        public CardDto Update(CardDto entity)
+        public async Task<CardDto> Update(CardDto entity)
         {
             try
             {
                 Card card = _dtoToDomainConverter.ConvertToDomainFromDto(entity);
-                card = Task.Run(() => _cardRepository.Update(card)).Result;
+                card = await _cardRepository.Update(card);
                 if (card is null)
                 {
                     return null;

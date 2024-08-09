@@ -3,6 +3,7 @@ using SRLearningServer.Components.Interfaces.Converters;
 using SRLearningServer.Components.Interfaces.Repositories;
 using SRLearningServer.Components.Interfaces.Services;
 using SRLearningServer.Components.Models;
+using SRLearningServer.Components.Models.DTO;
 using SRLearningServer.Components.Repositories;
 
 namespace SRLearningServer.Components.Services
@@ -18,22 +19,23 @@ namespace SRLearningServer.Components.Services
             _dtoToDomainConverter = dtoToDomainConverter;
             _typeCategoryListRepository = typeCategoryListRepository;
         }
-        public TypeCategoryList Create(TypeCategoryList entity)
+        public async Task<TypeCategoryListDto> Create(TypeCategoryListDto entity)
         {
             try
             {
-                TypeCategoryList typeCategoryList = Task.Run(() => _typeCategoryListRepository.GetByName(entity.TypeCategoryListName)).Result;
-                if (typeCategoryList != null)
+                TypeCategoryList typeCategoryList = _dtoToDomainConverter.ConvertToDomainFromDto(entity);
+                typeCategoryList = await _typeCategoryListRepository.GetByName(typeCategoryList.TypeCategoryListName);
+                if (typeCategoryList is null)
                 {
                     return null;
                 }
 
-                entity = Task.Run(() => _typeCategoryListRepository.Create(entity)).Result;
+                typeCategoryList = await _typeCategoryListRepository.Create(typeCategoryList);
                 if (entity == null)
                 {
                     return null;
                 }
-                return entity;
+                return _domainToDtoConverter.ConvertToDtoFromDomain(typeCategoryList);
             }
             catch (Exception)
             {
@@ -42,21 +44,21 @@ namespace SRLearningServer.Components.Services
             }
         }
 
-        public TypeCategoryList Deactivate(TypeCategoryList entity)
+        public async Task<TypeCategoryListDto> Deactivate(TypeCategoryListDto entity)
         {
-            return Deactivate(entity.TypeCategoryListId);
+            return await Deactivate(entity.TypeCategoryListId);
         }
 
-        public TypeCategoryList Deactivate(int id)
+        public async Task<TypeCategoryListDto> Deactivate(int id)
         {
             try
             {
-                TypeCategoryList typeCategoryList = Task.Run(() => _typeCategoryListRepository.Deactivate(id)).Result;
+                TypeCategoryList typeCategoryList = await _typeCategoryListRepository.Deactivate(id);
                 if (typeCategoryList == null)
                 {
                     return null;
                 }
-                return typeCategoryList;
+                return _domainToDtoConverter.ConvertToDtoFromDomain(typeCategoryList);
             }
             catch (Exception ex)
             {
@@ -65,16 +67,17 @@ namespace SRLearningServer.Components.Services
             }
         }
 
-        public TypeCategoryList Delete(TypeCategoryList entity)
+        public async Task<TypeCategoryListDto> Delete(TypeCategoryListDto entity)
         {
             try
             {
-                TypeCategoryList typeCategoryList = Task.Run(() => _typeCategoryListRepository.Delete(entity)).Result;
+                TypeCategoryList typeCategoryList = _dtoToDomainConverter.ConvertToDomainFromDto(entity);
+                typeCategoryList = await _typeCategoryListRepository.Delete(typeCategoryList);
                 if (typeCategoryList == null)
                 {
                     return null;
                 }
-                return typeCategoryList;
+                return _domainToDtoConverter.ConvertToDtoFromDomain(typeCategoryList);
             }
             catch (Exception ex)
             {
@@ -83,16 +86,16 @@ namespace SRLearningServer.Components.Services
             }
         }
 
-        public TypeCategoryList Get(int id)
+        public async Task<TypeCategoryListDto> Get(int id)
         {
             try
             {
-                TypeCategoryList typeCategoryList = Task.Run(() => _typeCategoryListRepository.Get(id)).Result;
+                TypeCategoryList typeCategoryList = await _typeCategoryListRepository.Get(id);
                 if (typeCategoryList == null)
                 {
                     return null;
                 }
-                return typeCategoryList;
+                return _domainToDtoConverter.ConvertToDtoFromDomain(typeCategoryList);
             }
             catch (Exception ex)
             {
@@ -101,16 +104,16 @@ namespace SRLearningServer.Components.Services
             }
         }
 
-        public List<TypeCategoryList> GetAll()
+        public async Task<List<TypeCategoryListDto>> GetAll()
         {
             try
             {
-                List<TypeCategoryList> list = Task.Run(() => _typeCategoryListRepository.GetAll()).Result;
+                List<TypeCategoryList> list = await _typeCategoryListRepository.GetAll();
                 if (list.IsNullOrEmpty())
                 {
                     return null;
                 }
-                return list;
+                return _domainToDtoConverter.ConvertToDtoFromDomain(list);
             }
             catch (Exception ex)
             {
@@ -119,16 +122,16 @@ namespace SRLearningServer.Components.Services
             }
         }
 
-        public TypeCategoryList GetByName(string name)
+        public async Task<TypeCategoryListDto> GetByName(string name)
         {
             try
             {
-                TypeCategoryList typeCategoryList = Task.Run(() => _typeCategoryListRepository.GetByName(name)).Result;
+                TypeCategoryList typeCategoryList = await _typeCategoryListRepository.GetByName(name);
                 if (typeCategoryList == null)
                 {
                     return null;
                 }
-                return typeCategoryList;
+                return _domainToDtoConverter.ConvertToDtoFromDomain(typeCategoryList);
             }
             catch (Exception ex)
             {
@@ -137,16 +140,17 @@ namespace SRLearningServer.Components.Services
             }
         }
 
-        public TypeCategoryList Update(TypeCategoryList entity)
+        public async Task<TypeCategoryListDto> Update(TypeCategoryListDto entity)
         {
             try
             {
-                TypeCategoryList typeCategoryList = Task.Run(() => _typeCategoryListRepository.Update(entity)).Result;
+                TypeCategoryList typeCategoryList = _dtoToDomainConverter.ConvertToDomainFromDto(entity);
+                typeCategoryList = await _typeCategoryListRepository.Update(typeCategoryList);
                 if (typeCategoryList == null)
                 {
                     return null;
                 }
-                return typeCategoryList;
+                return _domainToDtoConverter.ConvertToDtoFromDomain(typeCategoryList);
             }
             catch (Exception ex)
             {
