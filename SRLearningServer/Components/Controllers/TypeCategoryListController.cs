@@ -70,7 +70,7 @@ namespace SRLearningServer.Components.Controllers
             }
         }
 
-        [HttpGet("{id:int}")]
+        [HttpGet("byid/{id:int}")]
         public async Task<ActionResult<TypeCategoryListDto>> Get(int id)
         {
             try
@@ -105,7 +105,7 @@ namespace SRLearningServer.Components.Controllers
             }
         }
 
-        [HttpGet("{name:string}")]
+        [HttpGet("{name}")]
         public async Task<ActionResult<TypeCategoryListDto>> GetByName(string name)
         {
             try

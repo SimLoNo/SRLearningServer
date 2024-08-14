@@ -73,8 +73,9 @@ builder.Services
     .AddScoped<IResultService, ResultService>()
     .AddScoped<IFrontendAttachmentService, FrontendAttachmentService>()
     .AddScoped<IFrontendCardService, FrontendCardService>()
-    .AddScoped<IFrontendTypeService, FrontendTypeService>()
     .AddScoped<IFrontendResultService, FrontendResultService>()
+    .AddScoped<IFrontendTypeCategoryListService, FrontendTypeCategoryListService>()
+    .AddScoped<IFrontendTypeService, FrontendTypeService>()
     .AddScoped<IDomainToDtoConverter, DomainToDtoConverter>()
     .AddScoped<IDtoToDomainConverter, DtoToDomainConverter>();
 
@@ -88,7 +89,6 @@ builder.Services.AddScoped(sp =>
 builder.Services.AddControllers()
         .AddJsonOptions(options =>
         {
-            options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
             options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
         });
 

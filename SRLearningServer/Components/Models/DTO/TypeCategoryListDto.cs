@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace SRLearningServer.Components.Models.DTO
 {
@@ -13,6 +14,6 @@ namespace SRLearningServer.Components.Models.DTO
 
         public DateOnly LastUpdated { get; set; }
 
-        public List<TypeDto> Types { get; } = [];
+        public List<TypeDto> Types { get; set; } = new List<TypeDto>();
     }
 }

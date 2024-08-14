@@ -1,10 +1,11 @@
 ﻿@page "/signals"
 @rendermode InteractiveServer
-@using SRLearningServer.Components.Interfaces.Services
+@using SRLearningServer.Components.Interfaces.FrontendServices
 @using SRLearningServer.Components.Models.DTO
 @using SRLearningServer.Components.Models.WebpageModels
-@inject ICardService _cardService
-@inject ITypeCategoryListService _typeCategoryListService
+
+@inject IFrontendCardService _cardService
+@inject IFrontendTypeCategoryListService _typeCategoryListService
 
 <PageTitle>Signaler</PageTitle>
 

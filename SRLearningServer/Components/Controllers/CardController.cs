@@ -115,8 +115,8 @@ namespace SRLearningServer.Components.Controllers
             }
         }
 
-        [HttpGet]
-        public async Task<ActionResult<List<CardDto>>> GetByType(List<List<TypeDto>> cards)
+        [HttpPost("GetByType")]
+        public async Task<ActionResult<List<CardDto>>> GetByType([FromBody]List<List<TypeDto>> cards)
         {
             try
             {
