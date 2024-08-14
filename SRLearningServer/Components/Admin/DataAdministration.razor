@@ -1,0 +1,266 @@
+﻿@page "/admin/data"
+@rendermode InteractiveServer
+@using SRLearningServer.Components.Interfaces.Services
+@using SRLearningServer.Components.Models.DTO
+
+@inject IAttachmentService _attachmentService
+@inject ICardService _cardService
+@inject IResultService _resultService
+@inject ITypeService _typeService
+@inject ITypeCategoryListService _typeCategoryListService
+
+<PageTitle>Data administration</PageTitle>
+
+<h3>Data Administration</h3>
+<button class="btn btn-primary" @onclick="SetCreateType">Opret ny</button>
+<button class="btn btn-primary" @onclick="SetEditType">Opdater eksisterende</button>
+<div>
+    @if ((createType == true || editType == true) && workingType == "")
+    {
+
+        <label for="typeSelection">Vælg en data type du vil :</label>
+        <select name="typeSelection" @bind="workingType" id="typeSelection">
+            <option value="card">Kort</option>
+            <option value="attachment">vedhæft</option>
+            <option value="result">Resultat</option>
+            <option value="type">Type</option>
+            <option value="typeCategoryList">Type Categori</option>
+        </select>
+    }
+    else if (createType == true)
+    {
+        if (workingType == "card")
+        {
+
+            <div>
+                <label for="cardName">Navn</label>
+                <input type="text" id="cardName" @bind="card.CardName"/>
+
+                <label for="cardText">Beskrivelse</label>
+                <input type="text" id="cardText" @bind="card.CardText" />
+
+
+                <label for="active">Aktiv</label>
+                <input type="checkbox" id="active" @bind="card.Active" />
+                <div>
+                <label for="attachment">Vedhæftning</label>
+                <select name="attachment" @bind="attachmentId">
+                    @foreach (var att in attachmentList)
+                    {
+                        if (att.Active == true)
+                        {
+                            <option value="@att.AttachmentId">@att.AttachmentName</option>
+                        }
+                    }
+                </select>
+                </div>
+                <div>
+                <label for="result">Svar</label>
+                <select multiple name="result" @bind="selectedResultIds">
+                    @foreach (var result in resultList)
+                    {
+                        if (result.Active == true)
+                        {
+                            <option value="@result.ResultId">@result.ResultText</option>
+                        }
+                    }
+                </select>
+                </div>
+                <div>
+                <label for="type">Typer</label>
+                <select multiple name="type" @bind="selectedTypeIds">
+                    @foreach (var type in typeList)
+                    {
+                        if (type.Active == true)
+                        {
+                            <option value="@type.TypeId">@type.CardTypeName</option>
+                        }
+                    }
+                </select>
+                </div>
+
+                <button class="btn btn-primary" @onclick="CreateCard">Gem</button>
+            </div>
+        }
+        else if (workingType == "attachment")
+        {
+        }
+        else if (workingType == "result")
+        {
+        }
+        else if (workingType == "type")
+        {
+        }
+        else if (workingType == "typeCategoryList")
+        {
+        }
+
+    }
+    else if(editType == true)
+    {
+
+    }
+    else
+    {
+        <p>Der er ikke valgt en handling</p>
+        <p class="error">@errorMessage</p>
+
+    }
+
+</div>
+
+
+
+
+@code {
+    private string workingType = "";
+    private bool createType = false;
+    private bool editType = false;
+    private string errorMessage = "";
+    private CardDto card = new();
+    private AttachmentDto attachment = new();
+    private ResultDto result = new();
+    private TypeDto type = new();
+    private TypeCategoryListDto typeCategoryList = new();
+
+    private List<CardDto> cardList = new();
+    private List<AttachmentDto> attachmentList = new();
+    private List<ResultDto> resultList = new();
+    private List<TypeDto> typeList = new();
+    private List<TypeCategoryListDto> typeCategoryListList = new();
+
+
+    int attachmentId = 0;
+    int[] selectedResultIds = [];
+    int[] selectedTypeIds = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            attachmentList = await GetAttachments();
+            cardList = await GetCards();
+            resultList = await GetResults();
+            typeList = await GetTypes();
+            typeCategoryListList = await GetTypeCategoryLists();
+        }
+        catch (Exception ex)
+        {
+
+            errorMessage = ex.Message;
+        }
+        finally
+        {
+
+        }
+
+    }
+
+    private void ChangeTypeToBeCreated(string type)
+    {
+        workingType = type;
+    }
+    private void SetCreateType()
+    {
+        ResetWork();
+        createType = true;
+        editType = false;
+    }
+    private void SetEditType()
+    {
+        ResetWork();
+        createType = false;
+        editType = true;
+    }
+
+    private void ResetWork()
+    {
+        workingType = "";
+        card = new();
+        attachment = new();
+        result = new();
+        type = new();
+        typeCategoryList = new();
+    }
+
+    private async Task<List<AttachmentDto>> GetAttachments()
+    {
+        var result = await _attachmentService.GetAll();
+        if (result is null)
+        {
+            errorMessage = "Der blev ikke fundet nogle vedhæftninger.";
+            return new List<AttachmentDto>();
+        }
+        return result;
+    }
+
+    private async Task<List<ResultDto>> GetResults()
+    {
+        var result = await _resultService.GetAll();
+        if (result is null)
+        {
+            errorMessage = "Der blev ikke fundet nogle resultater.";
+            return new List<ResultDto>();
+        }
+        return result;
+    }
+
+    private async Task<List<TypeDto>> GetTypes()
+    {
+        var result = await _typeService.GetAll();
+        if (result is null)
+        {
+            errorMessage = "Der blev ikke fundet nogle typer.";
+            return new List<TypeDto>();
+        }
+        return result;
+    }
+
+    private async Task<List<TypeCategoryListDto>> GetTypeCategoryLists()
+    {
+        var result = await _typeCategoryListService.GetAll();
+        if (result is null)
+        {
+            errorMessage = "Der blev ikke fundet nogle type kategorier.";
+            return new List<TypeCategoryListDto>();
+        }
+        return result;
+
+    }
+
+    private async Task<List<CardDto>> GetCards(){
+        var result = await _cardService.GetAll();
+        if (result is null)
+        {
+            errorMessage = "Der blev ikke fundet nogle kort.";
+            return new List<CardDto>();
+        }
+        return result;
+    }
+
+    private async void CreateCard()
+    {
+        var entity = card;
+        if (attachmentId > 0)
+        {
+            entity.Attachment = attachmentList.FirstOrDefault(x => x.AttachmentId == attachmentId);
+
+        }
+        if (selectedResultIds.Length > 0)
+        {
+            entity.Results = resultList.Where(x => selectedResultIds.Contains(x.ResultId)).ToList();
+        }
+        if (selectedTypeIds.Length > 0)
+        {
+            entity.Types = typeList.Where(x => selectedTypeIds.Contains(x.TypeId)).ToList();
+        }
+        var result = await _cardService.Create(entity);
+        if (result is not null)
+        {
+            createType = false;
+            ResetWork();
+        }
+    }
+
+
+}

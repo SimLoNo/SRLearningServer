@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SRLearningServer", "SRLearn
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SRLearningServer.Tests", "SRLearningServer.Tests\SRLearningServer.Tests.csproj", "{00D38950-A7BC-4BDD-894B-52C2F6FDD397}"
 EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{9A23714F-FF37-4025-A839-81AEC09664F5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{00D38950-A7BC-4BDD-894B-52C2F6FDD397}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{00D38950-A7BC-4BDD-894B-52C2F6FDD397}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{00D38950-A7BC-4BDD-894B-52C2F6FDD397}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9A23714F-FF37-4025-A839-81AEC09664F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A23714F-FF37-4025-A839-81AEC09664F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A23714F-FF37-4025-A839-81AEC09664F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9A23714F-FF37-4025-A839-81AEC09664F5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

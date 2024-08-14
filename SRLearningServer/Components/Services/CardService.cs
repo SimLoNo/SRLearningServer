@@ -111,13 +111,7 @@ namespace SRLearningServer.Components.Services
                 List<List<Models.Type>> typeList = new List<List<Models.Type>>();
                 foreach (List<TypeDto> type in typeId)
                 {
-                    foreach (TypeDto t in type)
-                    {
-                        if (t.TypeId! > 0)
-                        {
-                            type.Remove(t);
-                        }
-                    }
+                    
                     typeList.Add(_dtoToDomainConverter.ConvertToDomainFromDto(type).ToList());
                 }
                 List<Card> cards = await _cardRepository.GetByType(typeList);

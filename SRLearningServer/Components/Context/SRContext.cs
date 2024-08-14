@@ -19,9 +19,16 @@ namespace SRLearningServer.Components.Context
         public SRContext(DbContextOptions<SRContext> options) : base(options)
         {
         }
-
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.EnableSensitiveDataLogging();
+            }
+        }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Card>().HasOne(p => p.Attachment).WithMany(p => p.Cards).HasForeignKey(c => c.AttachmentId);
             List<Attachment> attachments = new() 
             {
                 new()
@@ -59,7 +66,7 @@ namespace SRLearningServer.Components.Context
                     TypeId = 1,
                     CardTypeName = "Signal",
                     LastUpdated = DateOnly.FromDateTime(DateTime.Now),
-                    Active = true
+                    Active = true,
                 },
                 new
                 {
@@ -158,6 +165,7 @@ namespace SRLearningServer.Components.Context
                     CardText = "I signal uden efterfølgende SI signal med denne visning betyder?",
                     LastUpdated = DateOnly.FromDateTime(DateTime.Now),
                     Active = true,
+                    AttachmentId = attachments[0].AttachmentId,
                 },
                 new
                 {
@@ -166,6 +174,7 @@ namespace SRLearningServer.Components.Context
                     CardText = "I signal med efterfølgende SI signal med denne visning betyder?",
                     LastUpdated = DateOnly.FromDateTime(DateTime.Now),
                     Active = true,
+                    AttachmentId = attachments[0].AttachmentId,
                 },
                 new
                 {
@@ -174,6 +183,7 @@ namespace SRLearningServer.Components.Context
                     CardText = "I signal med efterfølgende SI signal med denne visning betyder?",
                     LastUpdated = DateOnly.FromDateTime(DateTime.Now),
                     Active = true,
+                    AttachmentId = attachments[0].AttachmentId
                 },
                 new
                 {
@@ -182,6 +192,7 @@ namespace SRLearningServer.Components.Context
                     CardText = "I signal med denne visning betyder?",
                     LastUpdated = DateOnly.FromDateTime(DateTime.Now),
                     Active = true,
+                    AttachmentId = attachments[0].AttachmentId
                 }
             );
 

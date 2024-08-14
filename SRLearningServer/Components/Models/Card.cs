@@ -15,8 +15,9 @@ namespace SRLearningServer.Components.Models
         [MaxLength(300)]
         public string CardText { get; set; }
 
-        /*[Column(TypeName = "int")]
-        public int AttachmentId { get; set; }*/
+        [Column(TypeName = "int")]
+        [ForeignKey("Attachment")]
+        public int? AttachmentId { get; set; }
         public DateOnly LastUpdated { get; set; }
 
         public bool Active { get; set; }

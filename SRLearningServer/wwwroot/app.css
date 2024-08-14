@@ -49,3 +49,53 @@ h1:focus {
 .darker-border-checkbox.form-check-input {
     border-color: #929292;
 }
+
+.signal-selection {
+    margin-top: 20px;
+}
+
+.signal-type {
+    margin-bottom: 10px;
+}
+
+    .signal-type h3 {
+        cursor: pointer;
+        color: #006bb7;
+    }
+
+.aspect-list {
+    margin-left: 20px;
+    margin-top: 10px;
+}
+
+.card {
+}
+
+.card-body {
+}
+.card-image {
+    position: relative;
+    display: flex;
+    justify-content: center;
+}
+
+    .card-image img {
+        max-width: 100%;
+        height: auto;
+    }
+
+    .card-image map area {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+    }
+
+        .card-image map area.left-half {
+            left: 0;
+            right: 50%;
+        }
+
+        .card-image map area.right-half {
+            left: 50%;
+            right: 0;
+        }

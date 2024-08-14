@@ -32,6 +32,9 @@ namespace SRLearningServer.Components.Repositories
                 // Fetch all active cards that have any of the specified TypeIds
                 var activeCards = await _context.Set<Card>()
                     .Where(c => c.Active && c.Types.Any(t => typeIds.Contains(t.TypeId)))
+                    .Include(c => c.Types)
+                    .Include(c => c.Results)
+                    .Include(c => c.Attachment)
                     .ToListAsync();
 
                 // Filter the active cards to match the typeSelectors
@@ -100,7 +103,11 @@ namespace SRLearningServer.Components.Repositories
         {
             try
             {
-                Models.Card trackedCard = await _context.Set<Models.Card>().FirstOrDefaultAsync(t => t.CardId == card.CardId);
+                Models.Card trackedCard = await _context.Set<Models.Card>()
+                    .Include(c => c.Types)
+                    .Include(c => c.Results)
+                    .Include(c => c.Attachment)
+                    .FirstOrDefaultAsync(t => t.CardId == card.CardId);
                 if (trackedCard == null)
                 {
                     return null;

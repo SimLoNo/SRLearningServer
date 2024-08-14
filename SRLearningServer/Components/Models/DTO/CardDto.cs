@@ -17,8 +17,8 @@ namespace SRLearningServer.Components.Models.DTO
         public bool Active { get; set; }
 
 
-        public List<TypeDto> Types { get; } = [];
-        public List<ResultDto> Results { get; } = [];
+        public List<TypeDto> Types { get; set; } = [];
+        public List<ResultDto> Results { get; set; } = [];
         public AttachmentDto Attachment { get; set; }
     }
 }

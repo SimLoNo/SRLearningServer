@@ -20,6 +20,7 @@ namespace SRLearningServer.Components.Repositories
             try
             {
                 return await _context.Set<TypeCategoryList>()
+                    .Include(tcl => tcl.Types)
                     .FirstOrDefaultAsync(tcl => tcl.TypeCategoryListName == name && tcl.Active == true);
             }
             catch (Exception ex)

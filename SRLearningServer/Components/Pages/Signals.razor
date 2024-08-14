@@ -1,25 +1,136 @@
 ﻿@page "/signals"
+@rendermode InteractiveServer
 @using SRLearningServer.Components.Interfaces.Services
 @using SRLearningServer.Components.Models.DTO
 @using SRLearningServer.Components.Models.WebpageModels
 @inject ICardService _cardService
 @inject ITypeCategoryListService _typeCategoryListService
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Signaler</PageTitle>
 
-<h1>Signals</h1>
+<h1>Signaler</h1>
+
+
+@if (alwaysShowResult == true)
+{
+    <button class="btn btn-primary" @onclick="ToggleAlwaysShowResult">Vis ikke svarene</button>
+}
+else
+{
+    <button class="btn btn-primary" @onclick="ToggleAlwaysShowResult">Vis altid svarene</button>
+}
+<div>
+    @if (cards.Count > 0 && isLoading == false)
+    {
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">@cards[currentCard].CardName</h5>
+                <p class="card-text">@cards[currentCard].CardText</p>
+                <div class="card-image">
+                    <img src="/Development/Attachments/@cards[currentCard].Attachment?.AttachmentUrl" usemap="#progressmap"/>
+                    <map name="progressmap">
+                        <area shape="rect" class="left-half" coords="0,0,50%,100%" alt="Go back" @onclick="() => Progress(false)" />
+                        <area shape="rect" class="right-half" coords="50%,0,100%,100%" alt="Progress" @onclick="() => Progress(true)" />
+                    </map>
+                </div>
+                @if (showResult == true || alwaysShowResult == true)
+                {
+                    <div>
+                        @if(alwaysShowResult == false && showResult == true)
+                        {
+                            <div>
+                                <p>Klik på højre side for at se næste signal. Klik på venstre side for at skjule svarene.</p>
+                            </div>
+                        }
+                        else
+                        {
+                            <div>
+                                <p>Klik på højre side for at se næste signal. Klik på venstre side for at gå tilbage.</p>
+                            </div>
+                        }
+                        <ul>
+                        @foreach (var result in cards[currentCard].Results)
+                        {
+                            <li>@result.ResultText</li>
+                        }
+                        </ul>
+                    </div>
+                }
+                else
+                {
+                    <div>
+                        <p>Klik på højre side for at se svarene. Klik på venstre side for at gå tilbage.</p>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+    else if (isLoading)
+    {
+        <p>Indlæser Signaler...</p>
+    }
+    else if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <p class="error">@errorMessage</p>
+    }
+    else
+    {
+        <p>Ingen signaler at vise</p>
+    }
+
+    
+</div>
+
+<button class="btn btn-primary" @onclick="GetSignals">Opdater Signaler</button>
+
+<button class="btn btn-primary" @onclick="ToggleSignalList">Sorter Signaler</button>
+
+<div class="signal-selection">
+    @if (aspects.Types.Count == 0)
+    {
+        <p>Indlæser...</p>
+    }
+    @if (showSignalList)
+    {
+        @foreach (var signal in signalSelection)
+        {
+            <div class="signal-type">
+                <div>
+                    <label><h3 @onclick="() => ToggleAspectList(signal.SignalType.TypeId)">@signal.SignalType.CardTypeName </h3></label>
+                    <input type="checkbox" @onchange="() => ToggleAllSignalAspects(signal.SignalType.TypeId)" checked="@IsAllAspectsSelected(signal.SignalType.TypeId)" />
+                </div>
+                @if (expandedSignalId == signal.SignalType.TypeId)
+                {
+                    <div class="aspect-list">
+                        @foreach (var aspect in aspects.Types)
+                        {
+                            <div>
+                                <input type="checkbox" @onchange="() => ToggleAspectSelection(signal.SignalType.TypeId, aspect)" checked="@IsAspectSelected(signal.SignalType.TypeId, aspect)" />
+                                <label>@aspect.CardTypeName</label>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        }
+    }
+</div>
 
 
 @code {
     private string signalListName = "Signaler";
     private string aspectListName = "SignalVisninger";
-    private CardDto currentCard = new();
+    private int currentCard = 0;
     private List<CardDto> cards = new();
     private TypeCategoryListDto signals = new();
     private TypeCategoryListDto aspects = new();
     private List<SignalModel> signalSelection = new();
-    private string errorMessage;
-    private bool isLoading = true;
+    private string errorMessage = "";
+    private bool isLoading = false;
+    private bool showSignalList = false;
+    private int? expandedSignalId = null;
+    private bool showResult = false;
+    private bool alwaysShowResult = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -32,7 +143,7 @@
                 SignalModel signal = new SignalModel()
                     {
                         SignalType = signalType,
-                        SignalAspects = aspects.Types
+                        SignalAspects = new(aspects.Types)
                     };
 
                 signalSelection.Add(signal);
@@ -46,13 +157,54 @@
         finally
         {
 
-            isLoading = false;
         }
     }
 
-    private void ToggleAspectSelection(TypeDto signal, TypeDto aspect)
+    private void ToggleSignalList()
     {
-        int signalSelectionIndex = signalSelection.FindIndex(s => s.SignalType.TypeId == signal.TypeId);
+        showSignalList = !showSignalList;
+    }
+
+    private void ToggleAspectList(int signalId)
+    {
+        if (expandedSignalId == signalId)
+        {
+            expandedSignalId = null;
+        }
+        else
+        {
+            expandedSignalId = signalId;
+        }
+    }
+
+    private void ToggleAllSignalAspects(int signalId)
+    {
+        int signalSelectionIndex = signalSelection.FindIndex(s => s.SignalType.TypeId == signalId);
+        if(signalSelectionIndex != -1)
+        {
+            if(signalSelection[signalSelectionIndex].SignalAspects.Count == aspects.Types.Count)
+            {
+                signalSelection[signalSelectionIndex].SignalAspects.Clear();
+            }
+            else
+            {
+                signalSelection[signalSelectionIndex].SignalAspects = new List<TypeDto>(aspects.Types);
+            }
+        }
+    }
+
+    private bool IsAllAspectsSelected(int signalId){
+        int signalSelectionIndex = signalSelection.FindIndex(s => s.SignalType.TypeId == signalId);
+        if(signalSelectionIndex != -1)
+        {
+            return signalSelection[signalSelectionIndex].SignalAspects.Count == aspects.Types.Count;
+        }
+        return false;
+    }
+
+    private void ToggleAspectSelection(int signalId, TypeDto aspect)
+    {
+        int signalSelectionIndex = signalSelection.FindIndex(s => s.SignalType.TypeId == signalId);
         if(signalSelectionIndex != -1)
         {
             if (signalSelection[signalSelectionIndex].SignalAspects.Contains(aspect))
@@ -77,4 +229,89 @@
         return false;
     }
 
+    private async void GetSignals()
+    {
+        isLoading = true;
+        errorMessage = "";
+        showResult = false;
+        showSignalList = false;
+        expandedSignalId = null;
+        currentCard = 0;
+        List<List<TypeDto>> signalAspects = new();
+        foreach (SignalModel signal in signalSelection)
+        {
+            foreach (TypeDto aspect in signal.SignalAspects)
+            {
+
+                List<TypeDto> Selection = new();
+                Selection.Add(signal.SignalType);
+                Selection.Add(aspect);
+                signalAspects.Add(Selection);
+
+            }
+        }
+        cards = await _cardService.GetByType(signalAspects);
+        if (cards is null)
+        {
+            cards = new();
+            errorMessage = "Ingen signaler med de sendte kriterier blev fundet.";
+        }
+        isLoading = false;
+        StateHasChanged();
+
+    }
+
+    private void ToggleAlwaysShowResult()
+    {
+        alwaysShowResult = !alwaysShowResult;
+    }
+
+    private void Progress(bool direction)
+    {
+        if (direction == true)
+        {
+            if(showResult == true || alwaysShowResult == true)
+            {
+                showResult = false;
+                if (currentCard < cards.Count - 1)
+                {
+                    currentCard++;
+
+                }
+                else
+                {
+                    currentCard = 0;
+                }
+            }
+            else
+            {
+                showResult = true;
+            }
+        }
+        else
+        {
+            if (showResult == false || alwaysShowResult == true)
+            {
+                if (currentCard > 0)
+                {
+                    currentCard--;
+                }
+                else
+                {
+                    currentCard = cards.Count - 1;
+                }
+                showResult = true;
+            }
+            else
+            {
+                showResult = false;
+            }
+        }
+    }
+
 }
+
+
+
+
+

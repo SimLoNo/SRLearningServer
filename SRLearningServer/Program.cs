@@ -33,6 +33,8 @@ builder.Services.AddAuthentication(options =>
     })
     .AddIdentityCookies();
 
+builder.Services.AddRazorPages();
+builder.Services.AddServerSideBlazor();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
@@ -45,6 +47,7 @@ builder.Services.AddDbContext<SRContext>(options =>
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddSignInManager()
     .AddDefaultTokenProviders();
@@ -56,6 +59,7 @@ builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSe
 
 builder.Services
     .AddScoped<ITypeCategoryListRepository, TypeCategoryListRepository>()
+    .AddScoped<ITypeCategoryListService, TypeCategoryListService>()
     .AddScoped<ITypeRepository, TypeRepository>()
     .AddScoped<ICardRepository, CardRepository>()
     .AddScoped<IAttachmentRepository, AttachmentRepository>()
@@ -72,6 +76,15 @@ builder.Services.AddControllers()
         {
             options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
         });
+
+/*string userFolder = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+userFolder = Path.Combine(userFolder, ".aspnet");
+userFolder = Path.Combine(userFolder, "https");
+userFolder = Path.Combine(userFolder, "srlearning.pfx");
+builder.Configuration.GetSection("Kestrel:Endpoints:Https:Certificates:path").Value = userFolder;
+
+string kestrelCertPassword = builder.Configuration.GetValue<string>("KestrelCertPassword");
+builder.Configuration.GetSection("Kestrel:Endpoints:Https:Certificates:password").Value = kestrelCertPassword;*/
 
 var app = builder.Build();
 
