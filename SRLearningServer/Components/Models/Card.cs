@@ -6,7 +6,6 @@ namespace SRLearningServer.Components.Models
     public class Card
     {
         [Key]
-        [Column(TypeName = "int")]
         public int CardId { get; set; }
 
         [MaxLength(200)]

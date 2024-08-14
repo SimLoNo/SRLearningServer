@@ -13,6 +13,31 @@ namespace SRLearningServer.Components.Repositories
 
         }
 
+        public async Task<Result> Create(Result entity)
+        {
+            try
+            {
+                entity.LastUpdated = DateOnly.FromDateTime(DateTime.UtcNow);
+                foreach (var card in entity.Cards.ToList())
+                {
+                    var newCard = await _context.Cards.FirstOrDefaultAsync(c => c.CardId == card.CardId);
+                    entity.Cards.Remove(card);
+                    if (newCard != null)
+                    {
+                        entity.Cards.Add(newCard);
+                    }
+                }
+                _context.Results.Add(entity);
+                await _context.SaveChangesAsync();
+                return entity;
+            }
+            catch (Exception ex)
+            {
+
+                return null;
+            }
+        }
+
         /*public async Task<IEnumerable<Result>> GetMultiple() // TODO need to figure out how I want this to work, should it simply return all active results in which case it will need a rename, or should there be a selection process, and if so what should I select on?
         {
             try

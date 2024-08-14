@@ -11,6 +11,41 @@ namespace SRLearningServer.Components.Repositories
         {
         }
 
+        public async Task<Attachment> Create(Attachment entity)
+        {
+            try
+            {
+                entity.LastUpdated = DateOnly.FromDateTime(DateTime.UtcNow);
+                foreach (var result in entity.Results.ToList())
+                {
+                    var newResult = await _context.Results.FirstOrDefaultAsync(r => r.ResultId == result.ResultId);
+                    entity.Results.Remove(result);
+                    if (newResult != null)
+                    {
+                        entity.Results.Add(newResult);
+                    }
+                }
+
+                foreach (var card in entity.Cards.ToList())
+                {
+                    var newCard = await _context.Cards.FirstOrDefaultAsync(c => c.CardId == card.CardId);
+                    entity.Cards.Remove(card);
+                    if (newCard != null)
+                    {
+                        entity.Cards.Add(newCard);
+                    }
+                }
+                _context.Attachments.Add(entity);
+                await _context.SaveChangesAsync();
+                return entity;
+            }
+            catch (Exception ex)
+            {
+
+                return null;
+            }
+        }
+
         /*/// <summary>
         /// Gets all active Attachments from the database.
         /// </summary>

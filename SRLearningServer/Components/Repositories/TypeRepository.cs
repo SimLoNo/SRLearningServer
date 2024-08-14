@@ -13,6 +13,41 @@ namespace SRLearningServer.Components.Repositories
         {
         }
 
+        public async Task<Models.Type> Create(Models.Type entity)
+        {
+            try
+            {
+                entity.LastUpdated = DateOnly.FromDateTime(DateTime.UtcNow);
+                foreach (var card in entity.Cards.ToList())
+                {
+                    var newCard = _context.Cards.FirstOrDefaultAsync(c => c.CardId == card.CardId);
+                    entity.Cards.Remove(card);
+                    if (newCard != null)
+                    {
+                        entity.Cards.Add(newCard.Result);
+                    }
+                }
+                foreach (var typeCategory in entity.TypeCategoryLists.ToList())
+                {
+                    var newTypeCategory = _context.TypeCategoryLists.FirstOrDefaultAsync(tcl => tcl.TypeCategoryListId == typeCategory.TypeCategoryListId);
+                    entity.TypeCategoryLists.Remove(typeCategory);
+                    if (newTypeCategory != null)
+                    {
+                        entity.TypeCategoryLists.Add(newTypeCategory.Result);
+                    }
+
+                }
+                _context.Types.Add(entity);
+                await _context.SaveChangesAsync();
+                return entity;
+            }
+            catch (Exception ex)
+            {
+
+                return null;
+            }
+        }
+
         /*/// <summary>
         /// Gets a list of active types from the database. If no types are sent, all active types are returned.
         /// </summary>

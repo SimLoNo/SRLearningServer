@@ -57,12 +57,12 @@ namespace SRLearningServer.Components.Services
             }
         }
 
-        public async Task<CardDto> Delete(CardDto entity)
+        public async Task<CardDto> Delete(int entity)
         {
             try
             {
-                Card card = _dtoToDomainConverter.ConvertToDomainFromDto(entity);
-                card = await _cardRepository.Delete(card);
+                //Card card = _dtoToDomainConverter.ConvertToDomainFromDto(entity);
+                Card card = await _cardRepository.Delete(entity);
                 return _domainToDtoConverter.ConvertToDtoFromDomain(card, true);
             }
             catch (Exception ex)

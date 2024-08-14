@@ -1,17 +1,18 @@
 ﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
+using SRLearningServer.Components.Context;
 using SRLearningServer.Components.Interfaces.Repositories;
 
 namespace SRLearningServer.Components.Repositories
 {
     public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : class
     {
-        protected readonly DbContext _context;
-        public BaseRepository(DbContext context)
+        protected readonly SRContext _context;
+        public BaseRepository(SRContext context)
         {
             _context = context;
         }
-        /// <summary>
+        /*/// <summary>
         /// Create a new entity in the database, if attached relations are not present, they will be created as well.
         /// </summary>
         /// <param name="entity"></param>
@@ -31,7 +32,7 @@ namespace SRLearningServer.Components.Repositories
 
                 return null;
             }
-        }
+        }*/
         /// <summary>
         /// Deactivates an entry in the database by setting the Active property to false. This is used when an entity is not to be deleted but is to be hidden from the user.
         /// </summary>
@@ -66,14 +67,18 @@ namespace SRLearningServer.Components.Repositories
         /// <param name="entity"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<TEntity> Delete(TEntity entity)
+        public async Task<TEntity> Delete(int entity)
         {
             try
             {
-
-                _context.Set<TEntity>().Remove(entity);
+                var result = await _context.Set<TEntity>().FindAsync(entity);
+                if (result == null)
+                {
+                    return null;
+                }
+                _context.Set<TEntity>().Remove(result);
                 await _context.SaveChangesAsync();
-                return entity;
+                return result;
             }
             catch (Exception ex)
             {
@@ -112,7 +117,7 @@ namespace SRLearningServer.Components.Repositories
             try
             {
 
-                return await _context.Set<TEntity>().ToListAsync();
+                return await _context.Set<TEntity>().AsNoTracking().ToListAsync();
             }
             catch (Exception ex)
             {

@@ -55,12 +55,12 @@ namespace SRLearningServer.Components.Services
             }
         }
 
-        public async Task<TypeDto> Delete(TypeDto entity)
+        public async Task<TypeDto> Delete(int entity)
         {
             try
             {
-                Models.Type type = _dtoToDomainConverter.ConvertToDomainFromDto(entity);
-                type = await _typeRepository.Delete(type);
+                //Models.Type type = _dtoToDomainConverter.ConvertToDomainFromDto(entity);
+                Models.Type type = await _typeRepository.Delete(entity);
                 return _domainToDtoConverter.ConvertToDtoFromDomain(type, true);
             }
             catch (Exception ex)

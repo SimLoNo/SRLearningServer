@@ -18,6 +18,42 @@ namespace SRLearningServer.Components.Repositories
             
         }
 
+        public async Task<Card> Create(Card entity)
+        {
+            try
+            {
+                entity.LastUpdated = DateOnly.FromDateTime(DateTime.Now);
+                foreach (var result in entity.Results.ToList())
+                {
+                    var newResult = await _context.Results.FirstOrDefaultAsync(r => r.ResultId == result.ResultId);
+                    entity.Results.Remove(result);
+                    if (newResult != null)
+                    {
+                        entity.Results.Add(newResult);
+                    }
+                }
+
+                foreach (var type in entity.Types.ToList())
+                {
+                    var newType = await _context.Types.FirstOrDefaultAsync(t => t.TypeId == type.TypeId);
+                    entity.Types.Remove(type);
+                    if (newType != null)
+                    {
+                        entity.Types.Add(newType);
+
+                    }
+                }
+                _context.Cards.Add(entity);
+                await _context.SaveChangesAsync();
+                return entity;
+            }
+            catch (Exception ex)
+            {
+
+                return null;
+            }
+        }
+
         public async Task<List<Card>> GetByType(List<List<Models.Type>> typeSelectors)
         {
             if (typeSelectors == null || typeSelectors.Count == 0)

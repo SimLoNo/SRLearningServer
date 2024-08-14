@@ -553,7 +553,7 @@ namespace SRLearningServer.Tests.RepositoriesTests
             _context.Attachments.Add(entityUsed);
             await _context.SaveChangesAsync();
             //Act
-            var result = await _repository.Delete(entityUsed);
+            var result = await _repository.Delete(entityUsed.AttachmentId);
             //Assert
             Assert.IsNotNull(result);
             Assert.IsInstanceOfType(result, typeof(Attachment));
@@ -571,7 +571,7 @@ namespace SRLearningServer.Tests.RepositoriesTests
             await _context.Database.EnsureDeletedAsync();
             await _context.SaveChangesAsync();
             //Act
-            var result = await _repository.Delete(entityUsed);
+            var result = await _repository.Delete(entityUsed.AttachmentId);
             //Assert
             Assert.IsNull(result);
         }

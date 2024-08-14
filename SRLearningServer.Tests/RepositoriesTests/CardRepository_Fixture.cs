@@ -741,7 +741,7 @@ namespace SRLearningServer.Tests.RepositoriesTests
             _context.Cards.Add(entityUsed);
             await _context.SaveChangesAsync();
             //Act
-            var result = await _repository.Delete(entityUsed);
+            var result = await _repository.Delete(entityUsed.CardId);
             //Assert
             Assert.IsNotNull(result);
             Assert.IsInstanceOfType(result, typeof(Card));
@@ -759,7 +759,7 @@ namespace SRLearningServer.Tests.RepositoriesTests
             await _context.Database.EnsureDeletedAsync();
             await _context.SaveChangesAsync();
             //Act
-            var result = await _repository.Delete(entityUsed);
+            var result = await _repository.Delete(entityUsed.CardId);
             //Assert
             Assert.IsNull(result);
         }

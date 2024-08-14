@@ -177,9 +177,9 @@ namespace SRLearningServer.Tests.ServicesTests
             Attachment returnedAttachment = _attachment1;
             _dtoToDomainConverter.Setup(x => x.ConvertToDomainFromDto(It.IsAny<AttachmentDto>())).Returns(returnedAttachment);
             _domainToDtoConverter.Setup(x => x.ConvertToDtoFromDomain(It.IsAny<Attachment>(), It.IsAny<bool>())).Returns(entityUsed);
-            _attachmentRepository.Setup(x => x.Delete(It.IsAny<Attachment>())).Returns(Task.FromResult(returnedAttachment));
+            _attachmentRepository.Setup(x => x.Delete(It.IsAny<int>())).Returns(Task.FromResult(returnedAttachment));
             //Act
-            var result = await _attachmentService.Delete(entityUsed);
+            var result = await _attachmentService.Delete(entityUsed.AttachmentId);
             //Assert
             Assert.IsNotNull(result);
             Assert.IsInstanceOfType(result, typeof(AttachmentDto));
@@ -197,9 +197,9 @@ namespace SRLearningServer.Tests.ServicesTests
             AttachmentDto entityUsed = _attachmentDto1;
             Attachment returnedAttachment = _attachment1;
             _dtoToDomainConverter.Setup(x => x.ConvertToDomainFromDto(It.IsAny<AttachmentDto>())).Returns(returnedAttachment);
-            _attachmentRepository.Setup(x => x.Delete(It.IsAny<Attachment>())).Returns(Task.FromResult<Attachment>(null));
+            _attachmentRepository.Setup(x => x.Delete(It.IsAny<int>())).Returns(Task.FromResult<Attachment>(null));
             //Act
-            var result = await _attachmentService.Delete(entityUsed);
+            var result = await _attachmentService.Delete(entityUsed.AttachmentId);
             //Assert
             Assert.IsNull(result);
         }

@@ -82,7 +82,6 @@ namespace SRLearningServer.Components.Converters
                         CardId = cardDto.CardId,
                         CardName = cardDto.CardName,
                         CardText = cardDto.CardText,
-                        AttachmentId = cardDto.Attachment.AttachmentId,
                         LastUpdated = cardDto.LastUpdated,
                         Active = cardDto.Active
                     };
@@ -102,7 +101,14 @@ namespace SRLearningServer.Components.Converters
                     }
                     if (cardDto.Attachment is not null)
                     {
-                        newCard.Attachment = ConvertToDomainFromDto(cardDto.Attachment);
+                        if(cardDto.Attachment.AttachmentId != 0)
+                        {
+                            newCard.AttachmentId = cardDto.Attachment.AttachmentId;
+                        }
+                        else
+                        {
+                            newCard.Attachment = ConvertToDomainFromDto(cardDto.Attachment);
+                        }
                     }
                     cards.Add(newCard);
                 }
@@ -147,7 +153,14 @@ namespace SRLearningServer.Components.Converters
                     };
                     if (dto.Attachment is not null)
                     {
-                        result.Attachment = ConvertToDomainFromDto(dto.Attachment);
+                        if(dto.Attachment.AttachmentId != 0)
+                        {
+                            result.AttachmentId = dto.Attachment.AttachmentId;
+                        }
+                        else
+                        {
+                            result.Attachment = ConvertToDomainFromDto(dto.Attachment);
+                        }
                     }
                     if (!dto.Cards.IsNullOrEmpty())
                     {

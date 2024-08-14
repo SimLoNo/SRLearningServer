@@ -12,6 +12,9 @@ using SRLearningServer.Components.Interfaces.Services;
 using SRLearningServer.Components.Services;
 using SRLearningServer.Components.Converters;
 using SRLearningServer.Components.Interfaces.Converters;
+using Microsoft.AspNetCore.Components;
+using SRLearningServer.Components.Interfaces.FrontendServices;
+using SRLearningServer.Components.FrontendServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -68,13 +71,25 @@ builder.Services
     .AddScoped<ICardService, CardService>()
     .AddScoped<IAttachmentService, AttachmentService>()
     .AddScoped<IResultService, ResultService>()
+    .AddScoped<IFrontendAttachmentService, FrontendAttachmentService>()
+    .AddScoped<IFrontendCardService, FrontendCardService>()
+    .AddScoped<IFrontendTypeService, FrontendTypeService>()
+    .AddScoped<IFrontendResultService, FrontendResultService>()
     .AddScoped<IDomainToDtoConverter, DomainToDtoConverter>()
     .AddScoped<IDtoToDomainConverter, DtoToDomainConverter>();
+
+// Register HttpClient with the base address of the application
+builder.Services.AddScoped(sp =>
+{
+    var navigationManager = sp.GetRequiredService<NavigationManager>();
+    return new HttpClient { BaseAddress = new Uri(navigationManager.BaseUri) };
+});
 
 builder.Services.AddControllers()
         .AddJsonOptions(options =>
         {
             options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+            options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
         });
 
 /*string userFolder = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
@@ -88,10 +103,13 @@ builder.Configuration.GetSection("Kestrel:Endpoints:Https:Certificates:password"
 
 var app = builder.Build();
 
+app.UseRouting();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
+    app.UseDeveloperExceptionPage();
 }
 else
 {
@@ -110,5 +128,7 @@ app.MapRazorComponents<App>()
 
 // Add additional endpoints required by the Identity /Account Razor components.
 app.MapAdditionalIdentityEndpoints();
+app.MapControllers(); // Ensure that the controllers are mapped
+
 
 app.Run();

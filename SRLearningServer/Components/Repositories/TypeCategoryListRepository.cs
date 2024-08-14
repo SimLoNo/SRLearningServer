@@ -11,6 +11,31 @@ namespace SRLearningServer.Components.Repositories
         {
         }
 
+        public async Task<TypeCategoryList> Create(TypeCategoryList entity)
+        {
+            try
+            {
+                entity.LastUpdated = DateOnly.FromDateTime(DateTime.UtcNow);
+                foreach (var type in entity.Types.ToList())
+                {
+                    var newType = _context.Types.FirstOrDefaultAsync(t => t.TypeId == type.TypeId);
+                    entity.Types.Remove(type);
+                    if (newType != null)
+                    {
+                        entity.Types.Add(newType.Result);
+                    }
+                }
+                _context.TypeCategoryLists.Add(entity);
+                await _context.SaveChangesAsync();
+                return entity;
+            }
+            catch (Exception ex)
+            {
+
+                return null;
+            }
+        }
+
         public async Task<TypeCategoryList> GetByName(string name)
         {
             if (name == null)

@@ -1,13 +1,13 @@
 ﻿@page "/admin/data"
 @rendermode InteractiveServer
+@using SRLearningServer.Components.Interfaces.FrontendServices
 @using SRLearningServer.Components.Interfaces.Services
 @using SRLearningServer.Components.Models.DTO
 
-@inject IAttachmentService _attachmentService
-@inject ICardService _cardService
-@inject IResultService _resultService
-@inject ITypeService _typeService
-@inject ITypeCategoryListService _typeCategoryListService
+@inject IFrontendAttachmentService _attachmentService
+@inject IFrontendCardService _cardService
+@inject IFrontendResultService _resultService
+@inject IFrontendTypeService _typeService
 
 <PageTitle>Data administration</PageTitle>
 
@@ -33,53 +33,59 @@
         {
 
             <div>
-                <label for="cardName">Navn</label>
-                <input type="text" id="cardName" @bind="card.CardName"/>
-
-                <label for="cardText">Beskrivelse</label>
-                <input type="text" id="cardText" @bind="card.CardText" />
-
-
-                <label for="active">Aktiv</label>
-                <input type="checkbox" id="active" @bind="card.Active" />
-                <div>
-                <label for="attachment">Vedhæftning</label>
-                <select name="attachment" @bind="attachmentId">
-                    @foreach (var att in attachmentList)
-                    {
-                        if (att.Active == true)
+                <EditForm Model="@card" OnValidSubmit="@CreateCard">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+                    <div>
+                        <label for="cardName">Navn</label>
+                        <InputText type="text" required id="cardName" @bind-Value="card.CardName"/>
+                    </div>
+                    <div>
+                        <label for="cardText">Beskrivelse</label>
+                        <InputText type="text" required id="cardText" @bind-Value="card.CardText" />
+                    </div>
+                    <div>
+                        <label for="active">Aktiv</label>
+                        <InputCheckbox type="checkbox" id="active" @bind-Value="card.Active" />
+                    </div>
+                    <div>
+                        <label for="attachment">Vedhæftning</label>
+                        <InputSelect name="attachment" required @bind-Value="attachmentId">
+                        @foreach (var att in attachmentList)
                         {
-                            <option value="@att.AttachmentId">@att.AttachmentName</option>
+                            if (att.Active == true)
+                            {
+                                <option value="@att.AttachmentId">@att.AttachmentName</option>
+                            }
                         }
-                    }
-                </select>
+                        </InputSelect>
                 </div>
-                <div>
-                <label for="result">Svar</label>
-                <select multiple name="result" @bind="selectedResultIds">
-                    @foreach (var result in resultList)
-                    {
-                        if (result.Active == true)
-                        {
-                            <option value="@result.ResultId">@result.ResultText</option>
-                        }
-                    }
-                </select>
-                </div>
-                <div>
-                <label for="type">Typer</label>
-                <select multiple name="type" @bind="selectedTypeIds">
-                    @foreach (var type in typeList)
-                    {
-                        if (type.Active == true)
-                        {
-                            <option value="@type.TypeId">@type.CardTypeName</option>
-                        }
-                    }
-                </select>
-                </div>
-
-                <button class="btn btn-primary" @onclick="CreateCard">Gem</button>
+                    <div>
+                        <label for="result">Svar</label>
+                        <InputSelect multiple name="result" @bind-Value="selectedResultIds">
+                            @foreach (var result in resultList)
+                            {
+                                if (result.Active == true)
+                                {
+                                    <option value="@result.ResultId">@result.ResultText</option>
+                                }
+                            }
+                        </InputSelect>
+                    </div>
+                    <div>
+                        <label for="type">Typer</label>
+                        <InputSelect multiple name="type" @bind-Value="selectedTypeIds">
+                            @foreach (var type in typeList)
+                            {
+                                if (type.Active == true)
+                                {
+                                    <option value="@type.TypeId">@type.CardTypeName</option>
+                                }
+                            }
+                        </InputSelect> 
+                    </div>
+                    <button type="submit">Submit</button>
+                </EditForm>
             </div>
         }
         else if (workingType == "attachment")
@@ -139,10 +145,10 @@
         try
         {
             attachmentList = await GetAttachments();
-            cardList = await GetCards();
+            //cardList = await GetCards();
             resultList = await GetResults();
             typeList = await GetTypes();
-            typeCategoryListList = await GetTypeCategoryLists();
+            //typeCategoryListList = await GetTypeCategoryLists();
         }
         catch (Exception ex)
         {
@@ -194,50 +200,49 @@
         return result;
     }
 
-    private async Task<List<ResultDto>> GetResults()
-    {
-        var result = await _resultService.GetAll();
-        if (result is null)
+        private async Task<List<ResultDto>> GetResults()
+            {
+            var result = await _resultService.GetAll();
+            if (result is null)
         {
-            errorMessage = "Der blev ikke fundet nogle resultater.";
-            return new List<ResultDto>();
+        errorMessage = "Der blev ikke fundet nogle resultater.";
+    return new List<ResultDto>();
         }
         return result;
-    }
-
-    private async Task<List<TypeDto>> GetTypes()
-    {
-        var result = await _typeService.GetAll();
-        if (result is null)
-        {
-            errorMessage = "Der blev ikke fundet nogle typer.";
-            return new List<TypeDto>();
         }
-        return result;
-    }
 
+        private async Task<List<TypeDto>> GetTypes()
+            {
+            var result = await _typeService.GetAll();
+            if (result is null)
+            {
+        errorMessage = "Der blev ikke fundet nogle typer.";
+    return new List<TypeDto>();
+    }
+    return result;
+    }
+    /*
     private async Task<List<TypeCategoryListDto>> GetTypeCategoryLists()
-    {
-        var result = await _typeCategoryListService.GetAll();
-        if (result is null)
         {
+        var result = await _typeCategoryListService.GetAll();
+            if (result is null)
+            {
             errorMessage = "Der blev ikke fundet nogle type kategorier.";
-            return new List<TypeCategoryListDto>();
-        }
-        return result;
+        return new List<TypeCategoryListDto>();
+    }
+    return result;
 
     }
 
     private async Task<List<CardDto>> GetCards(){
         var result = await _cardService.GetAll();
         if (result is null)
-        {
+            {
             errorMessage = "Der blev ikke fundet nogle kort.";
             return new List<CardDto>();
         }
         return result;
-    }
-
+    }*/
     private async void CreateCard()
     {
         var entity = card;
@@ -259,6 +264,7 @@
         {
             createType = false;
             ResetWork();
+            StateHasChanged();
         }
     }
 

@@ -6,7 +6,6 @@ namespace SRLearningServer.Components.Models
     public class Attachment
     {
         [Key]
-        [Column(TypeName = "int")]
         public int AttachmentId { get; set; }
 
         [MaxLength(200)]

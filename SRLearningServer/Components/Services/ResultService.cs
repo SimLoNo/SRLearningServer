@@ -64,12 +64,12 @@ namespace SRLearningServer.Components.Services
             }
         }
 
-        public async Task<ResultDto> Delete(ResultDto entity)
+        public async Task<ResultDto> Delete(int entity)
         {
             try
             {
-                Result result = _dtoToDomainConverter.ConvertToDomainFromDto(entity);
-                result = await _resultRepository.Delete(result);
+                ///Result result = _dtoToDomainConverter.ConvertToDomainFromDto(entity);
+                Result result = await _resultRepository.Delete(entity);
                 if (result is null)
                 {
                     return null;

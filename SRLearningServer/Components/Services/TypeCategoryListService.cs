@@ -67,12 +67,12 @@ namespace SRLearningServer.Components.Services
             }
         }
 
-        public async Task<TypeCategoryListDto> Delete(TypeCategoryListDto entity)
+        public async Task<TypeCategoryListDto> Delete(int entity)
         {
             try
             {
-                TypeCategoryList typeCategoryList = _dtoToDomainConverter.ConvertToDomainFromDto(entity);
-                typeCategoryList = await _typeCategoryListRepository.Delete(typeCategoryList);
+                //TypeCategoryList typeCategoryList = _dtoToDomainConverter.ConvertToDomainFromDto(entity);
+                TypeCategoryList typeCategoryList = await _typeCategoryListRepository.Delete(entity);
                 if (typeCategoryList == null)
                 {
                     return null;

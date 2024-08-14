@@ -171,9 +171,9 @@ namespace SRLearningServer.Tests.ServicesTests
             Result returnedResult = _result1;
             _dtoToDomainConverter.Setup(x => x.ConvertToDomainFromDto(It.IsAny<ResultDto>())).Returns(returnedResult);
             _domainToDtoConverter.Setup(x => x.ConvertToDtoFromDomain(It.IsAny<Result>(), It.IsAny<bool>())).Returns(entityUsed);
-            _resultRepository.Setup(x => x.Delete(It.IsAny<Result>())).Returns(Task.FromResult(returnedResult));
+            _resultRepository.Setup(x => x.Delete(It.IsAny<int>())).Returns(Task.FromResult(returnedResult));
             //Act
-            var result = await _resultService.Delete(entityUsed);
+            var result = await _resultService.Delete(entityUsed.ResultId);
             //Assert
             Assert.IsNotNull(result);
             Assert.IsInstanceOfType(result, typeof(ResultDto));
@@ -190,9 +190,9 @@ namespace SRLearningServer.Tests.ServicesTests
             ResultDto entityUsed = _resultDto1;
             Result returnedResult = _result1;
             _dtoToDomainConverter.Setup(x => x.ConvertToDomainFromDto(It.IsAny<ResultDto>())).Returns(returnedResult);
-            _resultRepository.Setup(x => x.Delete(It.IsAny<Result>())).Returns(Task.FromResult<Result>(null));
+            _resultRepository.Setup(x => x.Delete(It.IsAny<int>())).Returns(Task.FromResult<Result>(null));
             //Act
-            var result = await _resultService.Delete(entityUsed);
+            var result = await _resultService.Delete(entityUsed.ResultId);
             //Assert
             Assert.IsNull(result);
         }

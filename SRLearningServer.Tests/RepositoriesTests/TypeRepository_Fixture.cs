@@ -308,7 +308,7 @@ namespace SRLearningServer.Tests.RepositoriesTests
             await _context.SaveChangesAsync();
 
             //Act
-            var result = await _repository.Delete(_type1);
+            var result = await _repository.Delete(_type1.TypeId);
             //Assert
             // Asserts the return value.
             Assert.IsNotNull(result);
@@ -331,7 +331,7 @@ namespace SRLearningServer.Tests.RepositoriesTests
             await _context.SaveChangesAsync();
 
             //Act
-            var result = await _repository.Delete(_type1);
+            var result = await _repository.Delete(_type1.TypeId);
             //Assert
             // Asserts the return value.
             Assert.IsNotNull(result);
@@ -359,7 +359,7 @@ namespace SRLearningServer.Tests.RepositoriesTests
             await _context.Types.AddAsync(typeUsed);
             await _context.SaveChangesAsync();
             //Act
-            var result = await _repository.Delete(typeUsed);
+            var result = await _repository.Delete(typeUsed.TypeId);
             //Assert
             // Asserts the return value.
             Assert.IsNotNull(result);
@@ -773,7 +773,7 @@ namespace SRLearningServer.Tests.RepositoriesTests
             _context.Types.Add(entityUsed);
             await _context.SaveChangesAsync();
             //Act
-            var type = await _repository.Delete(entityUsed);
+            var type = await _repository.Delete(entityUsed.TypeId);
             //Assert
             Assert.IsNotNull(type);
             Assert.IsInstanceOfType(type, typeof(Components.Models.Type));
@@ -790,7 +790,7 @@ namespace SRLearningServer.Tests.RepositoriesTests
             await _context.Database.EnsureDeletedAsync();
             await _context.SaveChangesAsync();
             //Act
-            var type = await _repository.Delete(entityUsed);
+            var type = await _repository.Delete(entityUsed.TypeId);
             //Assert
             Assert.IsNull(type);
         }

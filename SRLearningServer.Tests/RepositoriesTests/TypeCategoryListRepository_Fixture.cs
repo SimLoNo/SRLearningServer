@@ -361,7 +361,7 @@ namespace SRLearningServer.Tests.RepositoriesTests
             _context.TypeCategoryLists.Add(entityUsed);
             await _context.SaveChangesAsync();
             //Act
-            var typeCategoryList = await _repository.Delete(entityUsed);
+            var typeCategoryList = await _repository.Delete(entityUsed.TypeCategoryListId);
             //Assert
             Assert.IsNotNull(typeCategoryList);
             Assert.IsInstanceOfType(typeCategoryList, typeof(TypeCategoryList));
@@ -379,7 +379,7 @@ namespace SRLearningServer.Tests.RepositoriesTests
             await _context.Database.EnsureDeletedAsync();
             await _context.SaveChangesAsync();
             //Act
-            var typeCategoryList = await _repository.Delete(entityUsed);
+            var typeCategoryList = await _repository.Delete(entityUsed.TypeCategoryListId);
             //Assert
             Assert.IsNull(typeCategoryList);
         }

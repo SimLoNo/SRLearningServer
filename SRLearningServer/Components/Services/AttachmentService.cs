@@ -67,12 +67,12 @@ namespace SRLearningServer.Components.Services
             }
         }
 
-        public async Task<AttachmentDto> Delete(AttachmentDto entity)
+        public async Task<AttachmentDto> Delete(int entity)
         {
             try
             {
-                Attachment attachment = _dtoToDomainConverter.ConvertToDomainFromDto(entity);
-                attachment = await _attachmentRepository.Delete(attachment);
+                //Attachment attachment = _dtoToDomainConverter.ConvertToDomainFromDto(entity);
+                Attachment attachment = await _attachmentRepository.Delete(entity);
                 if (attachment is null)
                 {
                     return null;

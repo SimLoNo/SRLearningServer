@@ -6,7 +6,6 @@ namespace SRLearningServer.Components.Models
     public class TypeCategoryList
     {
         [Key]
-        [Column(TypeName = "int")]
         public int TypeCategoryListId { get; set; }
 
         [MaxLength(100)]

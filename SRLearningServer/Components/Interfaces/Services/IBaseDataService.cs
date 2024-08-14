@@ -39,7 +39,7 @@
         /// </summary>
         /// <param name="entity"></param>
         /// <returns></returns>
-        public Task<U> Delete(U entity);
+        public Task<U> Delete(int entity);
 
         /// <summary>
         /// Get all entities of the given type from the database, including inactive entities.

@@ -15,6 +15,6 @@ namespace SRLearningServer.Components.Models.DTO
 
 
         public List<CardDto> Cards { get; } = [];
-        public AttachmentDto Attachment { get; set; }
+        public AttachmentDto? Attachment { get; set; }
     }
 }
