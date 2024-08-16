@@ -7,6 +7,7 @@
 @inject IFrontendCardService _cardService
 @inject IFrontendResultService _resultService
 @inject IFrontendTypeService _typeService
+@inject IFrontendTypeCategoryListService _typeCategoryListService
 
 <PageTitle>Data administration</PageTitle>
 
@@ -23,7 +24,7 @@
             <option value="attachment">vedhæft</option>
             <option value="result">Resultat</option>
             <option value="type">Type</option>
-            <option value="typeCategoryList">Type Categori</option>
+            <option value="typeCategoryList">Type Kategori</option>
         </select>
     }
     else if (createType == true)
@@ -58,7 +59,7 @@
                             }
                         }
                         </InputSelect>
-                </div>
+                    </div>
                     <div>
                         <label for="result">Svar</label>
                         <InputSelect multiple name="result" @bind-Value="selectedResultIds">
@@ -89,21 +90,280 @@
         }
         else if (workingType == "attachment")
         {
+            <div>
+                <EditForm Model="@attachment" OnValidSubmit="@CreateAttachment">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+                    <div>
+                        <label for="attachmentName">Navn</label>
+                        <InputText type="text" required id="attachmentName" @bind-Value="attachment.AttachmentName" />
+                    </div>
+                    <div>
+                        <label for="active">Aktiv</label>
+                        <InputCheckbox type="checkbox" id="active" @bind-Value="attachment.Active" />
+                    </div>
+                    <div>
+                        <label for="attachmentUrl">Fil:</label>
+                        <InputFile OnChange="HandleFileSelected" />
+                    </div>
+                    <button type="submit">Submit</button>
+                </EditForm>
+            </div>
         }
         else if (workingType == "result")
         {
+            <div>
+                <EditForm Model="@result" OnValidSubmit="@CreateResult">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+                    <div>
+                        <label for="resultText">Tekst</label>
+                        <InputText type="text" required id="resultText" @bind-Value="result.ResultText" />
+                    </div>
+                    <div>
+                        <label for="active">Aktiv</label>
+                        <InputCheckbox type="checkbox" id="active" @bind-Value="result.Active" />
+                    </div>
+                    <div>
+                        <label for="attachment">Vedhæftning</label>
+                        <InputSelect name="attachment" @bind-Value="attachmentId">
+                            @foreach (var att in attachmentList)
+                            {
+                                if (att.Active == true)
+                                {
+                                    <option value="@att.AttachmentId">@att.AttachmentName</option>
+                                }
+                            }
+                        </InputSelect>
+                    </div>
+                    <button type="submit">Submit</button>
+                </EditForm>
+            </div>
         }
         else if (workingType == "type")
         {
+            <div>
+                <EditForm Model="@type" OnValidSubmit="CreateType">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+                    <div>
+                        <label for="cardTypeName">Navn</label>
+                        <InputText type="text" required id="cardTypeName" @bind-Value="type.CardTypeName" />
+                    </div>
+                    <div>
+                        <label for="active">Aktiv</label>
+                        <InputCheckbox type="checkbox" id="active" @bind-Value="type.Active" />
+                    </div>
+                    <button type="submit">Submit</button>
+                </EditForm>
+            </div>
         }
         else if (workingType == "typeCategoryList")
         {
+            <div>
+                <EditForm Model="@typeCategoryList" OnValidSubmit="CreateTypeCategoryList">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+                    <div>
+                        <label for="typeCategoryListName">Navn</label>
+                        <InputText type="text" required id="typeCategoryListName" @bind-Value="typeCategoryList.TypeCategoryListName" />
+                    </div>
+                    <div>
+                        <label for="active">Aktiv</label>
+                        <InputCheckbox type="checkbox" id="active" @bind-Value="typeCategoryList.Active" />
+                    </div>
+                    <div>
+                        <label for="type">Typer</label>
+                        <InputSelect multiple name="type" @bind-Value="selectedTypeIds">
+                            @foreach (var type in typeList)
+                            {
+                                if (type.Active == true)
+                                {
+                                    <option value="@type.TypeId">@type.CardTypeName</option>
+                                }
+                            }
+                        </InputSelect>
+                    </div>
+                    <button type="submit">Submit</button>
+                </EditForm>
+            </div>
         }
 
     }
     else if(editType == true)
     {
+        if (workingType == "card")
+        {
 
+            <div>
+                <label for="card">Kort</label>
+                <select name="card" @onchange="SelectCard">
+                    <option value="0">Vælg kort</option>
+                    @foreach (var card in cardList)
+                    {
+                        <option value="@card.CardId">Navn: @card.CardName - Tekst: @card.CardText - Status: @(card.Active ? "Aktiv" : "Inaktiv")</option>
+                    }
+                </select>
+            </div>
+            if (card.CardId > 0)
+            {
+                <div>
+                    <EditForm Model="@card" OnValidSubmit="@UpdateCard">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary />
+                        <div>
+                            <label for="cardName">Navn</label>
+                            <InputText type="text" required id="cardName" @bind-Value="card.CardName" />
+                        </div>
+                        <div>
+                            <label for="cardText">Beskrivelse</label>
+                            <InputText type="text" required id="cardText" @bind-Value="card.CardText" />
+                        </div>
+                        <div>
+                            <label for="active">Aktiv</label>
+                            <InputCheckbox type="checkbox" id="active" @bind-Value="card.Active" />
+                        </div>
+                        <div>
+                            <label for="attachment">Vedhæftning</label>
+                            <InputSelect name="attachment" required @bind-Value="attachmentId">
+                                @foreach (var att in attachmentList)
+                                {
+                                    if (att.Active == true)
+                                    {
+                                        <option value="@att.AttachmentId">@att.AttachmentName</option>
+                                    }
+                                }
+                            </InputSelect>
+                        </div>
+                        <div>
+                            <label for="result">Svar</label>
+                            <InputSelect multiple name="result" @bind-Value="selectedResultIds">
+                                @foreach (var result in resultList)
+                                {
+                                    if (result.Active == true)
+                                    {
+                                        <option value="@result.ResultId">@result.ResultText</option>
+                                    }
+                                }
+                            </InputSelect>
+                        </div>
+                        <div>
+                            <label for="type">Typer</label>
+                            <InputSelect multiple name="type" @bind-Value="selectedTypeIds">
+                                @foreach (var type in typeList)
+                                {
+                                    if (type.Active == true)
+                                    {
+                                        <option value="@type.TypeId">@type.CardTypeName</option>
+                                    }
+                                }
+                            </InputSelect>
+                        </div>
+                        <button type="submit">Submit</button>
+                    </EditForm>
+                </div>
+            }
+        }
+        else if (workingType == "attachment")
+        {
+            <div>
+                <EditForm Model="@attachment" OnValidSubmit="@CreateAttachment">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+                    <div>
+                        <label for="attachmentName">Navn</label>
+                        <InputText type="text" required id="attachmentName" @bind-Value="attachment.AttachmentName" />
+                    </div>
+                    <div>
+                        <label for="active">Aktiv</label>
+                        <InputCheckbox type="checkbox" id="active" @bind-Value="attachment.Active" />
+                    </div>
+                    <div>
+                        <label for="attachmentUrl">Fil:</label>
+                        <InputFile OnChange="HandleFileSelected" />
+                    </div>
+                    <button type="submit">Submit</button>
+                </EditForm>
+            </div>
+        }
+        else if (workingType == "result")
+        {
+            <div>
+                <EditForm Model="@result" OnValidSubmit="@CreateResult">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+                    <div>
+                        <label for="resultText">Tekst</label>
+                        <InputText type="text" required id="resultText" @bind-Value="result.ResultText" />
+                    </div>
+                    <div>
+                        <label for="active">Aktiv</label>
+                        <InputCheckbox type="checkbox" id="active" @bind-Value="result.Active" />
+                    </div>
+                    <div>
+                        <label for="attachment">Vedhæftning</label>
+                        <InputSelect name="attachment" @bind-Value="attachmentId">
+                            @foreach (var att in attachmentList)
+                            {
+                                if (att.Active == true)
+                                {
+                                    <option value="@att.AttachmentId">@att.AttachmentName</option>
+                                }
+                            }
+                        </InputSelect>
+                    </div>
+                    <button type="submit">Submit</button>
+                </EditForm>
+            </div>
+        }
+        else if (workingType == "type")
+        {
+            <div>
+                <EditForm Model="@type" OnValidSubmit="CreateType">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+                    <div>
+                        <label for="cardTypeName">Navn</label>
+                        <InputText type="text" required id="cardTypeName" @bind-Value="type.CardTypeName" />
+                    </div>
+                    <div>
+                        <label for="active">Aktiv</label>
+                        <InputCheckbox type="checkbox" id="active" @bind-Value="type.Active" />
+                    </div>
+                    <button type="submit">Submit</button>
+                </EditForm>
+            </div>
+        }
+        else if (workingType == "typeCategoryList")
+        {
+            <div>
+                <EditForm Model="@typeCategoryList" OnValidSubmit="CreateTypeCategoryList">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+                    <div>
+                        <label for="typeCategoryListName">Navn</label>
+                        <InputText type="text" required id="typeCategoryListName" @bind-Value="typeCategoryList.TypeCategoryListName" />
+                    </div>
+                    <div>
+                        <label for="active">Aktiv</label>
+                        <InputCheckbox type="checkbox" id="active" @bind-Value="typeCategoryList.Active" />
+                    </div>
+                    <div>
+                        <label for="type">Typer</label>
+                        <InputSelect multiple name="type" @bind-Value="selectedTypeIds">
+                            @foreach (var type in typeList)
+                            {
+                                if (type.Active == true)
+                                {
+                                    <option value="@type.TypeId">@type.CardTypeName</option>
+                                }
+                            }
+                        </InputSelect>
+                    </div>
+                    <button type="submit">Submit</button>
+                </EditForm>
+            </div>
+        }
     }
     else
     {
@@ -133,21 +393,24 @@
     private List<ResultDto> resultList = new();
     private List<TypeDto> typeList = new();
     private List<TypeCategoryListDto> typeCategoryListList = new();
+    private string attachmentDirectory = "wwwroot//Development/Attachments/";
 
 
     int attachmentId = 0;
     int[] selectedResultIds = [];
     int[] selectedTypeIds = [];
 
+    private IBrowserFile? selectedFile;
+
     protected override async Task OnInitializedAsync()
     {
         try
         {
             attachmentList = await GetAttachments();
-            //cardList = await GetCards();
+            cardList = await GetCards();
             resultList = await GetResults();
             typeList = await GetTypes();
-            //typeCategoryListList = await GetTypeCategoryLists();
+            typeCategoryListList = await GetTypeCategoryLists();
         }
         catch (Exception ex)
         {
@@ -199,49 +462,49 @@
         return result;
     }
 
-        private async Task<List<ResultDto>> GetResults()
-            {
-            var result = await _resultService.GetAll();
-            if (result is null)
+    private async Task<List<ResultDto>> GetResults()
+    {
+        var result = await _resultService.GetAll();
+        if (result is null)
         {
-        errorMessage = "Der blev ikke fundet nogle resultater.";
-    return new List<ResultDto>();
+            errorMessage = "Der blev ikke fundet nogle resultater.";
+            return new List<ResultDto>();
         }
         return result;
-        }
+    }
 
-        private async Task<List<TypeDto>> GetTypes()
-            {
-            var result = await _typeService.GetAll();
-            if (result is null)
-            {
-        errorMessage = "Der blev ikke fundet nogle typer.";
-    return new List<TypeDto>();
-    }
-    return result;
-    }
-    /*
-    private async Task<List<TypeCategoryListDto>> GetTypeCategoryLists()
+    private async Task<List<TypeDto>> GetTypes()
+    {
+        var result = await _typeService.GetAll();
+        if (result is null)
         {
-        var result = await _typeCategoryListService.GetAll();
-            if (result is null)
-            {
-            errorMessage = "Der blev ikke fundet nogle type kategorier.";
-        return new List<TypeCategoryListDto>();
+            errorMessage = "Der blev ikke fundet nogle typer.";
+            return new List<TypeDto>();
+        }
+        return result;
     }
-    return result;
+
+    private async Task<List<TypeCategoryListDto>> GetTypeCategoryLists()
+    {
+        var result = await _typeCategoryListService.GetAll();
+        if (result is null)
+        {
+            errorMessage = "Der blev ikke fundet nogle type kategorier.";
+            return new List<TypeCategoryListDto>();
+        }
+        return result;
 
     }
 
     private async Task<List<CardDto>> GetCards(){
         var result = await _cardService.GetAll();
         if (result is null)
-            {
+        {
             errorMessage = "Der blev ikke fundet nogle kort.";
             return new List<CardDto>();
         }
         return result;
-    }*/
+    }
     private async void CreateCard()
     {
         var entity = card;
@@ -261,10 +524,113 @@
         var result = await _cardService.Create(entity);
         if (result is not null)
         {
+            cardList.Add(result);
             createType = false;
             ResetWork();
             StateHasChanged();
         }
+    }
+
+    private async void CreateAttachment()
+    {
+        if (selectedFile == null)
+        {
+            errorMessage = "Please select a file to upload.";
+            return;
+        }
+
+        Directory.CreateDirectory(Path.GetDirectoryName($"{attachmentDirectory}{attachment.AttachmentUrl}")); // Ensure the directory exists
+
+        using (var stream = new FileStream($"{attachmentDirectory}{attachment.AttachmentUrl}", FileMode.Create))
+        {
+            await selectedFile.OpenReadStream().CopyToAsync(stream);
+        }
+        var result = await _attachmentService.Create(attachment);
+        if (result is not null)
+        {
+            attachmentList.Add(result);
+            createType = false;
+            ResetWork();
+            StateHasChanged();
+        }
+    }
+
+    private async Task HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        selectedFile = e.File;
+        if (selectedFile != null)
+        {
+            var format = "image/png"; // You can add more formats if needed
+            if (selectedFile.ContentType.StartsWith("image/png"))
+            {
+                var fileExtension = Path.GetExtension(selectedFile.Name);
+                var randomFileName = $"{Guid.NewGuid()}{fileExtension}";
+
+
+                attachment.AttachmentUrl = $"{randomFileName}";
+            }
+            else
+            {
+                errorMessage = "Please upload a valid png image file.";
+            }
+        }
+    }
+
+    private async void CreateResult()
+    {
+        var resultReceived = await _resultService.Create(result);
+        if (resultReceived is not null)
+        {
+            resultList.Add(resultReceived);
+            createType = false;
+            ResetWork();
+            StateHasChanged();
+        }
+    }
+
+    private async void CreateType()
+    {
+        var result = await _typeService.Create(type);
+        if (result is not null)
+        {
+            typeList.Add(result);
+            createType = false;
+            ResetWork();
+            StateHasChanged();
+        }
+    }
+
+    private async void CreateTypeCategoryList()
+    {
+        if (selectedTypeIds.Length > 0)
+        {
+            typeCategoryList.Types = typeList.Where(x => selectedTypeIds.Contains(x.TypeId)).ToList();
+        }
+        var result = await _typeCategoryListService.Create(typeCategoryList);
+        if (result is not null)
+        {
+            typeCategoryListList.Add(result);
+            createType = false;
+            ResetWork();
+            StateHasChanged();
+        }
+    }
+
+    private async void SelectCard(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value.ToString(), out int cardId))
+        {
+            card = await _cardService.GetByid(cardId);
+            attachmentId = Convert.ToInt32(card.AttachmentId);
+            selectedResultIds = card.Results.Select(x => x.ResultId).ToArray();
+            selectedTypeIds = card.Types.Select(x => x.TypeId).ToArray();
+            StateHasChanged();
+        }
+    }
+
+    private async void UpdateCard()
+    {
+        
     }
 
 

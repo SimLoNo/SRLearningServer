@@ -11,7 +11,7 @@ namespace SRLearningServer.Components.Models.DTO
 
         public string CardText { get; set; }
 
-        //public int AttachmentId { get; set; }
+        public int? AttachmentId { get; set; }
         public DateOnly LastUpdated { get; set; }
 
         public bool Active { get; set; }

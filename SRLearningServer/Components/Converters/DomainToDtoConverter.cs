@@ -79,7 +79,7 @@ namespace SRLearningServer.Components.Converters
                         CardId = card.CardId,
                         CardName = card.CardName,
                         CardText = card.CardText,
-                        //AttachmentId = card.AttachmentId,
+                        AttachmentId = card.AttachmentId,
                         LastUpdated = card.LastUpdated,
                         Active = card.Active
 

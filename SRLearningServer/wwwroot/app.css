@@ -99,3 +99,10 @@ h1:focus {
             left: 50%;
             right: 0;
         }
+.active-Item {
+    background-color: lightgreen;
+}
+
+.inactive-Item {
+    background-color: lightcoral;
+}

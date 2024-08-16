@@ -24,8 +24,8 @@ namespace SRLearningServer.Components.Services
             try
             {
                 TypeCategoryList typeCategoryList = _dtoToDomainConverter.ConvertToDomainFromDto(entity);
-                typeCategoryList = await _typeCategoryListRepository.GetByName(typeCategoryList.TypeCategoryListName);
-                if (typeCategoryList is null)
+                var foundTypeCategoryList = await _typeCategoryListRepository.GetByName(typeCategoryList.TypeCategoryListName);
+                if (foundTypeCategoryList is not null)
                 {
                     return null;
                 }

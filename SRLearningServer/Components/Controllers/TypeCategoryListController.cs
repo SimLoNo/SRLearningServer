@@ -16,7 +16,7 @@ namespace SRLearningServer.Components.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<TypeCategoryListDto>> Create(TypeCategoryListDto entity)
+        public async Task<ActionResult<TypeCategoryListDto>> Create([FromBody] TypeCategoryListDto entity)
         {
             try
             {
@@ -124,7 +124,7 @@ namespace SRLearningServer.Components.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult<TypeCategoryListDto>> Update(TypeCategoryListDto entity)
+        public async Task<ActionResult<TypeCategoryListDto>> Update([FromBody] TypeCategoryListDto entity)
         {
             try
             {
