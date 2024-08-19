@@ -36,6 +36,31 @@ namespace SRLearningServer.Components.Repositories
             }
         }
 
+        /// <summary>
+        /// Returns a TypeCategoryList and it's relations with the given id. If no TypeCategoryList is found, returns null.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<TypeCategoryList> Get(int id)
+        {
+            try
+            {
+                var foundEntity = await _context.TypeCategoryLists
+                    .Include(tcl => tcl.Types)
+                    .FirstOrDefaultAsync(tcl => tcl.TypeCategoryListId == id);
+                if (foundEntity == null)
+                {
+                    return null;
+                }
+                return foundEntity;
+            }
+            catch (Exception ex)
+            {
+
+                return null;
+            }
+        }
+
         public async Task<TypeCategoryList> GetByName(string name)
         {
             if (name == null)
@@ -53,6 +78,7 @@ namespace SRLearningServer.Components.Repositories
                 return null;
             }
         }
+
 
         public async Task<TypeCategoryList> Update(TypeCategoryList typeCategoryList)
         {

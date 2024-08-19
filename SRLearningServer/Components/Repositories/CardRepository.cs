@@ -54,6 +54,33 @@ namespace SRLearningServer.Components.Repositories
             }
         }
 
+        /// <summary>
+        /// Returns a Card with it's relations with the given id. If no Card is found, returns null.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<Card> Get(int id)
+        {
+            try
+            {
+                var foundEntity = await _context.Cards
+                    .Include(c => c.Results)
+                    .Include(c => c.Types)
+                    .Include(c => c.Attachment)
+                    .FirstOrDefaultAsync(c => c.CardId == id);
+                if (foundEntity == null)
+                {
+                    return null;
+                }
+                return foundEntity;
+            }
+            catch (Exception ex)
+            {
+
+                return null;
+            }
+        }
+
         public async Task<List<Card>> GetByType(List<List<Models.Type>> typeSelectors)
         {
             if (typeSelectors == null || typeSelectors.Count == 0)

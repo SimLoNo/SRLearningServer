@@ -15,6 +15,7 @@ using SRLearningServer.Components.Interfaces.Converters;
 using Microsoft.AspNetCore.Components;
 using SRLearningServer.Components.Interfaces.FrontendServices;
 using SRLearningServer.Components.FrontendServices;
+using Radzen;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,6 +27,8 @@ builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
+
+builder.Services.AddRadzenComponents();
 
 
 

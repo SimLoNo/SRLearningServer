@@ -14,7 +14,7 @@ namespace SRLearningServer.Components.Models.DTO
         public DateOnly LastUpdated { get; set; }
 
 
-        public List<CardDto> Cards { get; } = [];
+        public IEnumerable<CardDto> Cards { get; set; } = new List<CardDto>();
         public AttachmentDto? Attachment { get; set; }
     }
 }

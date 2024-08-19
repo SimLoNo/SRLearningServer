@@ -106,3 +106,6 @@ h1:focus {
 .inactive-Item {
     background-color: lightcoral;
 }
+.selected-item{
+    background-color: lightblue;
+}

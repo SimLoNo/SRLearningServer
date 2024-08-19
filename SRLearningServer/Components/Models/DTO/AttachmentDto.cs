@@ -14,7 +14,7 @@ namespace SRLearningServer.Components.Models.DTO
         public bool Active { get; set; }
 
 
-        public List<CardDto> Cards { get; } = [];
-        public List<ResultDto> Results { get; } = [];
+        public IEnumerable<CardDto> Cards { get; set; } = new List<CardDto>();
+        public IEnumerable<ResultDto> Results { get; set; } = new List<ResultDto>();
     }
 }

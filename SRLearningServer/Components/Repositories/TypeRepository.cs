@@ -48,6 +48,32 @@ namespace SRLearningServer.Components.Repositories
             }
         }
 
+        /// <summary>
+        /// Gets a type and all it's relations from the database. If no type is found, returns null.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<Models.Type> Get(int id)
+        {
+            try
+            {
+                var foundEntity = await _context.Types
+                    .Include(t => t.Cards)
+                    .Include(t => t.TypeCategoryLists)
+                    .FirstOrDefaultAsync(t => t.TypeId == id);
+                if (foundEntity == null)
+                {
+                    return null;
+                }
+                return foundEntity;
+            }
+            catch (Exception ex)
+            {
+
+                return null;
+            }
+        }
+
         /*/// <summary>
         /// Gets a list of active types from the database. If no types are sent, all active types are returned.
         /// </summary>

@@ -52,6 +52,31 @@ namespace SRLearningServer.Components.Repositories
         }*/
 
         /// <summary>
+        /// Returns a Result with it's relations with the given id. If no Result is found, returns null.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<Result> Get(int id)
+        {
+            try
+            {
+                var foundEntity = await _context.Results
+                    .Include(r => r.Cards)
+                    .Include(r => r.Attachment)
+                    .FirstOrDefaultAsync(r => r.ResultId == id);
+                if (foundEntity == null)
+                {
+                    return null;
+                }
+                return foundEntity;
+            }
+            catch (Exception ex)
+            {
+
+                return null;
+            }
+        }
+        /// <summary>
         /// Updates a result in the database with the new result data. If the result does not exist in the database, returns null.
         /// </summary>
         /// <param name="result"></param>

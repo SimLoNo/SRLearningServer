@@ -14,6 +14,6 @@ namespace SRLearningServer.Components.Models.DTO
 
         public DateOnly LastUpdated { get; set; }
 
-        public List<TypeDto> Types { get; set; } = new List<TypeDto>();
+        public IEnumerable<TypeDto> Types { get; set; } = new List<TypeDto>();
     }
 }

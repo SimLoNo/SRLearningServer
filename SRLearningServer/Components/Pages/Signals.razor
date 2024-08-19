@@ -87,7 +87,7 @@ else
 <button class="btn btn-primary" @onclick="ToggleSignalList">Sorter Signaler</button>
 
 <div class="signal-selection">
-    @if (aspects.Types.Count == 0)
+    @if (aspects.Types.ToList().Count == 0)
     {
         <p>Indlæser...</p>
     }
@@ -183,7 +183,7 @@ else
         int signalSelectionIndex = signalSelection.FindIndex(s => s.SignalType.TypeId == signalId);
         if(signalSelectionIndex != -1)
         {
-            if(signalSelection[signalSelectionIndex].SignalAspects.Count == aspects.Types.Count)
+            if(signalSelection[signalSelectionIndex].SignalAspects.Count == aspects.Types.ToList().Count)
             {
                 signalSelection[signalSelectionIndex].SignalAspects.Clear();
             }
@@ -198,7 +198,7 @@ else
         int signalSelectionIndex = signalSelection.FindIndex(s => s.SignalType.TypeId == signalId);
         if(signalSelectionIndex != -1)
         {
-            return signalSelection[signalSelectionIndex].SignalAspects.Count == aspects.Types.Count;
+            return signalSelection[signalSelectionIndex].SignalAspects.Count == aspects.Types.ToList().Count;
         }
         return false;
     }

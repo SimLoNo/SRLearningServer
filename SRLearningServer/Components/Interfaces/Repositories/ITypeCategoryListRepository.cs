@@ -7,5 +7,6 @@ namespace SRLearningServer.Components.Interfaces.Repositories
         Task<TypeCategoryList> Create(TypeCategoryList entity);
         public Task<TypeCategoryList> GetByName(string name);
         public Task<TypeCategoryList> Update(TypeCategoryList typeCategoryList);
+        Task<TypeCategoryList> Get(int id);
     }
 }

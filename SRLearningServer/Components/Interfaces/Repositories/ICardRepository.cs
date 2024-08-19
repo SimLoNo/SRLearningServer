@@ -14,6 +14,7 @@ namespace SRLearningServer.Components.Interfaces.Repositories
         /// <returns></returns>
         Task<List<Card>> GetByType(List<List<Models.Type>> typeId);
         Task<Card> Update(Card card);
+        Task<Card> Get(int id);
 
     }
 }

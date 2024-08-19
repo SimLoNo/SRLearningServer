@@ -30,11 +30,11 @@ namespace SRLearningServer.Components.Converters
                     {
                         if (!attachment.Cards.IsNullOrEmpty())
                         {
-                            newAttachment.Cards.AddRange(ConvertToDtoFromDomain(attachment.Cards));
+                            newAttachment.Cards.ToList().AddRange(ConvertToDtoFromDomain(attachment.Cards));
                         }
                         if (!attachment.Results.IsNullOrEmpty())
                         {
-                            newAttachment.Results.AddRange(ConvertToDtoFromDomain(attachment.Results));
+                            newAttachment.Results.ToList().AddRange(ConvertToDtoFromDomain(attachment.Results));
                         }
                     }
                     attachmentDtos.Add(newAttachment);
@@ -81,7 +81,9 @@ namespace SRLearningServer.Components.Converters
                         CardText = card.CardText,
                         AttachmentId = card.AttachmentId,
                         LastUpdated = card.LastUpdated,
-                        Active = card.Active
+                        Active = card.Active,
+                        Types = new List<TypeDto>(),
+                        Results = new List<ResultDto>(),
 
 
                     };
@@ -89,11 +91,11 @@ namespace SRLearningServer.Components.Converters
                     {
                         if (!card.Types.IsNullOrEmpty())
                         {
-                            newDto.Types.AddRange(ConvertToDtoFromDomain(card.Types, false));
+                            newDto.Types = ConvertToDtoFromDomain(card.Types, false);
                         }
                         if (!card.Results.IsNullOrEmpty())
                         {
-                            newDto.Results.AddRange(ConvertToDtoFromDomain(card.Results, false));
+                            newDto.Results = ConvertToDtoFromDomain(card.Results, false);
                         }
                         if (card.Attachment is not null)
                         {
@@ -150,7 +152,7 @@ namespace SRLearningServer.Components.Converters
                         }
                         if (!result.Cards.IsNullOrEmpty())
                         {
-                            dto.Cards.AddRange(ConvertToDtoFromDomain(result.Cards));
+                            dto.Cards.ToList().AddRange(ConvertToDtoFromDomain(result.Cards));
                         }
                     }
 
@@ -198,11 +200,11 @@ namespace SRLearningServer.Components.Converters
                     {
                         if (!type.Cards.IsNullOrEmpty())
                         {
-                            dto.Cards.AddRange(ConvertToDtoFromDomain(type.Cards));
+                            dto.Cards.ToList().AddRange(ConvertToDtoFromDomain(type.Cards));
                         }
                         if (!type.TypeCategoryLists.IsNullOrEmpty())
                         {
-                            dto.TypeCategoryLists.AddRange(ConvertToDtoFromDomain(type.TypeCategoryLists));
+                            dto.TypeCategoryLists.ToList().AddRange(ConvertToDtoFromDomain(type.TypeCategoryLists));
                         }
                     }
                     typeDtos.Add(dto);
@@ -242,7 +244,7 @@ namespace SRLearningServer.Components.Converters
                     {
                         if (!typeCategoryList.Types.IsNullOrEmpty())
                         {
-                            dto.Types.AddRange(ConvertToDtoFromDomain(typeCategoryList.Types));
+                            dto.Types.ToList().AddRange(ConvertToDtoFromDomain(typeCategoryList.Types));
                         }
                     }
                     typeDtos.Add(dto);

@@ -86,7 +86,7 @@ namespace SRLearningServer.Components.Repositories
                 return null;
             }
         }
-        /// <summary>
+        /*/// <summary>
         /// This gets a single entity with all active and inactive relations.
         /// </summary>
         /// <param name="id"></param>
@@ -105,7 +105,7 @@ namespace SRLearningServer.Components.Repositories
 
                 return null;
             }
-        }
+        }*/
 
         /// <summary>
         /// Gets all the entities of a given type from the database, both active and inactive.
@@ -117,7 +117,7 @@ namespace SRLearningServer.Components.Repositories
             try
             {
 
-                return await _context.Set<TEntity>().AsNoTracking().ToListAsync();
+                return await _context.Set<TEntity>().ToListAsync();
             }
             catch (Exception ex)
             {

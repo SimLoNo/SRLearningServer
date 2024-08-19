@@ -46,6 +46,32 @@ namespace SRLearningServer.Components.Repositories
             }
         }
 
+        /// <summary>
+        /// Returns an Attachment with it's relations with the given id. If no Attachment is found, returns null.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<Attachment> Get(int id)
+        {
+            try
+            {
+                var foundEntity = await _context.Attachments
+                    .Include(a => a.Results)
+                    .Include(a => a.Cards)
+                    .FirstOrDefaultAsync(a => a.AttachmentId == id);
+                if(foundEntity == null)
+                {
+                    return null;
+                }
+                return foundEntity;
+            }
+            catch (Exception ex)
+            {
+
+                return null;
+            }
+        }
+
         /*/// <summary>
         /// Gets all active Attachments from the database.
         /// </summary>
@@ -74,7 +100,10 @@ namespace SRLearningServer.Components.Repositories
         {
             try
             {
-                Attachment trackedAttachment = await _context.Set<Attachment>().FirstOrDefaultAsync(t => t.AttachmentId == attachment.AttachmentId);
+                Attachment trackedAttachment = await _context.Set<Attachment>()
+                    .Include(a => a.Results)
+                    .Include(a => a.Cards)
+                    .FirstOrDefaultAsync(t => t.AttachmentId == attachment.AttachmentId);
                 if (trackedAttachment == null)
                 {
                     return null;

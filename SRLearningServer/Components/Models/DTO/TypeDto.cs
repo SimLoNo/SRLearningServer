@@ -10,7 +10,7 @@ namespace SRLearningServer.Components.Models.DTO
         public DateOnly LastUpdated { get; set; }
         public bool Active { get; set; }
 
-        public List<CardDto> Cards { get; set; } = new();
-        public List<TypeCategoryListDto> TypeCategoryLists { get; set; } = new();
+        public IEnumerable<CardDto> Cards { get; set; } = new List<CardDto>();
+        public IEnumerable<TypeCategoryListDto> TypeCategoryLists { get; set; } = new List<TypeCategoryListDto>();
     }
 }

@@ -31,62 +31,80 @@
     {
         if (workingType == "card")
         {
+            <RadzenStack class="rz-p-0 rz-p-md-12">
+                <RadzenTemplateForm TItem="CardDto" Data=@card>
+                    <RadzenRow>
+                        <RadzenCard>
+                            <RadzenFormField Text="Navn" Variant="@variant">
+                                <ChildContent>
+                                    <RadzenTextBox Name="CardName" @bind-Value="card.CardName" />
+                                </ChildContent>
+                                <Helper>
+                                    <RadzenRequiredValidator Text="Navn er påkrævet" Component="CardName" />
+                                </Helper>
+                            </RadzenFormField>
+                            <RadzenFormField Text="Beskrivelse" Variant="@variant">
+                                <ChildContent>
+                                    <RadzenTextBox Name="CardText" @bind-Value="card.CardText" />
+                                </ChildContent>
+                                <Helper>
+                                    <RadzenRequiredValidator Text="Beskrivelse er påkrævet" Component="CardText" />
+                                </Helper>
+                            </RadzenFormField>
+                            <RadzenFormField Variant="@variant">
+                                <RadzenLabel Text="Vedhæftning" Component="AttachmentDropDown" />
+                                <RadzenDropDownDataGrid Context="AttachmentContext" Name="AttachmentDropDown" @bind-Value="card.AttachmentId" Data="@attachmentList" ValueProperty="AttachmentId" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.Contains" AllowFiltering>
+                                    <Template>
+                                        Navn: @AttachmentContext.AttachmentName - Aktiv: @(@AttachmentContext.Active ? "Ja" : "Nej")
+                                    </Template>
+                                    </RadzenDropDownDataGrid>
+                            </RadzenFormField>
+                            <RadzenFormField Variant="@variant">
+                                <RadzenRadioButtonList Name="Active" @bind-Value="card.Active" TValue="bool">
+                                    <Items>
+                                        <RadzenRadioButtonListItem Text="Aktiv" Value="@true"/>
+                                        <RadzenRadioButtonListItem Text="Inaktiv" Value="@false"/>
+                                    </Items>
+                                </RadzenRadioButtonList>
+                            </RadzenFormField>
+                        </RadzenCard>
+                    </RadzenRow>
+                    <RadzenRow>
+                        <RadzenCard class="rz-p-0 rz-p-md-12" Variant="@variant">
+                            <RadzenPickList Style="width:100%;" Multiple Context="ResultContext" @bind-Target="@card.Results" @bind-Source="@resultList" TextProperty="@nameof(Models.DTO.ResultDto.ResultText)" AllowFiltering>
+                                 <SourceHeader>
+                                     Fravalgte resultater
+                                 </SourceHeader>
+                                 <TargetHeader>
+                                     Valgte resultater
+                                 </TargetHeader>
+                                 <Template>
+                                    resultat: @ResultContext.ResultText - Aktiv: @(@ResultContext.Active ? "Ja" : "Nej")
+                                </Template>
+                            </RadzenPickList>
+                        </RadzenCard>
+                    </RadzenRow>
 
-            <div>
-                <EditForm Model="@card" OnValidSubmit="@CreateCard">
-                    <DataAnnotationsValidator />
-                    <ValidationSummary />
-                    <div>
-                        <label for="cardName">Navn</label>
-                        <InputText type="text" required id="cardName" @bind-Value="card.CardName"/>
-                    </div>
-                    <div>
-                        <label for="cardText">Beskrivelse</label>
-                        <InputText type="text" required id="cardText" @bind-Value="card.CardText" />
-                    </div>
-                    <div>
-                        <label for="active">Aktiv</label>
-                        <InputCheckbox type="checkbox" id="active" @bind-Value="card.Active" />
-                    </div>
-                    <div>
-                        <label for="attachment">Vedhæftning</label>
-                        <InputSelect name="attachment" required @bind-Value="attachmentId">
-                        @foreach (var att in attachmentList)
-                        {
-                            if (att.Active == true)
-                            {
-                                <option value="@att.AttachmentId">@att.AttachmentName</option>
-                            }
-                        }
-                        </InputSelect>
-                    </div>
-                    <div>
-                        <label for="result">Svar</label>
-                        <InputSelect multiple name="result" @bind-Value="selectedResultIds">
-                            @foreach (var result in resultList)
-                            {
-                                if (result.Active == true)
-                                {
-                                    <option value="@result.ResultId">@result.ResultText</option>
-                                }
-                            }
-                        </InputSelect>
-                    </div>
-                    <div>
-                        <label for="type">Typer</label>
-                        <InputSelect multiple name="type" @bind-Value="selectedTypeIds">
-                            @foreach (var type in typeList)
-                            {
-                                if (type.Active == true)
-                                {
-                                    <option value="@type.TypeId">@type.CardTypeName</option>
-                                }
-                            }
-                        </InputSelect> 
-                    </div>
-                    <button type="submit">Submit</button>
-                </EditForm>
-            </div>
+                    <RadzenRow>
+                        <RadzenCard class="rz-p-0 rz-p-md-12" Variant="@variant">
+                            <RadzenPickList Style="width:100%;" Multiple Context="TypeContext" @bind-Target="@card.Types" @bind-Source="@typeList" TextProperty="@nameof(Models.DTO.TypeDto.CardTypeName)" AllowFiltering>
+                                <SourceHeader>
+                                    Fravalgte typer
+                                </SourceHeader>
+                                <TargetHeader>
+                                    Valgte typer
+                                </TargetHeader>
+                                <Template>
+                                    Type: @TypeContext.CardTypeName - Aktiv: @(@TypeContext.Active ? "Ja" : "Nej")
+                                </Template>
+                            </RadzenPickList>
+                        </RadzenCard>
+                    </RadzenRow>
+                </RadzenTemplateForm>
+            </RadzenStack>
+                
+
+                
         }
         else if (workingType == "attachment")
         {
@@ -112,7 +130,7 @@
         }
         else if (workingType == "result")
         {
-            <div>
+            @* <div>
                 <EditForm Model="@result" OnValidSubmit="@CreateResult">
                     <DataAnnotationsValidator />
                     <ValidationSummary />
@@ -138,11 +156,11 @@
                     </div>
                     <button type="submit">Submit</button>
                 </EditForm>
-            </div>
+            </div> *@
         }
         else if (workingType == "type")
         {
-            <div>
+            @* <div>
                 <EditForm Model="@type" OnValidSubmit="CreateType">
                     <DataAnnotationsValidator />
                     <ValidationSummary />
@@ -156,11 +174,11 @@
                     </div>
                     <button type="submit">Submit</button>
                 </EditForm>
-            </div>
+            </div> *@
         }
         else if (workingType == "typeCategoryList")
         {
-            <div>
+            @* <div>
                 <EditForm Model="@typeCategoryList" OnValidSubmit="CreateTypeCategoryList">
                     <DataAnnotationsValidator />
                     <ValidationSummary />
@@ -186,7 +204,7 @@
                     </div>
                     <button type="submit">Submit</button>
                 </EditForm>
-            </div>
+            </div> *@
         }
 
     }
@@ -207,61 +225,85 @@
             </div>
             if (card.CardId > 0)
             {
-                <div>
-                    <EditForm Model="@card" OnValidSubmit="@UpdateCard">
-                        <DataAnnotationsValidator />
-                        <ValidationSummary />
-                        <div>
-                            <label for="cardName">Navn</label>
-                            <InputText type="text" required id="cardName" @bind-Value="card.CardName" />
-                        </div>
-                        <div>
-                            <label for="cardText">Beskrivelse</label>
-                            <InputText type="text" required id="cardText" @bind-Value="card.CardText" />
-                        </div>
-                        <div>
-                            <label for="active">Aktiv</label>
-                            <InputCheckbox type="checkbox" id="active" @bind-Value="card.Active" />
-                        </div>
-                        <div>
-                            <label for="attachment">Vedhæftning</label>
-                            <InputSelect name="attachment" required @bind-Value="attachmentId">
-                                @foreach (var att in attachmentList)
-                                {
-                                    if (att.Active == true)
-                                    {
-                                        <option value="@att.AttachmentId">@att.AttachmentName</option>
-                                    }
-                                }
-                            </InputSelect>
-                        </div>
-                        <div>
-                            <label for="result">Svar</label>
-                            <InputSelect multiple name="result" @bind-Value="selectedResultIds">
-                                @foreach (var result in resultList)
-                                {
-                                    if (result.Active == true)
-                                    {
-                                        <option value="@result.ResultId">@result.ResultText</option>
-                                    }
-                                }
-                            </InputSelect>
-                        </div>
-                        <div>
-                            <label for="type">Typer</label>
-                            <InputSelect multiple name="type" @bind-Value="selectedTypeIds">
-                                @foreach (var type in typeList)
-                                {
-                                    if (type.Active == true)
-                                    {
-                                        <option value="@type.TypeId">@type.CardTypeName</option>
-                                    }
-                                }
-                            </InputSelect>
-                        </div>
-                        <button type="submit">Submit</button>
-                    </EditForm>
-                </div>
+                <RadzenCard>
+                <RadzenStack class="rz-p-0 rz-p-md-12">
+                    <RadzenTemplateForm TItem="CardDto" Data=@card>
+                        <RadzenRow>
+                            <RadzenColumn Size="12" SizeMD="12">
+                                    <RadzenColumn Size="12">
+                                <RadzenFormField Text="Navn" Variant="@variant">
+                                    <ChildContent>
+                                        <RadzenTextBox Style="width: 100%" Name="CardName" @bind-Value="card.CardName" />
+                                    </ChildContent>
+                                    <Helper>
+                                        <RadzenRequiredValidator Text="Navn er påkrævet" Component="CardName" />
+                                    </Helper>
+                                </RadzenFormField>
+                            </RadzenColumn>
+
+                            <RadzenColumn>
+                                <RadzenFormField Text="Beskrivelse" Variant="@variant">
+                                    <ChildContent>
+                                        <RadzenTextBox Name="CardText" @bind-Value="card.CardText" />
+                                    </ChildContent>
+                                    <Helper>
+                                        <RadzenRequiredValidator Text="Beskrivelse er påkrævet" Component="CardText" />
+                                    </Helper>
+                                </RadzenFormField>
+                            </RadzenColumn>
+
+                            <RadzenColumn>
+                                <RadzenFormField Variant="@variant">
+                                    <RadzenLabel Text="Vedhæftning" Component="AttachmentDropDown" />
+                                    <RadzenDropDownDataGrid Context="AttachmentContext" Name="AttachmentDropDown" @bind-Value="card.AttachmentId" Data="@attachmentList" ValueProperty="AttachmentId" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.Contains" AllowFiltering>
+                                     <Template>
+                                         Navn: @AttachmentContext.AttachmentName - Aktiv: @(@AttachmentContext.Active ? "Ja" : "Nej")
+                                        </Template>
+                                    </RadzenDropDownDataGrid>
+                                </RadzenFormField>
+                            </RadzenColumn>
+                             <RadzenColumn>
+                                <RadzenFormField Variant="@variant">
+                                    <RadzenRadioButtonList Name="Active" @bind-Value="card.Active" TValue="bool">
+                                        <Items>
+                                            <RadzenRadioButtonListItem Text="Aktiv" Value="@true" />
+                                            <RadzenRadioButtonListItem Text="Inaktiv" Value="@false" />
+                                        </Items>
+                                    </RadzenRadioButtonList>
+                                </RadzenFormField>
+                            </RadzenColumn>
+                                </RadzenColumn>
+                        </RadzenRow>
+                        <RadzenRow>
+                                <RadzenPickList Style="width:100%;" Multiple Context="ResultContext" @bind-Target="@card.Results" @bind-Source="@resultList" TextProperty="@nameof(Models.DTO.ResultDto.ResultText)" AllowFiltering>
+                                 <SourceHeader>
+                                     Fravalgte resultater
+                                 </SourceHeader>
+                                 <TargetHeader>
+                                     Valgte resultater
+                                 </TargetHeader>
+                                 <Template>
+                                     resultat: @ResultContext.ResultText - Aktiv: @(@ResultContext.Active ? "Ja" : "Nej")
+                                    </Template>
+                                </RadzenPickList>
+                        </RadzenRow>
+
+                        <RadzenRow>
+                                <RadzenPickList Style="width:100%;" Multiple Context="TypeContext" @bind-Target="@card.Types" @bind-Source="@typeList" TextProperty="@nameof(Models.DTO.TypeDto.CardTypeName)" AllowFiltering>
+                                 <SourceHeader>
+                                     Fravalgte typer
+                                 </SourceHeader>
+                                 <TargetHeader>
+                                     Valgte typer
+                                 </TargetHeader>
+                                 <Template>
+                                     Type: @TypeContext.CardTypeName - Aktiv: @(@TypeContext.Active ? "Ja" : "Nej")
+                                    </Template>
+                                </RadzenPickList>
+                        </RadzenRow>
+                    </RadzenTemplateForm>
+                </RadzenStack>
+                </RadzenCard>
             }
         }
         else if (workingType == "attachment")
@@ -288,7 +330,7 @@
         }
         else if (workingType == "result")
         {
-            <div>
+            @* <div>
                 <EditForm Model="@result" OnValidSubmit="@CreateResult">
                     <DataAnnotationsValidator />
                     <ValidationSummary />
@@ -314,7 +356,7 @@
                     </div>
                     <button type="submit">Submit</button>
                 </EditForm>
-            </div>
+            </div> *@
         }
         else if (workingType == "type")
         {
@@ -336,7 +378,7 @@
         }
         else if (workingType == "typeCategoryList")
         {
-            <div>
+            @* <div>
                 <EditForm Model="@typeCategoryList" OnValidSubmit="CreateTypeCategoryList">
                     <DataAnnotationsValidator />
                     <ValidationSummary />
@@ -362,7 +404,7 @@
                     </div>
                     <button type="submit">Submit</button>
                 </EditForm>
-            </div>
+            </div> *@
         }
     }
     else
@@ -388,17 +430,26 @@
     private TypeDto type = new();
     private TypeCategoryListDto typeCategoryList = new();
 
-    private List<CardDto> cardList = new();
-    private List<AttachmentDto> attachmentList = new();
-    private List<ResultDto> resultList = new();
-    private List<TypeDto> typeList = new();
-    private List<TypeCategoryListDto> typeCategoryListList = new();
-    private string attachmentDirectory = "wwwroot//Development/Attachments/";
+    private List<CardDto> _cardList;
+    private List<AttachmentDto> _attachmentList;
+    private List<ResultDto> _resultList;
+    private List<TypeDto> _typeList;
+    private List<TypeCategoryListDto> _typeCategoryListList;
 
 
-    int attachmentId = 0;
-    int[] selectedResultIds = [];
-    int[] selectedTypeIds = [];
+    private IEnumerable<CardDto> cardList;
+    private IEnumerable<AttachmentDto> attachmentList;
+    private IEnumerable<ResultDto> resultList;
+    private IEnumerable<TypeDto> typeList;
+    private IEnumerable<TypeCategoryListDto> typeCategoryListList;
+    private string attachmentDirectory = "/Development/Attachments/";
+
+    Variant variant = Variant.Filled;
+
+
+    // int attachmentId = 0;
+    // int[] selectedResultIds = [];
+    // int[] selectedTypeIds = [];
 
     private IBrowserFile? selectedFile;
 
@@ -406,11 +457,11 @@
     {
         try
         {
-            attachmentList = await GetAttachments();
-            cardList = await GetCards();
-            resultList = await GetResults();
-            typeList = await GetTypes();
-            typeCategoryListList = await GetTypeCategoryLists();
+            _attachmentList = await GetAttachments();
+            _cardList = await GetCards();
+            _resultList = await GetResults();
+            _typeList = await GetTypes();
+            _typeCategoryListList = await GetTypeCategoryLists();
         }
         catch (Exception ex)
         {
@@ -449,6 +500,11 @@
         result = new();
         type = new();
         typeCategoryList = new();
+        cardList = new List<CardDto>(_cardList);
+        attachmentList = new List<AttachmentDto>(_attachmentList);
+        resultList = new List<ResultDto>(_resultList);
+        typeList = new List<TypeDto>(_typeList);
+        typeCategoryListList = new List<TypeCategoryListDto>(_typeCategoryListList);
     }
 
     private async Task<List<AttachmentDto>> GetAttachments()
@@ -508,23 +564,23 @@
     private async void CreateCard()
     {
         var entity = card;
-        if (attachmentId > 0)
-        {
-            entity.Attachment = attachmentList.FirstOrDefault(x => x.AttachmentId == attachmentId);
+        // if (attachmentId > 0)
+        // {
+        //     entity.Attachment = attachmentList.FirstOrDefault(x => x.AttachmentId == attachmentId);
 
-        }
-        if (selectedResultIds.Length > 0)
-        {
-            entity.Results = resultList.Where(x => selectedResultIds.Contains(x.ResultId)).ToList();
-        }
-        if (selectedTypeIds.Length > 0)
-        {
-            entity.Types = typeList.Where(x => selectedTypeIds.Contains(x.TypeId)).ToList();
-        }
+        // }
+        // if (selectedResultIds.Length > 0)
+        // {
+        //     entity.Results = resultList.Where(x => selectedResultIds.Contains(x.ResultId)).ToList();
+        // }
+        // if (selectedTypeIds.Length > 0)
+        // {
+        //     entity.Types = typeList.Where(x => selectedTypeIds.Contains(x.TypeId)).ToList();
+        // }
         var result = await _cardService.Create(entity);
         if (result is not null)
         {
-            cardList.Add(result);
+            cardList.ToList().Add(result);
             createType = false;
             ResetWork();
             StateHasChanged();
@@ -548,7 +604,7 @@
         var result = await _attachmentService.Create(attachment);
         if (result is not null)
         {
-            attachmentList.Add(result);
+            attachmentList.ToList().Add(result);
             createType = false;
             ResetWork();
             StateHasChanged();
@@ -581,7 +637,7 @@
         var resultReceived = await _resultService.Create(result);
         if (resultReceived is not null)
         {
-            resultList.Add(resultReceived);
+            resultList.ToList().Add(resultReceived);
             createType = false;
             ResetWork();
             StateHasChanged();
@@ -593,7 +649,7 @@
         var result = await _typeService.Create(type);
         if (result is not null)
         {
-            typeList.Add(result);
+            typeList.ToList().Add(result);
             createType = false;
             ResetWork();
             StateHasChanged();
@@ -602,14 +658,14 @@
 
     private async void CreateTypeCategoryList()
     {
-        if (selectedTypeIds.Length > 0)
-        {
-            typeCategoryList.Types = typeList.Where(x => selectedTypeIds.Contains(x.TypeId)).ToList();
-        }
+        // if (selectedTypeIds.Length > 0)
+        // {
+        //     typeCategoryList.Types = typeList.Where(x => selectedTypeIds.Contains(x.TypeId)).ToList();
+        // }
         var result = await _typeCategoryListService.Create(typeCategoryList);
         if (result is not null)
         {
-            typeCategoryListList.Add(result);
+            typeCategoryListList.ToList().Add(result);
             createType = false;
             ResetWork();
             StateHasChanged();
@@ -620,17 +676,37 @@
     {
         if (int.TryParse(e.Value.ToString(), out int cardId))
         {
-            card = await _cardService.GetByid(cardId);
-            attachmentId = Convert.ToInt32(card.AttachmentId);
-            selectedResultIds = card.Results.Select(x => x.ResultId).ToArray();
-            selectedTypeIds = card.Types.Select(x => x.TypeId).ToArray();
-            StateHasChanged();
+            if (cardId > 0)
+            {
+                card = await _cardService.GetByid(cardId);
+                resultList = FilterResults(card.Results);
+                typeList = FilterTypes(card.Types);
+                // attachmentId = Convert.ToInt32(card.AttachmentId);
+                // selectedResultIds = card.Results.Select(x => x.ResultId).ToArray();
+                // selectedTypeIds = card.Types.Select(x => x.TypeId).ToArray();
+                StateHasChanged();
+            }
         }
+    }
+
+    private IEnumerable<ResultDto> FilterResults(IEnumerable<ResultDto> results)
+    {
+        return _resultList.Where(result => !results.Any(r => r.ResultId == result.ResultId)).ToList();
+    }
+
+    private IEnumerable<TypeDto> FilterTypes(IEnumerable<TypeDto> types)
+    {
+        return _typeList.Where(type => !types.Any(t => t.TypeId == type.TypeId)).ToList();
     }
 
     private async void UpdateCard()
     {
         
+    }
+
+    private void SetAttachmentId(int id)
+    {
+        //attachmentId = id;
     }
 
 

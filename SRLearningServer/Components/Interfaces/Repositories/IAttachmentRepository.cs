@@ -6,5 +6,6 @@ namespace SRLearningServer.Components.Interfaces.Repositories
     {
         Task<Attachment> Create(Attachment entity);
         Task<Attachment> Update(Attachment attachment);
+        Task<Attachment> Get(int id);
     }
 }

@@ -28,14 +28,14 @@ namespace SRLearningServer.Components.Converters
                     };
                     if (!dto.Results.IsNullOrEmpty())
                     {
-                        foreach (Result result in ConvertToDomainFromDto(dto.Results))
+                        foreach (Result result in ConvertToDomainFromDto(dto.Results.ToList()))
                         {
                             attachment.Results.Add(result);
                         }
                     }
                     if (!dto.Cards.IsNullOrEmpty())
                     {
-                        foreach (Card card in ConvertToDomainFromDto(dto.Cards))
+                        foreach (Card card in ConvertToDomainFromDto(dto.Cards.ToList()))
                         {
                             attachment.Cards.Add(card);
                         }
@@ -87,14 +87,14 @@ namespace SRLearningServer.Components.Converters
                     };
                     if (!cardDto.Types.IsNullOrEmpty())
                     {
-                        foreach (Components.Models.Type type in ConvertToDomainFromDto(cardDto.Types))
+                        foreach (Components.Models.Type type in ConvertToDomainFromDto(cardDto.Types.ToList()))
                         {
                             newCard.Types.Add(type);
                         }
                     }
                     if (!cardDto.Results.IsNullOrEmpty())
                     {
-                        foreach (Result result in ConvertToDomainFromDto(cardDto.Results))
+                        foreach (Result result in ConvertToDomainFromDto(cardDto.Results.ToList()))
                         {
                             newCard.Results.Add(result);
                         }
@@ -164,7 +164,7 @@ namespace SRLearningServer.Components.Converters
                     }
                     if (!dto.Cards.IsNullOrEmpty())
                     {
-                        foreach (Card card in ConvertToDomainFromDto(dto.Cards))
+                        foreach (Card card in ConvertToDomainFromDto(dto.Cards.ToList()))
                         {
                             result.Cards.Add(card);
                         }
@@ -211,14 +211,14 @@ namespace SRLearningServer.Components.Converters
                     };
                     if (!dto.Cards.IsNullOrEmpty())
                     {
-                        foreach (Card card in ConvertToDomainFromDto(dto.Cards))
+                        foreach (Card card in ConvertToDomainFromDto(dto.Cards.ToList()))
                         {
                             type.Cards.Add(card);
                         }
                     }
                     if (!dto.TypeCategoryLists.IsNullOrEmpty())
                     {
-                        foreach (TypeCategoryList tcl in ConvertToDomainFromDto(dto.TypeCategoryLists))
+                        foreach (TypeCategoryList tcl in ConvertToDomainFromDto(dto.TypeCategoryLists.ToList()))
                         {
                             type.TypeCategoryLists.Add(tcl);
                         }
@@ -257,7 +257,7 @@ namespace SRLearningServer.Components.Converters
                     };
                     if (!dto.Types.IsNullOrEmpty())
                     {
-                        foreach (Models.Type tcl in ConvertToDomainFromDto(dto.Types))
+                        foreach (Models.Type tcl in ConvertToDomainFromDto(dto.Types.ToList()))
                         {
                             typeCategoryList.Types.Add(tcl);
                         }

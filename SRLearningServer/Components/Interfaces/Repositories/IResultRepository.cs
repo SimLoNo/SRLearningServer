@@ -6,5 +6,6 @@ namespace SRLearningServer.Components.Interfaces.Repositories
     {
         Task<Result> Create(Result entity);
         Task<Result> Update(Result result);
+        Task<Result> Get(int id);
     }
 }
