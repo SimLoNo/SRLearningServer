@@ -95,7 +95,7 @@ namespace SRLearningServer.Components.Services
                 {
                     return null;
                 }
-                return _domainToDtoConverter.ConvertToDtoFromDomain(typeCategoryList);
+                return _domainToDtoConverter.ConvertToDtoFromDomain(typeCategoryList, true);
             }
             catch (Exception ex)
             {

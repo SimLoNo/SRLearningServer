@@ -31,80 +31,125 @@
     {
         if (workingType == "card")
         {
-            <RadzenStack class="rz-p-0 rz-p-md-12">
-                <RadzenTemplateForm TItem="CardDto" Data=@card>
-                    <RadzenRow>
-                        <RadzenCard>
-                            <RadzenFormField Text="Navn" Variant="@variant">
-                                <ChildContent>
-                                    <RadzenTextBox Name="CardName" @bind-Value="card.CardName" />
-                                </ChildContent>
-                                <Helper>
-                                    <RadzenRequiredValidator Text="Navn er påkrævet" Component="CardName" />
-                                </Helper>
-                            </RadzenFormField>
-                            <RadzenFormField Text="Beskrivelse" Variant="@variant">
-                                <ChildContent>
-                                    <RadzenTextBox Name="CardText" @bind-Value="card.CardText" />
-                                </ChildContent>
-                                <Helper>
-                                    <RadzenRequiredValidator Text="Beskrivelse er påkrævet" Component="CardText" />
-                                </Helper>
-                            </RadzenFormField>
-                            <RadzenFormField Variant="@variant">
-                                <RadzenLabel Text="Vedhæftning" Component="AttachmentDropDown" />
-                                <RadzenDropDownDataGrid Context="AttachmentContext" Name="AttachmentDropDown" @bind-Value="card.AttachmentId" Data="@attachmentList" ValueProperty="AttachmentId" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.Contains" AllowFiltering>
-                                    <Template>
-                                        Navn: @AttachmentContext.AttachmentName - Aktiv: @(@AttachmentContext.Active ? "Ja" : "Nej")
-                                    </Template>
-                                    </RadzenDropDownDataGrid>
-                            </RadzenFormField>
-                            <RadzenFormField Variant="@variant">
-                                <RadzenRadioButtonList Name="Active" @bind-Value="card.Active" TValue="bool">
-                                    <Items>
-                                        <RadzenRadioButtonListItem Text="Aktiv" Value="@true"/>
-                                        <RadzenRadioButtonListItem Text="Inaktiv" Value="@false"/>
-                                    </Items>
-                                </RadzenRadioButtonList>
-                            </RadzenFormField>
-                        </RadzenCard>
-                    </RadzenRow>
-                    <RadzenRow>
-                        <RadzenCard class="rz-p-0 rz-p-md-12" Variant="@variant">
+            <RadzenCard>
+                <RadzenStack class="rz-p-0 rz-p-md-12">
+                    <h3>Opret Kort</h3>
+                    <RadzenTemplateForm TItem="CardDto" Data=@card Submit="CreateCard">
+                        <RadzenRow>
+                            <RadzenColumn Size="12" SizeMD="12">
+                                <RadzenColumn Size="12">
+                                    <RadzenFormField Text="Navn" Variant="@variant">
+                                        <ChildContent>
+                                            <RadzenTextBox Style="width: 100%" Name="CardName" @bind-Value="card.CardName" />
+                                        </ChildContent>
+                                        <Helper>
+                                            <RadzenRequiredValidator Text="Navn er påkrævet" Component="CardName" />
+                                        </Helper>
+                                    </RadzenFormField>
+                                </RadzenColumn>
+
+                                <RadzenColumn>
+                                    <RadzenFormField Text="Beskrivelse" Variant="@variant">
+                                        <ChildContent>
+                                            <RadzenTextBox Name="CardText" @bind-Value="card.CardText" />
+                                        </ChildContent>
+                                        <Helper>
+                                            <RadzenRequiredValidator Text="Beskrivelse er påkrævet" Component="CardText" />
+                                        </Helper>
+                                    </RadzenFormField>
+                                </RadzenColumn>
+
+                                <RadzenColumn>
+                                    <RadzenFormField Variant="@variant">
+                                        <ChildContent>
+                                        <RadzenLabel Text="Vedhæftning" Component="AttachmentDropDown" />
+                                        <RadzenDropDownDataGrid Context="AttachmentContext" Name="AttachmentDropDown" @bind-Value="card.AttachmentId" Data="@attachmentList" ValueProperty="@nameof(AttachmentDto.AttachmentId)" TextProperty="@nameof(AttachmentDto.AttachmentName)" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.Contains" AllowFiltering="true">
+                                            <Template>
+                                                @if (AttachmentContext.Active == true)
+                                                {
+                                                    <span>Navn: @AttachmentContext.AttachmentName - Aktiv: @(@AttachmentContext.Active ? "Ja" : "Nej")</span>
+                                                }
+                                                else
+                                                {
+                                                    <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Navn: @AttachmentContext.AttachmentName - Aktiv: @(@AttachmentContext.Active ? "Ja" : "Nej")</span>
+                                                }
+
+                                            </Template>
+                                        </RadzenDropDownDataGrid>
+                                        </ChildContent>
+                                        <Helper>
+                                            <RadzenRequiredValidator Text="Vedhæftning er påkrævet" Component="AttachmentDropDown" />
+                                        </Helper>
+                                    </RadzenFormField>
+                                </RadzenColumn>
+                                <RadzenColumn>
+                                    <RadzenFormField Variant="@variant">
+                                        <ChildContent>
+                                        <RadzenRadioButtonList Name="Active" @bind-Value="card.Active" TValue="bool">
+                                            <Items>
+                                                <RadzenRadioButtonListItem Text="Aktiv" Value="@true" />
+                                                <RadzenRadioButtonListItem Text="Inaktiv" Value="@false" />
+                                            </Items>
+                                        </RadzenRadioButtonList>
+                                        </ChildContent>
+                                        <Helper>
+                                            <RadzenRequiredValidator Text="Status er påkrævet" Component="Active" />
+                                            </Helper>
+                                    </RadzenFormField>
+                                </RadzenColumn>
+                            </RadzenColumn>
+                        </RadzenRow>
+                        <RadzenRow>
                             <RadzenPickList Style="width:100%;" Multiple Context="ResultContext" @bind-Target="@card.Results" @bind-Source="@resultList" TextProperty="@nameof(Models.DTO.ResultDto.ResultText)" AllowFiltering>
-                                 <SourceHeader>
-                                     Fravalgte resultater
-                                 </SourceHeader>
-                                 <TargetHeader>
-                                     Valgte resultater
-                                 </TargetHeader>
-                                 <Template>
-                                    resultat: @ResultContext.ResultText - Aktiv: @(@ResultContext.Active ? "Ja" : "Nej")
+                             <SourceHeader>
+                                 Fravalgte resultater
+                             </SourceHeader>
+                             <TargetHeader>
+                                 Valgte resultater
+                             </TargetHeader>
+                             <Template>
+                                 @if (ResultContext.Active == true)
+                                    {
+                                        <span>resultat: @ResultContext.ResultText - Aktiv: @(@ResultContext.Active ? "Ja" : "Nej")</span>
+                                    }
+                                    else
+                                    {
+                                        <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>resultat: @ResultContext.ResultText - Aktiv: @(@ResultContext.Active ? "Ja" : "Nej")</span>
+                                    }
+
                                 </Template>
                             </RadzenPickList>
-                        </RadzenCard>
-                    </RadzenRow>
+                        </RadzenRow>
 
-                    <RadzenRow>
-                        <RadzenCard class="rz-p-0 rz-p-md-12" Variant="@variant">
+                        <RadzenRow>
                             <RadzenPickList Style="width:100%;" Multiple Context="TypeContext" @bind-Target="@card.Types" @bind-Source="@typeList" TextProperty="@nameof(Models.DTO.TypeDto.CardTypeName)" AllowFiltering>
-                                <SourceHeader>
-                                    Fravalgte typer
-                                </SourceHeader>
-                                <TargetHeader>
-                                    Valgte typer
-                                </TargetHeader>
-                                <Template>
-                                    Type: @TypeContext.CardTypeName - Aktiv: @(@TypeContext.Active ? "Ja" : "Nej")
+                             <SourceHeader>
+                                 Fravalgte typer
+                             </SourceHeader>
+                             <TargetHeader>
+                                 Valgte typer
+                             </TargetHeader>
+                             <Template>
+                                 @if (TypeContext.Active == true)
+                                    {
+                                        <span>Type: @TypeContext.CardTypeName - Aktiv: @(@TypeContext.Active ? "Ja" : "Nej")</span>
+                                    }
+                                    else
+                                    {
+                                        <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Type: @TypeContext.CardTypeName - Aktiv: @(@TypeContext.Active ? "Ja" : "Nej")</span>
+                                    }
+
                                 </Template>
                             </RadzenPickList>
-                        </RadzenCard>
-                    </RadzenRow>
-                </RadzenTemplateForm>
-            </RadzenStack>
-                
+                        </RadzenRow>
+                        <RadzenButton ButtonType="ButtonType.Submit" Text="Gem"></RadzenButton>
 
-                
+                    </RadzenTemplateForm>
+                </RadzenStack>
+            </RadzenCard>
+
+
+
         }
         else if (workingType == "attachment")
         {
@@ -130,85 +175,272 @@
         }
         else if (workingType == "result")
         {
-            @* <div>
-                <EditForm Model="@result" OnValidSubmit="@CreateResult">
-                    <DataAnnotationsValidator />
-                    <ValidationSummary />
-                    <div>
-                        <label for="resultText">Tekst</label>
-                        <InputText type="text" required id="resultText" @bind-Value="result.ResultText" />
-                    </div>
-                    <div>
-                        <label for="active">Aktiv</label>
-                        <InputCheckbox type="checkbox" id="active" @bind-Value="result.Active" />
-                    </div>
-                    <div>
-                        <label for="attachment">Vedhæftning</label>
-                        <InputSelect name="attachment" @bind-Value="attachmentId">
-                            @foreach (var att in attachmentList)
-                            {
-                                if (att.Active == true)
-                                {
-                                    <option value="@att.AttachmentId">@att.AttachmentName</option>
-                                }
-                            }
-                        </InputSelect>
-                    </div>
-                    <button type="submit">Submit</button>
-                </EditForm>
-            </div> *@
+            <RadzenCard>
+                <RadzenStack class="rz-p-0 rz-p-md-12">
+                    <h3>Opret Resultat</h3>
+                    <RadzenTemplateForm TItem="ResultDto" Data=@result Submit="CreateResult">
+                        <RadzenRow>
+                            <RadzenColumn Size="12" SizeMD="12">
+                                <RadzenColumn Size="12">
+                                    <RadzenFormField Text="Tekst" Variant="@variant">
+                                        <ChildContent>
+                                            <RadzenTextBox Style="width: 100%" Name="ResultText" @bind-Value="result.ResultText" />
+                                        </ChildContent>
+                                        <Helper>
+                                            <RadzenRequiredValidator Text="Tekst er påkrævet" Component="ResultText" />
+                                        </Helper>
+                                    </RadzenFormField>
+                                </RadzenColumn>
+
+                                
+
+                                <RadzenColumn>
+                                    <RadzenFormField Variant="@variant">
+                                        <ChildContent>
+                                            <RadzenLabel Text="Vedhæftning" Component="AttachmentDropDown" />
+                                            <RadzenDropDownDataGrid Context="AttachmentContext" Name="AttachmentDropDown" @bind-Value="result.AttachmentId" Data="@attachmentList" ValueProperty="@nameof(AttachmentDto.AttachmentId)" TextProperty="@nameof(AttachmentDto.AttachmentName)" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.Contains" AllowFiltering="true" AllowClear="true">
+                                                <Template>
+                                                    @if (AttachmentContext.Active == true)
+                                                    {
+                                                        <span>Navn: @AttachmentContext.AttachmentName - Aktiv: @(@AttachmentContext.Active ? "Ja" : "Nej")</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Navn: @AttachmentContext.AttachmentName - Aktiv: @(@AttachmentContext.Active ? "Ja" : "Nej")</span>
+                                                    }
+
+                                                </Template>
+                                            </RadzenDropDownDataGrid>
+                                        </ChildContent>
+                                    </RadzenFormField>
+                                </RadzenColumn>
+                                <RadzenColumn>
+                                    <RadzenFormField Variant="@variant">
+                                        <ChildContent>
+                                            <RadzenRadioButtonList Name="Active" @bind-Value="result.Active" TValue="bool">
+                                                <Items>
+                                                    <RadzenRadioButtonListItem Text="Aktiv" Value="@true" />
+                                                    <RadzenRadioButtonListItem Text="Inaktiv" Value="@false" />
+                                                </Items>
+                                            </RadzenRadioButtonList>
+                                        </ChildContent>
+                                        <Helper>
+                                            <RadzenRequiredValidator Text="Status er påkrævet" Component="Active" />
+                                        </Helper>
+                                    </RadzenFormField>
+                                </RadzenColumn>
+                            </RadzenColumn>
+                        </RadzenRow>
+                        <RadzenRow>
+                            <RadzenPickList Style="width:100%;" Multiple Context="CardContext" @bind-Target="@result.Cards" @bind-Source="@cardList" TextProperty="@nameof(CardDto.CardName)" AllowFiltering>
+                             <SourceHeader>
+                                 Fravalgte Kort
+                             </SourceHeader>
+                             <TargetHeader>
+                                 Valgte Kort
+                             </TargetHeader>
+                             <Template>
+                                 @if (CardContext.Active == true)
+                                    {
+                                        <span>resultat: @CardContext.CardName - Aktiv: @(@CardContext.Active ? "Ja" : "Nej")</span>
+                                    }
+                                    else
+                                    {
+                                        <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>resultat: @CardContext.CardName - Aktiv: @(@CardContext.Active ? "Ja" : "Nej")</span>
+                                    }
+
+                                </Template>
+                            </RadzenPickList>
+                        </RadzenRow>
+
+                        
+                        <RadzenButton ButtonType="ButtonType.Submit" Text="Gem"></RadzenButton>
+
+                    </RadzenTemplateForm>
+                </RadzenStack>
+            </RadzenCard>
+            
         }
         else if (workingType == "type")
         {
-            @* <div>
-                <EditForm Model="@type" OnValidSubmit="CreateType">
-                    <DataAnnotationsValidator />
-                    <ValidationSummary />
-                    <div>
-                        <label for="cardTypeName">Navn</label>
-                        <InputText type="text" required id="cardTypeName" @bind-Value="type.CardTypeName" />
-                    </div>
-                    <div>
-                        <label for="active">Aktiv</label>
-                        <InputCheckbox type="checkbox" id="active" @bind-Value="type.Active" />
-                    </div>
-                    <button type="submit">Submit</button>
-                </EditForm>
-            </div> *@
+            <RadzenCard>
+                <RadzenStack class="rz-p-0 rz-p-md-12">
+                    <h3>Opret Type</h3>
+                    <RadzenTemplateForm TItem="TypeDto" Data=@type Submit="CreateType">
+                        <RadzenRow>
+                            <RadzenColumn Size="12" SizeMD="12">
+                                <RadzenColumn Size="12">
+                                    <RadzenFormField Text="Navn" Variant="@variant">
+                                        <ChildContent>
+                                            <RadzenTextBox Style="width: 100%" Name="CardTypeName" @bind-Value="type.CardTypeName" />
+                                        </ChildContent>
+                                        <Helper>
+                                            <RadzenRequiredValidator Text="Navn er påkrævet" Component="CardTypeName" />
+                                        </Helper>
+                                    </RadzenFormField>
+                                </RadzenColumn>
+
+                                <RadzenColumn>
+                                    <RadzenFormField Variant="@variant">
+                                        <ChildContent>
+                                            <RadzenRadioButtonList Name="Active" @bind-Value="type.Active" TValue="bool">
+                                                <Items>
+                                                    <RadzenRadioButtonListItem Text="Aktiv" Value="@true" />
+                                                    <RadzenRadioButtonListItem Text="Inaktiv" Value="@false" />
+                                                </Items>
+                                            </RadzenRadioButtonList>
+                                        </ChildContent>
+                                        <Helper>
+                                            <RadzenRequiredValidator Text="Status er påkrævet" Component="Active" />
+                                        </Helper>
+                                    </RadzenFormField>
+                                </RadzenColumn>
+                            </RadzenColumn>
+                        </RadzenRow>
+                        <RadzenRow>
+                            <RadzenPickList Style="width:100%;" Multiple Context="CardContext" @bind-Target="@type.Cards" @bind-Source="@cardList" TextProperty="@nameof(CardDto.CardName)" AllowFiltering>
+                             <SourceHeader>
+                                 Fravalgte Kort
+                             </SourceHeader>
+                             <TargetHeader>
+                                 Valgte Kort
+                             </TargetHeader>
+                             <Template>
+                                 @if (CardContext.Active == true)
+                                    {
+                                        <span>Kort: @CardContext.CardName - Aktiv: @(CardContext.Active ? "Ja" : "Nej")</span>
+                                    }
+                                    else
+                                    {
+                                        <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Kort: @CardContext.CardName- Aktiv: @(@CardContext.Active ? "Ja" : "Nej")</span>
+                                    }
+
+                                </Template>
+                            </RadzenPickList>
+                        </RadzenRow>
+
+                        <RadzenRow>
+                            <RadzenPickList Style="width:100%;" Multiple Context="TypeCategoryContext" @bind-Target="@type.TypeCategoryLists" @bind-Source="@typeCategoryListList" TextProperty="@nameof(TypeCategoryListDto.TypeCategoryListName)" AllowFiltering>
+                             <SourceHeader>
+                                 Fravalgte type kategorier
+                             </SourceHeader>
+                             <TargetHeader>
+                                 Valgte type kategorier
+                             </TargetHeader>
+                             <Template>
+                                 @if (TypeCategoryContext.Active == true)
+                                    {
+                                        <span>Type kategori: @TypeCategoryContext.TypeCategoryListName - Aktiv: @(@TypeCategoryContext.Active ? "Ja" : "Nej")</span>
+                                    }
+                                    else
+                                    {
+                                        <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Type kategori: @TypeCategoryContext.TypeCategoryListName - Aktiv: @(@TypeCategoryContext.Active ? "Ja" : "Nej")</span>
+                                    }
+
+                                </Template>
+                            </RadzenPickList>
+                        </RadzenRow>
+                        <RadzenButton ButtonType="ButtonType.Submit" Text="Gem"></RadzenButton>
+
+                    </RadzenTemplateForm>
+                </RadzenStack>
+            </RadzenCard>
         }
         else if (workingType == "typeCategoryList")
         {
+            <RadzenCard>
+                <RadzenStack class="rz-p-0 rz-p-md-12">
+                    <h3>Opret Type Kategori</h3>
+                    <RadzenTemplateForm TItem="TypeCategoryListDto" Data=@typeCategoryList Submit="CreateTypeCategoryList">
+                        <RadzenRow>
+                            <RadzenColumn Size="12" SizeMD="12">
+                                <RadzenColumn Size="12">
+                                    <RadzenFormField Text="Navn" Variant="@variant">
+                                        <ChildContent>
+                                            <RadzenTextBox Style="width: 100%" Name="TypeCategoryName" @bind-Value="typeCategoryList.TypeCategoryListName" />
+                                        </ChildContent>
+                                        <Helper>
+                                            <RadzenRequiredValidator Text="Navn er påkrævet" Component="TypeCategoryName" />
+                                        </Helper>
+                                    </RadzenFormField>
+                                </RadzenColumn>
+
+                                <RadzenColumn>
+                                    <RadzenFormField Variant="@variant">
+                                        <ChildContent>
+                                            <RadzenRadioButtonList Name="Active" @bind-Value="typeCategoryList.Active" TValue="bool">
+                                                <Items>
+                                                    <RadzenRadioButtonListItem Text="Aktiv" Value="@true" />
+                                                    <RadzenRadioButtonListItem Text="Inaktiv" Value="@false" />
+                                                </Items>
+                                            </RadzenRadioButtonList>
+                                        </ChildContent>
+                                        <Helper>
+                                            <RadzenRequiredValidator Text="Status er påkrævet" Component="Active" />
+                                        </Helper>
+                                    </RadzenFormField>
+                                </RadzenColumn>
+                            </RadzenColumn>
+                        </RadzenRow>
+                        <RadzenRow>
+                            <RadzenPickList Style="width:100%;" Multiple Context="TypeContext" @bind-Target="@typeCategoryList.Types" @bind-Source="@typeList" TextProperty="@nameof(TypeDto.CardTypeName)" AllowFiltering>
+                             <SourceHeader>
+                                 Fravalgte typer
+                             </SourceHeader>
+                             <TargetHeader>
+                                 Valgte typer
+                             </TargetHeader>
+                             <Template>
+                                 @if (TypeContext.Active == true)
+                                    {
+                                        <span>Type: @TypeContext.CardTypeName - Aktiv: @(TypeContext.Active ? "Ja" : "Nej")</span>
+                                    }
+                                    else
+                                    {
+                                        <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Type: @TypeContext.CardTypeName - Aktiv: @(@TypeContext.Active ? "Ja" : "Nej")</span>
+                                    }
+
+                                </Template>
+                            </RadzenPickList>
+                        </RadzenRow>
+
+                        
+                        <RadzenButton ButtonType="ButtonType.Submit" Text="Gem"></RadzenButton>
+
+                    </RadzenTemplateForm>
+                </RadzenStack>
+            </RadzenCard>
             @* <div>
-                <EditForm Model="@typeCategoryList" OnValidSubmit="CreateTypeCategoryList">
-                    <DataAnnotationsValidator />
-                    <ValidationSummary />
-                    <div>
-                        <label for="typeCategoryListName">Navn</label>
-                        <InputText type="text" required id="typeCategoryListName" @bind-Value="typeCategoryList.TypeCategoryListName" />
-                    </div>
-                    <div>
-                        <label for="active">Aktiv</label>
-                        <InputCheckbox type="checkbox" id="active" @bind-Value="typeCategoryList.Active" />
-                    </div>
-                    <div>
-                        <label for="type">Typer</label>
-                        <InputSelect multiple name="type" @bind-Value="selectedTypeIds">
-                            @foreach (var type in typeList)
-                            {
-                                if (type.Active == true)
-                                {
-                                    <option value="@type.TypeId">@type.CardTypeName</option>
-                                }
-                            }
-                        </InputSelect>
-                    </div>
-                    <button type="submit">Submit</button>
-                </EditForm>
-            </div> *@
+    <EditForm Model="@typeCategoryList" OnValidSubmit="CreateTypeCategoryList">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div>
+    <label for="typeCategoryListName">Navn</label>
+    <InputText type="text" required id="typeCategoryListName" @bind-Value="typeCategoryList.TypeCategoryListName" />
+    </div>
+    <div>
+    <label for="active">Aktiv</label>
+    <InputCheckbox type="checkbox" id="active" @bind-Value="typeCategoryList.Active" />
+    </div>
+    <div>
+    <label for="type">Typer</label>
+    <InputSelect multiple name="type" @bind-Value="selectedTypeIds">
+    @foreach (var type in typeList)
+    {
+    if (type.Active == true)
+    {
+    <option value="@type.TypeId">@type.CardTypeName</option>
+    }
+    }
+    </InputSelect>
+    </div>
+    <button type="submit">Submit</button>
+    </EditForm>
+    </div> *@
         }
 
     }
-    else if(editType == true)
+    else if (editType == true)
     {
         if (workingType == "card")
         {
@@ -226,55 +458,74 @@
             if (card.CardId > 0)
             {
                 <RadzenCard>
-                <RadzenStack class="rz-p-0 rz-p-md-12">
-                    <RadzenTemplateForm TItem="CardDto" Data=@card>
-                        <RadzenRow>
-                            <RadzenColumn Size="12" SizeMD="12">
+                    <RadzenStack class="rz-p-0 rz-p-md-12">
+                        <h3>Opdater Kort</h3>
+                        <RadzenTemplateForm TItem="CardDto" Data=@card Submit="UpdateCard">
+                            <RadzenRow>
+                                <RadzenColumn Size="12" SizeMD="12">
                                     <RadzenColumn Size="12">
-                                <RadzenFormField Text="Navn" Variant="@variant">
-                                    <ChildContent>
-                                        <RadzenTextBox Style="width: 100%" Name="CardName" @bind-Value="card.CardName" />
-                                    </ChildContent>
-                                    <Helper>
-                                        <RadzenRequiredValidator Text="Navn er påkrævet" Component="CardName" />
-                                    </Helper>
-                                </RadzenFormField>
-                            </RadzenColumn>
+                                        <RadzenFormField Text="Navn" Variant="@variant">
+                                            <ChildContent>
+                                                <RadzenTextBox Style="width: 100%" Name="CardName" @bind-Value="card.CardName" />
+                                            </ChildContent>
+                                            <Helper>
+                                                <RadzenRequiredValidator Text="Navn er påkrævet" Component="CardName" />
+                                            </Helper>
+                                        </RadzenFormField>
+                                    </RadzenColumn>
 
-                            <RadzenColumn>
-                                <RadzenFormField Text="Beskrivelse" Variant="@variant">
-                                    <ChildContent>
-                                        <RadzenTextBox Name="CardText" @bind-Value="card.CardText" />
-                                    </ChildContent>
-                                    <Helper>
-                                        <RadzenRequiredValidator Text="Beskrivelse er påkrævet" Component="CardText" />
-                                    </Helper>
-                                </RadzenFormField>
-                            </RadzenColumn>
+                                    <RadzenColumn>
+                                        <RadzenFormField Text="Beskrivelse" Variant="@variant">
+                                            <ChildContent>
+                                                <RadzenTextBox Name="CardText" @bind-Value="card.CardText" />
+                                            </ChildContent>
+                                            <Helper>
+                                                <RadzenRequiredValidator Text="Beskrivelse er påkrævet" Component="CardText" />
+                                            </Helper>
+                                        </RadzenFormField>
+                                    </RadzenColumn>
 
-                            <RadzenColumn>
-                                <RadzenFormField Variant="@variant">
-                                    <RadzenLabel Text="Vedhæftning" Component="AttachmentDropDown" />
-                                    <RadzenDropDownDataGrid Context="AttachmentContext" Name="AttachmentDropDown" @bind-Value="card.AttachmentId" Data="@attachmentList" ValueProperty="AttachmentId" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.Contains" AllowFiltering>
-                                     <Template>
-                                         Navn: @AttachmentContext.AttachmentName - Aktiv: @(@AttachmentContext.Active ? "Ja" : "Nej")
-                                        </Template>
-                                    </RadzenDropDownDataGrid>
-                                </RadzenFormField>
-                            </RadzenColumn>
-                             <RadzenColumn>
-                                <RadzenFormField Variant="@variant">
-                                    <RadzenRadioButtonList Name="Active" @bind-Value="card.Active" TValue="bool">
-                                        <Items>
-                                            <RadzenRadioButtonListItem Text="Aktiv" Value="@true" />
-                                            <RadzenRadioButtonListItem Text="Inaktiv" Value="@false" />
-                                        </Items>
-                                    </RadzenRadioButtonList>
-                                </RadzenFormField>
-                            </RadzenColumn>
+                                    <RadzenColumn>
+                                        <RadzenFormField Variant="@variant">
+                                            <ChildContent>
+                                                <RadzenLabel Text="Vedhæftning" Component="AttachmentDropDown" />
+                                                <RadzenDropDownDataGrid Context="AttachmentContext" Name="AttachmentDropDown" @bind-Value="card.AttachmentId" Data="@attachmentList" ValueProperty="@nameof(AttachmentDto.AttachmentId)" TextProperty="@nameof(AttachmentDto.AttachmentName)" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.Contains" AllowFiltering="true">
+                                                    <Template>
+                                                        @if (AttachmentContext.Active == true)
+                                                        {
+                                                            <span>Navn: @AttachmentContext.AttachmentName - Aktiv: @(@AttachmentContext.Active ? "Ja" : "Nej")</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Navn: @AttachmentContext.AttachmentName - Aktiv: @(@AttachmentContext.Active ? "Ja" : "Nej")</span>
+                                                        }
+
+                                                    </Template>
+                                                </RadzenDropDownDataGrid>
+                                            </ChildContent>
+                                            <Helper>
+                                                <RadzenRequiredValidator Text="Vedhæftning er påkrævet" Component="AttachmentDropDown" />
+                                            </Helper>
+                                        </RadzenFormField>
+                                    </RadzenColumn>
+                                    <RadzenColumn>
+                                        <RadzenFormField Variant="@variant">
+                                            <ChildContent>
+                                                <RadzenRadioButtonList Name="Active" @bind-Value="card.Active" TValue="bool">
+                                                    <Items>
+                                                        <RadzenRadioButtonListItem Text="Aktiv" Value="@true" />
+                                                        <RadzenRadioButtonListItem Text="Inaktiv" Value="@false" />
+                                                    </Items>
+                                                </RadzenRadioButtonList>
+                                            </ChildContent>
+                                            <Helper>
+                                                <RadzenRequiredValidator Text="Status er påkrævet" Component="Active" />
+                                            </Helper>
+                                        </RadzenFormField>
+                                    </RadzenColumn>
                                 </RadzenColumn>
-                        </RadzenRow>
-                        <RadzenRow>
+                            </RadzenRow>
+                            <RadzenRow>
                                 <RadzenPickList Style="width:100%;" Multiple Context="ResultContext" @bind-Target="@card.Results" @bind-Source="@resultList" TextProperty="@nameof(Models.DTO.ResultDto.ResultText)" AllowFiltering>
                                  <SourceHeader>
                                      Fravalgte resultater
@@ -283,12 +534,20 @@
                                      Valgte resultater
                                  </TargetHeader>
                                  <Template>
-                                     resultat: @ResultContext.ResultText - Aktiv: @(@ResultContext.Active ? "Ja" : "Nej")
+                                     @if (ResultContext.Active == true)
+                                        {
+                                            <span>resultat: @ResultContext.ResultText - Aktiv: @(@ResultContext.Active ? "Ja" : "Nej")</span>
+                                        }
+                                        else
+                                        {
+                                            <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>resultat: @ResultContext.ResultText - Aktiv: @(@ResultContext.Active ? "Ja" : "Nej")</span>
+                                        }
+
                                     </Template>
                                 </RadzenPickList>
-                        </RadzenRow>
+                            </RadzenRow>
 
-                        <RadzenRow>
+                            <RadzenRow>
                                 <RadzenPickList Style="width:100%;" Multiple Context="TypeContext" @bind-Target="@card.Types" @bind-Source="@typeList" TextProperty="@nameof(Models.DTO.TypeDto.CardTypeName)" AllowFiltering>
                                  <SourceHeader>
                                      Fravalgte typer
@@ -297,12 +556,22 @@
                                      Valgte typer
                                  </TargetHeader>
                                  <Template>
-                                     Type: @TypeContext.CardTypeName - Aktiv: @(@TypeContext.Active ? "Ja" : "Nej")
+                                     @if (TypeContext.Active == true)
+                                        {
+                                            <span>Type: @TypeContext.CardTypeName - Aktiv: @(@TypeContext.Active ? "Ja" : "Nej")</span>
+                                        }
+                                        else
+                                        {
+                                            <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Type: @TypeContext.CardTypeName - Aktiv: @(@TypeContext.Active ? "Ja" : "Nej")</span>
+                                        }
+
                                     </Template>
                                 </RadzenPickList>
-                        </RadzenRow>
-                    </RadzenTemplateForm>
-                </RadzenStack>
+                            </RadzenRow>
+                            <RadzenButton ButtonType="ButtonType.Submit" Text="Gem"></RadzenButton>
+
+                        </RadzenTemplateForm>
+                    </RadzenStack>
                 </RadzenCard>
             }
         }
@@ -330,81 +599,307 @@
         }
         else if (workingType == "result")
         {
-            @* <div>
-                <EditForm Model="@result" OnValidSubmit="@CreateResult">
-                    <DataAnnotationsValidator />
-                    <ValidationSummary />
-                    <div>
-                        <label for="resultText">Tekst</label>
-                        <InputText type="text" required id="resultText" @bind-Value="result.ResultText" />
-                    </div>
-                    <div>
-                        <label for="active">Aktiv</label>
-                        <InputCheckbox type="checkbox" id="active" @bind-Value="result.Active" />
-                    </div>
-                    <div>
-                        <label for="attachment">Vedhæftning</label>
-                        <InputSelect name="attachment" @bind-Value="attachmentId">
-                            @foreach (var att in attachmentList)
-                            {
-                                if (att.Active == true)
-                                {
-                                    <option value="@att.AttachmentId">@att.AttachmentName</option>
-                                }
-                            }
-                        </InputSelect>
-                    </div>
-                    <button type="submit">Submit</button>
-                </EditForm>
-            </div> *@
+            <div>
+                <label for="result">Resultater</label>
+                <select name="result" @onchange="SelectResult">
+                    <option value="0">Vælg Resultat</option>
+                    @foreach (var result in resultList)
+                    {
+                        <option value="@result.ResultId">Tekst: @result.ResultText - Status: @(result.Active ? "Aktiv" : "Inaktiv")</option>
+                    }
+                </select>
+            </div>
+            @if(result.ResultId > 0)
+            {
+
+            <RadzenCard>
+                <RadzenStack class="rz-p-0 rz-p-md-12">
+                    <h3>Opdater Resultat</h3>
+                    <RadzenTemplateForm TItem="ResultDto" Data=@result Submit="CreateResult">
+                        <RadzenRow>
+                            <RadzenColumn Size="12" SizeMD="12">
+                                <RadzenColumn Size="12">
+                                    <RadzenFormField Text="Tekst" Variant="@variant">
+                                        <ChildContent>
+                                            <RadzenTextBox Style="width: 100%" Name="ResultText" @bind-Value="result.ResultText" />
+                                        </ChildContent>
+                                        <Helper>
+                                            <RadzenRequiredValidator Text="Tekst er påkrævet" Component="ResultText" />
+                                        </Helper>
+                                    </RadzenFormField>
+                                </RadzenColumn>
+
+
+
+                                <RadzenColumn>
+                                    <RadzenFormField Variant="@variant">
+                                        <ChildContent>
+                                            <RadzenLabel Text="Vedhæftning" Component="AttachmentDropDown" />
+                                            <RadzenDropDownDataGrid Context="AttachmentContext" Name="AttachmentDropDown" @bind-Value="result.AttachmentId" Data="@attachmentList" ValueProperty="@nameof(AttachmentDto.AttachmentId)" TextProperty="@nameof(AttachmentDto.AttachmentName)" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.Contains" AllowFiltering="true" AllowClear="true">
+                                                <Template>
+                                                    @if (AttachmentContext.Active == true)
+                                                    {
+                                                        <span>Navn: @AttachmentContext.AttachmentName - Aktiv: @(@AttachmentContext.Active ? "Ja" : "Nej")</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Navn: @AttachmentContext.AttachmentName - Aktiv: @(@AttachmentContext.Active ? "Ja" : "Nej")</span>
+                                                    }
+
+                                                </Template>
+                                            </RadzenDropDownDataGrid>
+                                        </ChildContent>
+                                    </RadzenFormField>
+                                </RadzenColumn>
+                                <RadzenColumn>
+                                    <RadzenFormField Variant="@variant">
+                                        <ChildContent>
+                                            <RadzenRadioButtonList Name="Active" @bind-Value="result.Active" TValue="bool">
+                                                <Items>
+                                                    <RadzenRadioButtonListItem Text="Aktiv" Value="@true" />
+                                                    <RadzenRadioButtonListItem Text="Inaktiv" Value="@false" />
+                                                </Items>
+                                            </RadzenRadioButtonList>
+                                        </ChildContent>
+                                        <Helper>
+                                            <RadzenRequiredValidator Text="Status er påkrævet" Component="Active" />
+                                        </Helper>
+                                    </RadzenFormField>
+                                </RadzenColumn>
+                            </RadzenColumn>
+                        </RadzenRow>
+                        <RadzenRow>
+                            <RadzenPickList Style="width:100%;" Multiple Context="CardContext" @bind-Target="@result.Cards" @bind-Source="@cardList" TextProperty="@nameof(CardDto.CardName)" AllowFiltering>
+                             <SourceHeader>
+                                 Fravalgte Kort
+                             </SourceHeader>
+                             <TargetHeader>
+                                 Valgte Kort
+                             </TargetHeader>
+                             <Template>
+                                 @if (CardContext.Active == true)
+                                    {
+                                        <span>resultat: @CardContext.CardName - Aktiv: @(@CardContext.Active ? "Ja" : "Nej")</span>
+                                    }
+                                    else
+                                    {
+                                        <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>resultat: @CardContext.CardName - Aktiv: @(@CardContext.Active ? "Ja" : "Nej")</span>
+                                    }
+
+                                </Template>
+                            </RadzenPickList>
+                        </RadzenRow>
+
+
+                        <RadzenButton ButtonType="ButtonType.Submit" Text="Gem"></RadzenButton>
+
+                    </RadzenTemplateForm>
+                </RadzenStack>
+            </RadzenCard>
+            }
         }
         else if (workingType == "type")
         {
             <div>
-                <EditForm Model="@type" OnValidSubmit="CreateType">
-                    <DataAnnotationsValidator />
-                    <ValidationSummary />
-                    <div>
-                        <label for="cardTypeName">Navn</label>
-                        <InputText type="text" required id="cardTypeName" @bind-Value="type.CardTypeName" />
-                    </div>
-                    <div>
-                        <label for="active">Aktiv</label>
-                        <InputCheckbox type="checkbox" id="active" @bind-Value="type.Active" />
-                    </div>
-                    <button type="submit">Submit</button>
-                </EditForm>
+                <label for="type">Typer</label>
+                <select name="type" @onchange="SelectType">
+                    <option value="0">Vælg Type</option>
+                    @foreach (var type in typeList)
+                    {
+                        <option value="@type.TypeId">Navn: @type.CardTypeName - Status: @(type.Active ? "Aktiv" : "Inaktiv")</option>
+                    }
+                </select>
             </div>
+            @if (type.TypeId > 0)
+            {
+                <RadzenCard>
+                    <RadzenStack class="rz-p-0 rz-p-md-12">
+                        <h3>Opdater Type</h3>
+                        <RadzenTemplateForm TItem="TypeDto" Data=@type Submit="CreateType">
+                            <RadzenRow>
+                                <RadzenColumn Size="12" SizeMD="12">
+                                    <RadzenColumn Size="12">
+                                        <RadzenFormField Text="Navn" Variant="@variant">
+                                            <ChildContent>
+                                                <RadzenTextBox Style="width: 100%" Name="CardTypeName" @bind-Value="type.CardTypeName" />
+                                            </ChildContent>
+                                            <Helper>
+                                                <RadzenRequiredValidator Text="Navn er påkrævet" Component="CardTypeName" />
+                                            </Helper>
+                                        </RadzenFormField>
+                                    </RadzenColumn>
+
+                                    <RadzenColumn>
+                                        <RadzenFormField Variant="@variant">
+                                            <ChildContent>
+                                                <RadzenRadioButtonList Name="Active" @bind-Value="type.Active" TValue="bool">
+                                                    <Items>
+                                                        <RadzenRadioButtonListItem Text="Aktiv" Value="@true" />
+                                                        <RadzenRadioButtonListItem Text="Inaktiv" Value="@false" />
+                                                    </Items>
+                                                </RadzenRadioButtonList>
+                                            </ChildContent>
+                                            <Helper>
+                                                <RadzenRequiredValidator Text="Status er påkrævet" Component="Active" />
+                                            </Helper>
+                                        </RadzenFormField>
+                                    </RadzenColumn>
+                                </RadzenColumn>
+                            </RadzenRow>
+                            <RadzenRow>
+                                <RadzenPickList Style="width:100%;" Multiple Context="CardContext" @bind-Target="@type.Cards" @bind-Source="@cardList" TextProperty="@nameof(CardDto.CardName)" AllowFiltering>
+                                 <SourceHeader>
+                                     Fravalgte Kort
+                                 </SourceHeader>
+                                 <TargetHeader>
+                                     Valgte Kort
+                                 </TargetHeader>
+                                 <Template>
+                                     @if (CardContext.Active == true)
+                                        {
+                                            <span>Kort: @CardContext.CardName - Aktiv: @(CardContext.Active ? "Ja" : "Nej")</span>
+                                        }
+                                        else
+                                        {
+                                            <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Kort: @CardContext.CardName- Aktiv: @(@CardContext.Active ? "Ja" : "Nej")</span>
+                                        }
+
+                                    </Template>
+                                </RadzenPickList>
+                            </RadzenRow>
+
+                            <RadzenRow>
+                                <RadzenPickList Style="width:100%;" Multiple Context="TypeCategoryContext" @bind-Target="@type.TypeCategoryLists" @bind-Source="@typeCategoryListList" TextProperty="@nameof(TypeCategoryListDto.TypeCategoryListName)" AllowFiltering>
+                                 <SourceHeader>
+                                     Fravalgte type kategorier
+                                 </SourceHeader>
+                                 <TargetHeader>
+                                     Valgte type kategorier
+                                 </TargetHeader>
+                                 <Template>
+                                     @if (TypeCategoryContext.Active == true)
+                                        {
+                                            <span>Type kategori: @TypeCategoryContext.TypeCategoryListName - Aktiv: @(@TypeCategoryContext.Active ? "Ja" : "Nej")</span>
+                                        }
+                                        else
+                                        {
+                                            <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Type kategori: @TypeCategoryContext.TypeCategoryListName - Aktiv: @(@TypeCategoryContext.Active ? "Ja" : "Nej")</span>
+                                        }
+
+                                    </Template>
+                                </RadzenPickList>
+                            </RadzenRow>
+                            <RadzenButton ButtonType="ButtonType.Submit" Text="Gem"></RadzenButton>
+
+                        </RadzenTemplateForm>
+                    </RadzenStack>
+                </RadzenCard>
+            }
         }
         else if (workingType == "typeCategoryList")
         {
+            <div>
+                <label for="tcl">Type Kategorier</label>
+                <select name="tcl" @onchange="SelectTypeCategory">
+                    <option value="0">Vælg Type Kategori</option>
+                    @foreach (var tcl in _typeCategoryListList)
+                    {
+                        <option value="@tcl.TypeCategoryListId">Navn: @tcl.TypeCategoryListName - Status: @(tcl.Active ? "Aktiv" : "Inaktiv")</option>
+                    }
+                </select>
+            </div>
+            @if (typeCategoryList.TypeCategoryListId > 0)
+            {
+                <RadzenCard>
+                    <RadzenStack class="rz-p-0 rz-p-md-12">
+                        <h3>Opdater Type Kategori</h3>
+                        <RadzenTemplateForm TItem="TypeCategoryListDto" Data=@typeCategoryList Submit="CreateTypeCategoryList">
+                            <RadzenRow>
+                                <RadzenColumn Size="12" SizeMD="12">
+                                    <RadzenColumn Size="12">
+                                        <RadzenFormField Text="Navn" Variant="@variant">
+                                            <ChildContent>
+                                                <RadzenTextBox Style="width: 100%" Name="TypeCategoryName" @bind-Value="typeCategoryList.TypeCategoryListName" />
+                                            </ChildContent>
+                                            <Helper>
+                                                <RadzenRequiredValidator Text="Navn er påkrævet" Component="TypeCategoryName" />
+                                            </Helper>
+                                        </RadzenFormField>
+                                    </RadzenColumn>
+
+                                    <RadzenColumn>
+                                        <RadzenFormField Variant="@variant">
+                                            <ChildContent>
+                                                <RadzenRadioButtonList Name="Active" @bind-Value="typeCategoryList.Active" TValue="bool">
+                                                    <Items>
+                                                        <RadzenRadioButtonListItem Text="Aktiv" Value="@true" />
+                                                        <RadzenRadioButtonListItem Text="Inaktiv" Value="@false" />
+                                                    </Items>
+                                                </RadzenRadioButtonList>
+                                            </ChildContent>
+                                            <Helper>
+                                                <RadzenRequiredValidator Text="Status er påkrævet" Component="Active" />
+                                            </Helper>
+                                        </RadzenFormField>
+                                    </RadzenColumn>
+                                </RadzenColumn>
+                            </RadzenRow>
+                            <RadzenRow>
+                                <RadzenPickList Style="width:100%;" Multiple Context="TypeContext" @bind-Target="@typeCategoryList.Types" @bind-Source="@typeList" TextProperty="@nameof(TypeDto.CardTypeName)" AllowFiltering>
+                                 <SourceHeader>
+                                     Fravalgte typer
+                                 </SourceHeader>
+                                 <TargetHeader>
+                                     Valgte typer
+                                 </TargetHeader>
+                                 <Template>
+                                     @if (TypeContext.Active == true)
+                                        {
+                                            <span>Type: @TypeContext.CardTypeName - Aktiv: @(TypeContext.Active ? "Ja" : "Nej")</span>
+                                        }
+                                        else
+                                        {
+                                            <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Type: @TypeContext.CardTypeName - Aktiv: @(@TypeContext.Active ? "Ja" : "Nej")</span>
+                                        }
+
+                                    </Template>
+                                </RadzenPickList>
+                            </RadzenRow>
+
+
+                            <RadzenButton ButtonType="ButtonType.Submit" Text="Gem"></RadzenButton>
+
+                        </RadzenTemplateForm>
+                    </RadzenStack>
+                </RadzenCard>
+            }
             @* <div>
-                <EditForm Model="@typeCategoryList" OnValidSubmit="CreateTypeCategoryList">
-                    <DataAnnotationsValidator />
-                    <ValidationSummary />
-                    <div>
-                        <label for="typeCategoryListName">Navn</label>
-                        <InputText type="text" required id="typeCategoryListName" @bind-Value="typeCategoryList.TypeCategoryListName" />
-                    </div>
-                    <div>
-                        <label for="active">Aktiv</label>
-                        <InputCheckbox type="checkbox" id="active" @bind-Value="typeCategoryList.Active" />
-                    </div>
-                    <div>
-                        <label for="type">Typer</label>
-                        <InputSelect multiple name="type" @bind-Value="selectedTypeIds">
-                            @foreach (var type in typeList)
-                            {
-                                if (type.Active == true)
-                                {
-                                    <option value="@type.TypeId">@type.CardTypeName</option>
-                                }
-                            }
-                        </InputSelect>
-                    </div>
-                    <button type="submit">Submit</button>
-                </EditForm>
-            </div> *@
+    <EditForm Model="@typeCategoryList" OnValidSubmit="CreateTypeCategoryList">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div>
+    <label for="typeCategoryListName">Navn</label>
+    <InputText type="text" required id="typeCategoryListName" @bind-Value="typeCategoryList.TypeCategoryListName" />
+    </div>
+    <div>
+    <label for="active">Aktiv</label>
+    <InputCheckbox type="checkbox" id="active" @bind-Value="typeCategoryList.Active" />
+    </div>
+    <div>
+    <label for="type">Typer</label>
+    <InputSelect multiple name="type" @bind-Value="selectedTypeIds">
+    @foreach (var type in typeList)
+    {
+    if (type.Active == true)
+    {
+    <option value="@type.TypeId">@type.CardTypeName</option>
+    }
+    }
+    </InputSelect>
+    </div>
+    <button type="submit">Submit</button>
+    </EditForm>
+    </div> *@
         }
     }
     else
@@ -552,7 +1047,8 @@
 
     }
 
-    private async Task<List<CardDto>> GetCards(){
+    private async Task<List<CardDto>> GetCards()
+    {
         var result = await _cardService.GetAll();
         if (result is null)
         {
@@ -674,16 +1170,66 @@
 
     private async void SelectCard(ChangeEventArgs e)
     {
-        if (int.TryParse(e.Value.ToString(), out int cardId))
+        if (int.TryParse(e.Value.ToString(), out int entityId))
         {
-            if (cardId > 0)
+            if (entityId > 0)
             {
-                card = await _cardService.GetByid(cardId);
+                card = await _cardService.GetByid(entityId);
                 resultList = FilterResults(card.Results);
                 typeList = FilterTypes(card.Types);
-                // attachmentId = Convert.ToInt32(card.AttachmentId);
-                // selectedResultIds = card.Results.Select(x => x.ResultId).ToArray();
-                // selectedTypeIds = card.Types.Select(x => x.TypeId).ToArray();
+                StateHasChanged();
+            }
+        }
+    }
+    private async void SelectType(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value.ToString(), out int entityId))
+        {
+            if (entityId > 0)
+            {
+                type = await _typeService.GetById(entityId);
+                cardList = FilterCards(type.Cards);
+                typeCategoryListList = FilterTypeCategories(type.TypeCategoryLists);
+                StateHasChanged();
+            }
+        }
+    }
+
+    private async void SelectResult(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value.ToString(), out int entityId))
+        {
+            if (entityId > 0)
+            {
+                result = await _resultService.GetById(entityId);
+                cardList = FilterCards(result.Cards);
+                StateHasChanged();
+            }
+        }
+    }
+
+    private async void SelectAttachment(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value.ToString(), out int entityId))
+        {
+            if (entityId > 0)
+            {
+                attachment = await _attachmentService.GetById(entityId);
+                resultList = FilterResults(attachment.Results);
+                cardList = FilterCards(attachment.Cards);
+                StateHasChanged();
+            }
+        }
+    }
+
+    private async void SelectTypeCategory(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value.ToString(), out int entityId))
+        {
+            if (entityId > 0)
+            {
+                typeCategoryList = await _typeCategoryListService.GetById(entityId);
+                typeList = FilterTypes(typeCategoryList.Types);
                 StateHasChanged();
             }
         }
@@ -699,15 +1245,40 @@
         return _typeList.Where(type => !types.Any(t => t.TypeId == type.TypeId)).ToList();
     }
 
-    private async void UpdateCard()
+    private IEnumerable<CardDto> FilterCards(IEnumerable<CardDto> cards)
     {
-        
+        return _cardList.Where(card => !cards.Any(c => c.CardId == card.CardId)).ToList();
+    }
+    private IEnumerable<TypeCategoryListDto> FilterTypeCategories(IEnumerable<TypeCategoryListDto> tcls)
+    {
+        return _typeCategoryListList.Where(tcl => !tcls.Any(t => t.TypeCategoryListId == tcl.TypeCategoryListId)).ToList();
     }
 
-    private void SetAttachmentId(int id)
+    private async void UpdateCard()
     {
-        //attachmentId = id;
+        var entity = card;
+        if(entity.CardId > 0){
+            var result = await _cardService.Update(entity);
+            if (result is not null)
+            {
+                int index = cardList.ToList().FindIndex(x => x.CardId == result.CardId);
+                if (index != -1)
+                {
+                    cardList.ToList()[index] = result;
+                    createType = false;
+                    ResetWork();
+                    StateHasChanged();
+                }
+                else{
+                    errorMessage = "Der skete en fejl ved opdatering af kortet.";
+                }
+            }
+            else{
+                errorMessage = "Der skete en fejl ved opdatering af kortet.";
+            }
+        }
     }
+
 
 
 }
