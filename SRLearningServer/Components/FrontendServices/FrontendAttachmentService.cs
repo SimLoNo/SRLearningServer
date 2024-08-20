@@ -24,7 +24,7 @@ namespace SRLearningServer.Components.FrontendServices
 
         public async Task<AttachmentDto> Deactivate(int id)
         {
-            var response = await _httpClient.PutAsync($"api/Attachment/{id}", null);
+            var response = await _httpClient.PutAsync($"api/Attachment/Deactivate/{id}", null);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<AttachmentDto>();
         }
@@ -43,7 +43,8 @@ namespace SRLearningServer.Components.FrontendServices
 
         public async Task<AttachmentDto> Update(AttachmentDto attachment)
         {
-            var response = await _httpClient.PutAsJsonAsync($"api/Attachment", attachment);
+            int id = attachment.AttachmentId;
+            var response = await _httpClient.PutAsJsonAsync<AttachmentDto>($"api/Attachment", attachment);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<AttachmentDto>();
         }

@@ -32,11 +32,11 @@ namespace SRLearningServer.Components.Converters
                     {
                         if (!attachment.Cards.IsNullOrEmpty())
                         {
-                            newAttachment.Cards.ToList().AddRange(ConvertToDtoFromDomain(attachment.Cards));
+                            newAttachment.Cards =ConvertToDtoFromDomain(attachment.Cards);
                         }
                         if (!attachment.Results.IsNullOrEmpty())
                         {
-                            newAttachment.Results.ToList().AddRange(ConvertToDtoFromDomain(attachment.Results));
+                            newAttachment.Results = ConvertToDtoFromDomain(attachment.Results);
                         }
                     }
                     attachmentDtos.Add(newAttachment);
@@ -156,7 +156,7 @@ namespace SRLearningServer.Components.Converters
                         }
                         if (!result.Cards.IsNullOrEmpty())
                         {
-                            dto.Cards =ConvertToDtoFromDomain(result.Cards);
+                            dto.Cards = ConvertToDtoFromDomain(result.Cards);
                         }
                     }
 

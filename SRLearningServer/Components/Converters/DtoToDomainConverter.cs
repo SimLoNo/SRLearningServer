@@ -101,14 +101,12 @@ namespace SRLearningServer.Components.Converters
                     }
                     if (cardDto.Attachment is not null)
                     {
-                        if(cardDto.Attachment.AttachmentId != 0)
-                        {
+                            //newCard.Attachment = ConvertToDomainFromDto(cardDto.Attachment);
                             newCard.AttachmentId = cardDto.Attachment.AttachmentId;
-                        }
-                        else
-                        {
-                            newCard.Attachment = ConvertToDomainFromDto(cardDto.Attachment);
-                        }
+                    }
+                    else if (cardDto.AttachmentId is not null)
+                    {
+                            newCard.AttachmentId = cardDto.AttachmentId;
                     }
                     cards.Add(newCard);
                 }
@@ -146,21 +144,19 @@ namespace SRLearningServer.Components.Converters
                     Result result = new()
                     {
                         ResultId = dto.ResultId,
-                        //AttachmentId = dto.AttachmentId,
+                        AttachmentId = dto.AttachmentId,
                         ResultText = dto.ResultText,
                         LastUpdated = dto.LastUpdated,
                         Active = dto.Active
                     };
                     if (dto.Attachment is not null)
                     {
-                        if(dto.Attachment.AttachmentId != 0)
-                        {
-                            result.AttachmentId = dto.Attachment.AttachmentId;
-                        }
-                        else
-                        {
-                            result.Attachment = ConvertToDomainFromDto(dto.Attachment);
-                        }
+                        //result.Attachment = ConvertToDomainFromDto(dto.Attachment);
+                        result.AttachmentId = dto.Attachment.AttachmentId;
+                    }
+                    else if (dto.AttachmentId is not null)
+                    {
+                        result.AttachmentId = dto.AttachmentId;
                     }
                     if (!dto.Cards.IsNullOrEmpty())
                     {

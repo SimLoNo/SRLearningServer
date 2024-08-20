@@ -7,9 +7,9 @@ namespace SRLearningServer.Components.Models.DTO
     {
         public int CardId { get; set; }
 
-        public string CardName { get; set; }
+        public string CardName { get; set; } = string.Empty;
 
-        public string CardText { get; set; }
+        public string CardText { get; set; } = string.Empty;
 
         public int? AttachmentId { get; set; }
         public DateOnly LastUpdated { get; set; }
@@ -19,6 +19,6 @@ namespace SRLearningServer.Components.Models.DTO
 
         public IEnumerable<TypeDto> Types { get; set; } = new List<TypeDto>();
         public IEnumerable<ResultDto> Results { get; set; } = new List<ResultDto>();
-        public AttachmentDto Attachment { get; set; }
+        public AttachmentDto? Attachment { get; set; }
     }
 }

@@ -169,7 +169,6 @@ namespace SRLearningServer.Components.Repositories
                 Models.Card trackedCard = await _context.Set<Models.Card>()
                     .Include(c => c.Types)
                     .Include(c => c.Results)
-                    .Include(c => c.Attachment)
                     .FirstOrDefaultAsync(t => t.CardId == card.CardId);
                 if (trackedCard == null)
                 {
@@ -178,7 +177,7 @@ namespace SRLearningServer.Components.Repositories
                 trackedCard.CardName = card.CardName;
                 trackedCard.CardText = card.CardText;
                 trackedCard.Active = card.Active;
-                trackedCard.Attachment = card.Attachment;
+                trackedCard.AttachmentId = card.AttachmentId;
                 var trackedResultIds = new HashSet<int>(trackedCard.Results.Select(r => r.ResultId));
                 var cardResultIds = new HashSet<int>(card.Results.Select(r => r.ResultId));
 

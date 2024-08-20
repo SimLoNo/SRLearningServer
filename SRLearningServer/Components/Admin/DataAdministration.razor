@@ -92,9 +92,6 @@
                                             </Items>
                                         </RadzenRadioButtonList>
                                         </ChildContent>
-                                        <Helper>
-                                            <RadzenRequiredValidator Text="Status er påkrævet" Component="Active" />
-                                            </Helper>
                                     </RadzenFormField>
                                 </RadzenColumn>
                             </RadzenColumn>
@@ -153,25 +150,98 @@
         }
         else if (workingType == "attachment")
         {
-            <div>
-                <EditForm Model="@attachment" OnValidSubmit="@CreateAttachment">
-                    <DataAnnotationsValidator />
-                    <ValidationSummary />
-                    <div>
-                        <label for="attachmentName">Navn</label>
-                        <InputText type="text" required id="attachmentName" @bind-Value="attachment.AttachmentName" />
-                    </div>
-                    <div>
-                        <label for="active">Aktiv</label>
-                        <InputCheckbox type="checkbox" id="active" @bind-Value="attachment.Active" />
-                    </div>
-                    <div>
-                        <label for="attachmentUrl">Fil:</label>
-                        <InputFile OnChange="HandleFileSelected" />
-                    </div>
-                    <button type="submit">Submit</button>
-                </EditForm>
-            </div>
+
+            <RadzenCard>
+                <RadzenStack class="rz-p-0 rz-p-md-12">
+                    <h3>Opret Vedhæftning</h3>
+                    <RadzenTemplateForm TItem="AttachmentDto" Data=@attachment Submit="CreateAttachment">
+                        <RadzenRow>
+                            <RadzenColumn Size="12" SizeMD="12">
+                                <RadzenColumn Size="12">
+                                    <RadzenFormField Text="Navn" Variant="@variant">
+                                        <ChildContent>
+                                            <RadzenTextBox Style="width: 100%" Name="AttachmentName" @bind-Value="attachment.AttachmentName" />
+                                        </ChildContent>
+                                        <Helper>
+                                            <RadzenRequiredValidator Text="Navn er påkrævet" Component="AttachmentName" />
+                                        </Helper>
+                                    </RadzenFormField>
+                                </RadzenColumn>
+
+                                <RadzenColumn>
+                                    <RadzenFormField Variant="@variant">
+                                        <ChildContent>
+                                            <RadzenStack>
+                                                <RadzenCard>
+                                                    <label for="AttachmentSelect">Fil:</label>
+                                                    <InputFile Required name="AttachmentSelect" OnChange="HandleFileSelected" />
+                                                </RadzenCard>
+                                            </RadzenStack>
+                                        </ChildContent>
+                                    </RadzenFormField>
+                                </RadzenColumn>
+                                <RadzenColumn>
+                                    <RadzenFormField Variant="@variant">
+                                        <ChildContent>
+                                            <RadzenRadioButtonList Name="Active" @bind-Value="attachment.Active" TValue="bool">
+                                                <Items>
+                                                    <RadzenRadioButtonListItem Text="Aktiv" Value="@true" />
+                                                    <RadzenRadioButtonListItem Text="Inaktiv" Value="@false" />
+                                                </Items>
+                                            </RadzenRadioButtonList>
+                                        </ChildContent>
+                                    </RadzenFormField>
+                                </RadzenColumn>
+                            </RadzenColumn>
+                        </RadzenRow>
+                        <RadzenRow>
+                            <RadzenPickList Style="width:100%;" Multiple Context="ResultContext" @bind-Target="@attachment.Results" @bind-Source="@resultList" TextProperty="@nameof(Models.DTO.ResultDto.ResultText)" AllowFiltering>
+                             <SourceHeader>
+                                 Fravalgte resultater
+                             </SourceHeader>
+                             <TargetHeader>
+                                 Valgte resultater
+                             </TargetHeader>
+                             <Template>
+                                 @if (ResultContext.Active == true)
+                                    {
+                                        <span>resultat: @ResultContext.ResultText - Aktiv: @(@ResultContext.Active ? "Ja" : "Nej")</span>
+                                    }
+                                    else
+                                    {
+                                        <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>resultat: @ResultContext.ResultText - Aktiv: @(@ResultContext.Active ? "Ja" : "Nej")</span>
+                                    }
+
+                                </Template>
+                            </RadzenPickList>
+                        </RadzenRow>
+
+                        <RadzenRow>
+                            <RadzenPickList Style="width:100%;" Multiple Context="CardContext" @bind-Target="@attachment.Cards" @bind-Source="@cardList" TextProperty="@nameof(Models.DTO.CardDto.CardName)" AllowFiltering>
+                             <SourceHeader>
+                                 Fravalgte Kort
+                             </SourceHeader>
+                             <TargetHeader>
+                                 Valgte Kort
+                             </TargetHeader>
+                             <Template>
+                                 @if (CardContext.Active == true)
+                                    {
+                                        <span>Type: @CardContext.CardName - Aktiv: @(@CardContext.Active ? "Ja" : "Nej")</span>
+                                    }
+                                    else
+                                    {
+                                        <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Type: @CardContext.CardName - Aktiv: @(@CardContext.Active ? "Ja" : "Nej")</span>
+                                    }
+
+                                </Template>
+                            </RadzenPickList>
+                        </RadzenRow>
+                        <RadzenButton ButtonType="ButtonType.Submit" Text="Gem"></RadzenButton>
+
+                    </RadzenTemplateForm>
+                </RadzenStack>
+            </RadzenCard>
         }
         else if (workingType == "result")
         {
@@ -224,9 +294,6 @@
                                                 </Items>
                                             </RadzenRadioButtonList>
                                         </ChildContent>
-                                        <Helper>
-                                            <RadzenRequiredValidator Text="Status er påkrævet" Component="Active" />
-                                        </Helper>
                                     </RadzenFormField>
                                 </RadzenColumn>
                             </RadzenColumn>
@@ -290,9 +357,6 @@
                                                 </Items>
                                             </RadzenRadioButtonList>
                                         </ChildContent>
-                                        <Helper>
-                                            <RadzenRequiredValidator Text="Status er påkrævet" Component="Active" />
-                                        </Helper>
                                     </RadzenFormField>
                                 </RadzenColumn>
                             </RadzenColumn>
@@ -375,9 +439,6 @@
                                                 </Items>
                                             </RadzenRadioButtonList>
                                         </ChildContent>
-                                        <Helper>
-                                            <RadzenRequiredValidator Text="Status er påkrævet" Component="Active" />
-                                        </Helper>
                                     </RadzenFormField>
                                 </RadzenColumn>
                             </RadzenColumn>
@@ -444,12 +505,12 @@
     {
         if (workingType == "card")
         {
-
+            
             <div>
                 <label for="card">Kort</label>
                 <select name="card" @onchange="SelectCard">
                     <option value="0">Vælg kort</option>
-                    @foreach (var card in cardList)
+                    @foreach (var card in _cardList)
                     {
                         <option value="@card.CardId">Navn: @card.CardName - Tekst: @card.CardText - Status: @(card.Active ? "Aktiv" : "Inaktiv")</option>
                     }
@@ -518,9 +579,6 @@
                                                     </Items>
                                                 </RadzenRadioButtonList>
                                             </ChildContent>
-                                            <Helper>
-                                                <RadzenRequiredValidator Text="Status er påkrævet" Component="Active" />
-                                            </Helper>
                                         </RadzenFormField>
                                     </RadzenColumn>
                                 </RadzenColumn>
@@ -569,6 +627,8 @@
                                 </RadzenPickList>
                             </RadzenRow>
                             <RadzenButton ButtonType="ButtonType.Submit" Text="Gem"></RadzenButton>
+                            <RadzenButton ButtonType="ButtonType.Button" Text="Deaktiver" Click="Deactivate"></RadzenButton>
+                            <RadzenButton Style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)' ButtonType="ButtonType.Button" Text="Slet" Click="Delete"></RadzenButton>
 
                         </RadzenTemplateForm>
                     </RadzenStack>
@@ -578,24 +638,112 @@
         else if (workingType == "attachment")
         {
             <div>
-                <EditForm Model="@attachment" OnValidSubmit="@CreateAttachment">
-                    <DataAnnotationsValidator />
-                    <ValidationSummary />
-                    <div>
-                        <label for="attachmentName">Navn</label>
-                        <InputText type="text" required id="attachmentName" @bind-Value="attachment.AttachmentName" />
-                    </div>
-                    <div>
-                        <label for="active">Aktiv</label>
-                        <InputCheckbox type="checkbox" id="active" @bind-Value="attachment.Active" />
-                    </div>
-                    <div>
-                        <label for="attachmentUrl">Fil:</label>
-                        <InputFile OnChange="HandleFileSelected" />
-                    </div>
-                    <button type="submit">Submit</button>
-                </EditForm>
+                <label for="attachment">Vedhæft</label>
+                <select name="attachment" @onchange="SelectAttachment">
+                    <option value="0">Vælg Vedhæft</option>
+                    @foreach (var attach in _attachmentList)
+                    {
+                        <option value="@attach.AttachmentId">Navn: @attach.AttachmentName - Status: @(attach.Active ? "Aktiv" : "Inaktiv")</option>
+                    }
+                </select>
             </div>
+            @if(attachment.AttachmentId > 0)
+            {
+                <RadzenCard>
+                    <RadzenStack class="rz-p-0 rz-p-md-12">
+                        <h3>Opret Vedhæftning</h3>
+                        <RadzenTemplateForm TItem="AttachmentDto" Data=@attachment Submit="UpdateAttachment">
+                            <RadzenRow>
+                                <RadzenColumn Size="12" SizeMD="12">
+                                    <RadzenColumn Size="12">
+                                        <RadzenFormField Text="Navn" Variant="@variant">
+                                            <ChildContent>
+                                                <RadzenTextBox Style="width: 100%" Name="AttachmentName" @bind-Value="attachment.AttachmentName" />
+                                            </ChildContent>
+                                            <Helper>
+                                                <RadzenRequiredValidator Text="Navn er påkrævet" Component="AttachmentName" />
+                                            </Helper>
+                                        </RadzenFormField>
+                                    </RadzenColumn>
+
+                                    <RadzenColumn>
+                                        <RadzenFormField Variant="@variant">
+                                            <ChildContent>
+                                                <RadzenStack>
+                                                    <RadzenCard>
+                                                        <label for="AttachmentSelect">Fil:</label>
+                                                        <InputFile name="AttachmentSelect" OnChange="HandleFileSelected" />
+                                                        <RadzenImage Path="@($"{attachmentReadDirectory}{attachment.AttachmentUrl}")" />
+                                                    </RadzenCard>
+                                                </RadzenStack>
+                                            </ChildContent>
+                                        </RadzenFormField>
+                                    </RadzenColumn>
+                                    <RadzenColumn>
+                                        <RadzenFormField Variant="@variant">
+                                            <ChildContent>
+                                                <RadzenRadioButtonList Name="Active" @bind-Value="attachment.Active" TValue="bool">
+                                                    <Items>
+                                                        <RadzenRadioButtonListItem Text="Aktiv" Value="@true" />
+                                                        <RadzenRadioButtonListItem Text="Inaktiv" Value="@false" />
+                                                    </Items>
+                                                </RadzenRadioButtonList>
+                                            </ChildContent>
+                                        </RadzenFormField>
+                                    </RadzenColumn>
+                                </RadzenColumn>
+                            </RadzenRow>
+                            <RadzenRow>
+                                <RadzenPickList Style="width:100%;" Multiple Context="ResultContext" @bind-Target="@attachment.Results" @bind-Source="@resultList" TextProperty="@nameof(Models.DTO.ResultDto.ResultText)" AllowFiltering>
+                                 <SourceHeader>
+                                     Fravalgte resultater
+                                 </SourceHeader>
+                                 <TargetHeader>
+                                     Valgte resultater
+                                 </TargetHeader>
+                                 <Template>
+                                     @if (ResultContext.Active == true)
+                                        {
+                                            <span>resultat: @ResultContext.ResultText - Aktiv: @(@ResultContext.Active ? "Ja" : "Nej")</span>
+                                        }
+                                        else
+                                        {
+                                            <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>resultat: @ResultContext.ResultText - Aktiv: @(@ResultContext.Active ? "Ja" : "Nej")</span>
+                                        }
+
+                                    </Template>
+                                </RadzenPickList>
+                            </RadzenRow>
+
+                            <RadzenRow>
+                                <RadzenPickList Style="width:100%;" Multiple Context="CardContext" @bind-Target="@attachment.Cards" @bind-Source="@cardList" TextProperty="@nameof(Models.DTO.CardDto.CardName)" AllowFiltering>
+                                 <SourceHeader>
+                                     Fravalgte Kort
+                                 </SourceHeader>
+                                 <TargetHeader>
+                                     Valgte Kort
+                                 </TargetHeader>
+                                 <Template>
+                                     @if (CardContext.Active == true)
+                                        {
+                                            <span>Type: @CardContext.CardName - Aktiv: @(@CardContext.Active ? "Ja" : "Nej")</span>
+                                        }
+                                        else
+                                        {
+                                            <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Type: @CardContext.CardName - Aktiv: @(@CardContext.Active ? "Ja" : "Nej")</span>
+                                        }
+
+                                    </Template>
+                                </RadzenPickList>
+                            </RadzenRow>
+                            <RadzenButton ButtonType="ButtonType.Submit" Text="Gem"></RadzenButton>
+                            <RadzenButton ButtonType="ButtonType.Button" Text="Deaktiver" Click="Deactivate"></RadzenButton>
+                            <RadzenButton Style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)' ButtonType="ButtonType.Button" Text="Slet" Click="Delete"></RadzenButton>
+
+                        </RadzenTemplateForm>
+                    </RadzenStack>
+                </RadzenCard>
+            }
         }
         else if (workingType == "result")
         {
@@ -603,7 +751,7 @@
                 <label for="result">Resultater</label>
                 <select name="result" @onchange="SelectResult">
                     <option value="0">Vælg Resultat</option>
-                    @foreach (var result in resultList)
+                    @foreach (var result in _resultList)
                     {
                         <option value="@result.ResultId">Tekst: @result.ResultText - Status: @(result.Active ? "Aktiv" : "Inaktiv")</option>
                     }
@@ -615,7 +763,7 @@
             <RadzenCard>
                 <RadzenStack class="rz-p-0 rz-p-md-12">
                     <h3>Opdater Resultat</h3>
-                    <RadzenTemplateForm TItem="ResultDto" Data=@result Submit="CreateResult">
+                    <RadzenTemplateForm TItem="ResultDto" Data=@result Submit="UpdateResult">
                         <RadzenRow>
                             <RadzenColumn Size="12" SizeMD="12">
                                 <RadzenColumn Size="12">
@@ -661,9 +809,6 @@
                                                 </Items>
                                             </RadzenRadioButtonList>
                                         </ChildContent>
-                                        <Helper>
-                                            <RadzenRequiredValidator Text="Status er påkrævet" Component="Active" />
-                                        </Helper>
                                     </RadzenFormField>
                                 </RadzenColumn>
                             </RadzenColumn>
@@ -692,6 +837,8 @@
 
 
                         <RadzenButton ButtonType="ButtonType.Submit" Text="Gem"></RadzenButton>
+                            <RadzenButton ButtonType="ButtonType.Button" Text="Deaktiver" Click="Deactivate"></RadzenButton>
+                            <RadzenButton Style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)' ButtonType="ButtonType.Button" Text="Slet" Click="Delete"></RadzenButton>
 
                     </RadzenTemplateForm>
                 </RadzenStack>
@@ -704,7 +851,7 @@
                 <label for="type">Typer</label>
                 <select name="type" @onchange="SelectType">
                     <option value="0">Vælg Type</option>
-                    @foreach (var type in typeList)
+                    @foreach (var type in _typeList)
                     {
                         <option value="@type.TypeId">Navn: @type.CardTypeName - Status: @(type.Active ? "Aktiv" : "Inaktiv")</option>
                     }
@@ -715,7 +862,7 @@
                 <RadzenCard>
                     <RadzenStack class="rz-p-0 rz-p-md-12">
                         <h3>Opdater Type</h3>
-                        <RadzenTemplateForm TItem="TypeDto" Data=@type Submit="CreateType">
+                        <RadzenTemplateForm TItem="TypeDto" Data=@type Submit="UpdateType">
                             <RadzenRow>
                                 <RadzenColumn Size="12" SizeMD="12">
                                     <RadzenColumn Size="12">
@@ -739,9 +886,6 @@
                                                     </Items>
                                                 </RadzenRadioButtonList>
                                             </ChildContent>
-                                            <Helper>
-                                                <RadzenRequiredValidator Text="Status er påkrævet" Component="Active" />
-                                            </Helper>
                                         </RadzenFormField>
                                     </RadzenColumn>
                                 </RadzenColumn>
@@ -790,6 +934,8 @@
                                 </RadzenPickList>
                             </RadzenRow>
                             <RadzenButton ButtonType="ButtonType.Submit" Text="Gem"></RadzenButton>
+                            <RadzenButton ButtonType="ButtonType.Button" Text="Deaktiver" Click="Deactivate"></RadzenButton>
+                            <RadzenButton Style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)' ButtonType="ButtonType.Button" Text="Slet" Click="Delete"></RadzenButton>
 
                         </RadzenTemplateForm>
                     </RadzenStack>
@@ -813,7 +959,7 @@
                 <RadzenCard>
                     <RadzenStack class="rz-p-0 rz-p-md-12">
                         <h3>Opdater Type Kategori</h3>
-                        <RadzenTemplateForm TItem="TypeCategoryListDto" Data=@typeCategoryList Submit="CreateTypeCategoryList">
+                        <RadzenTemplateForm TItem="TypeCategoryListDto" Data=@typeCategoryList Submit="UpdateTypeCategoryList">
                             <RadzenRow>
                                 <RadzenColumn Size="12" SizeMD="12">
                                     <RadzenColumn Size="12">
@@ -837,9 +983,6 @@
                                                     </Items>
                                                 </RadzenRadioButtonList>
                                             </ChildContent>
-                                            <Helper>
-                                                <RadzenRequiredValidator Text="Status er påkrævet" Component="Active" />
-                                            </Helper>
                                         </RadzenFormField>
                                     </RadzenColumn>
                                 </RadzenColumn>
@@ -868,38 +1011,14 @@
 
 
                             <RadzenButton ButtonType="ButtonType.Submit" Text="Gem"></RadzenButton>
+                            <RadzenButton ButtonType="ButtonType.Button" Text="Deaktiver" Click="Deactivate"></RadzenButton>
+                            <RadzenButton Style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)' ButtonType="ButtonType.Button" Text="Slet" Click="Delete"></RadzenButton>
+                            <RadzenText Text="@errorMessage"> </RadzenText>
 
                         </RadzenTemplateForm>
                     </RadzenStack>
                 </RadzenCard>
             }
-            @* <div>
-    <EditForm Model="@typeCategoryList" OnValidSubmit="CreateTypeCategoryList">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
-    <div>
-    <label for="typeCategoryListName">Navn</label>
-    <InputText type="text" required id="typeCategoryListName" @bind-Value="typeCategoryList.TypeCategoryListName" />
-    </div>
-    <div>
-    <label for="active">Aktiv</label>
-    <InputCheckbox type="checkbox" id="active" @bind-Value="typeCategoryList.Active" />
-    </div>
-    <div>
-    <label for="type">Typer</label>
-    <InputSelect multiple name="type" @bind-Value="selectedTypeIds">
-    @foreach (var type in typeList)
-    {
-    if (type.Active == true)
-    {
-    <option value="@type.TypeId">@type.CardTypeName</option>
-    }
-    }
-    </InputSelect>
-    </div>
-    <button type="submit">Submit</button>
-    </EditForm>
-    </div> *@
         }
     }
     else
@@ -924,6 +1043,7 @@
     private ResultDto result = new();
     private TypeDto type = new();
     private TypeCategoryListDto typeCategoryList = new();
+    private int value;
 
     private List<CardDto> _cardList;
     private List<AttachmentDto> _attachmentList;
@@ -937,7 +1057,8 @@
     private IEnumerable<ResultDto> resultList;
     private IEnumerable<TypeDto> typeList;
     private IEnumerable<TypeCategoryListDto> typeCategoryListList;
-    private string attachmentDirectory = "/Development/Attachments/";
+    private string attachmentReadDirectory = "/Development/Attachments/";
+    private string attachmentCreateDirectory = "wwwroot//Development/Attachments/";
 
     Variant variant = Variant.Filled;
 
@@ -1076,7 +1197,7 @@
         var result = await _cardService.Create(entity);
         if (result is not null)
         {
-            cardList.ToList().Add(result);
+            _cardList.ToList().Add(result);
             createType = false;
             ResetWork();
             StateHasChanged();
@@ -1090,17 +1211,12 @@
             errorMessage = "Please select a file to upload.";
             return;
         }
+        CreateFile();
 
-        Directory.CreateDirectory(Path.GetDirectoryName($"{attachmentDirectory}{attachment.AttachmentUrl}")); // Ensure the directory exists
-
-        using (var stream = new FileStream($"{attachmentDirectory}{attachment.AttachmentUrl}", FileMode.Create))
-        {
-            await selectedFile.OpenReadStream().CopyToAsync(stream);
-        }
         var result = await _attachmentService.Create(attachment);
         if (result is not null)
         {
-            attachmentList.ToList().Add(result);
+            _attachmentList.ToList().Add(result);
             createType = false;
             ResetWork();
             StateHasChanged();
@@ -1113,7 +1229,7 @@
         if (selectedFile != null)
         {
             var format = "image/png"; // You can add more formats if needed
-            if (selectedFile.ContentType.StartsWith("image/png"))
+            if (selectedFile.ContentType.StartsWith(format))
             {
                 var fileExtension = Path.GetExtension(selectedFile.Name);
                 var randomFileName = $"{Guid.NewGuid()}{fileExtension}";
@@ -1123,6 +1239,7 @@
             }
             else
             {
+                selectedFile = null;
                 errorMessage = "Please upload a valid png image file.";
             }
         }
@@ -1133,7 +1250,7 @@
         var resultReceived = await _resultService.Create(result);
         if (resultReceived is not null)
         {
-            resultList.ToList().Add(resultReceived);
+            _resultList.ToList().Add(resultReceived);
             createType = false;
             ResetWork();
             StateHasChanged();
@@ -1145,7 +1262,7 @@
         var result = await _typeService.Create(type);
         if (result is not null)
         {
-            typeList.ToList().Add(result);
+            _typeList.ToList().Add(result);
             createType = false;
             ResetWork();
             StateHasChanged();
@@ -1161,20 +1278,31 @@
         var result = await _typeCategoryListService.Create(typeCategoryList);
         if (result is not null)
         {
-            typeCategoryListList.ToList().Add(result);
+            _typeCategoryListList.ToList().Add(result);
             createType = false;
             ResetWork();
             StateHasChanged();
         }
     }
 
-    private async void SelectCard(ChangeEventArgs e)
+    private async void SelectCard(ChangeEventArgs e) //int entityId
     {
         if (int.TryParse(e.Value.ToString(), out int entityId))
-        {
+        {   
             if (entityId > 0)
             {
-                card = await _cardService.GetByid(entityId);
+                var entity = await _cardService.GetByid(entityId);
+                card = new()
+                {
+                    CardId = entity.CardId,
+                    CardName = entity.CardName,
+                    CardText = entity.CardText,
+                    Active = entity.Active,
+                    AttachmentId = entity.AttachmentId,
+                    Attachment = entity.Attachment,
+                    Results = entity.Results,
+                    Types = entity.Types
+                };
                 resultList = FilterResults(card.Results);
                 typeList = FilterTypes(card.Types);
                 StateHasChanged();
@@ -1187,7 +1315,15 @@
         {
             if (entityId > 0)
             {
-                type = await _typeService.GetById(entityId);
+                var entity = await _typeService.GetById(entityId);
+                type = new()
+                {
+                    TypeId = entity.TypeId,
+                    CardTypeName = entity.CardTypeName,
+                    Active = entity.Active,
+                    Cards = entity.Cards,
+                    TypeCategoryLists = entity.TypeCategoryLists
+                };
                 cardList = FilterCards(type.Cards);
                 typeCategoryListList = FilterTypeCategories(type.TypeCategoryLists);
                 StateHasChanged();
@@ -1201,7 +1337,16 @@
         {
             if (entityId > 0)
             {
-                result = await _resultService.GetById(entityId);
+                var entity = await _resultService.GetById(entityId);
+                result = new()
+                {
+                    ResultId = entity.ResultId,
+                    ResultText = entity.ResultText,
+                    Active = entity.Active,
+                    AttachmentId = entity.AttachmentId,
+                    Attachment = entity.Attachment,
+                    Cards = entity.Cards
+                };
                 cardList = FilterCards(result.Cards);
                 StateHasChanged();
             }
@@ -1214,7 +1359,16 @@
         {
             if (entityId > 0)
             {
-                attachment = await _attachmentService.GetById(entityId);
+                var entity = await _attachmentService.GetById(entityId);
+                attachment = new()
+                {
+                    AttachmentId = entity.AttachmentId,
+                    AttachmentName = entity.AttachmentName,
+                    AttachmentUrl = entity.AttachmentUrl,
+                    Active = entity.Active,
+                    Results = entity.Results,
+                    Cards = entity.Cards
+                };
                 resultList = FilterResults(attachment.Results);
                 cardList = FilterCards(attachment.Cards);
                 StateHasChanged();
@@ -1228,7 +1382,14 @@
         {
             if (entityId > 0)
             {
-                typeCategoryList = await _typeCategoryListService.GetById(entityId);
+                var entity = await _typeCategoryListService.GetById(entityId);
+                typeCategoryList = new()
+                {
+                    TypeCategoryListId = entity.TypeCategoryListId,
+                    TypeCategoryListName = entity.TypeCategoryListName,
+                    Active = entity.Active,
+                    Types = entity.Types
+                };
                 typeList = FilterTypes(typeCategoryList.Types);
                 StateHasChanged();
             }
@@ -1261,10 +1422,10 @@
             var result = await _cardService.Update(entity);
             if (result is not null)
             {
-                int index = cardList.ToList().FindIndex(x => x.CardId == result.CardId);
+                int index = _cardList.FindIndex(x => x.CardId == result.CardId);
                 if (index != -1)
                 {
-                    cardList.ToList()[index] = result;
+                    _cardList[index] = result;
                     createType = false;
                     ResetWork();
                     StateHasChanged();
@@ -1278,6 +1439,230 @@
             }
         }
     }
+
+    private async void UpdateType(){
+        var entity = type;
+        if(entity.TypeId > 0)
+        {
+            var result = await _typeService.Update(entity);
+            if (result is not null)
+            {
+                int index = _typeList.FindIndex(x => x.TypeId == result.TypeId);
+                if (index != -1)
+                {
+                    _typeList[index] = result;
+                    createType = false;
+                    ResetWork();
+                    StateHasChanged();
+                }
+                else{
+                    errorMessage = "Der skete en fejl ved opdatering af typen.";
+                }
+            }
+            else{
+                errorMessage = "Der skete en fejl ved opdatering af typen.";
+            }
+
+        }
+    }
+
+    private async void UpdateTypeCategoryList(){
+        var entity = typeCategoryList;
+        if(entity.TypeCategoryListId > 0)
+        {
+            var result = await _typeCategoryListService.Update(entity);
+            if (result is not null)
+            {
+                int index = _typeCategoryListList.FindIndex(x => x.TypeCategoryListId == result.TypeCategoryListId);
+                if (index != -1)
+                {
+                    _typeCategoryListList[index] = result;
+                    createType = false;
+                    ResetWork();
+                    StateHasChanged();
+                }
+                else{
+                    errorMessage = "Der skete en fejl ved opdatering af typen.";
+                }
+            }
+            else{
+                errorMessage = "Der skete en fejl ved opdatering af typen.";
+            }
+
+        }
+    }
+
+    private async void UpdateResult()
+    {
+        var entity = result;
+        if(entity.ResultId > 0)
+        {
+            var resultReceived = await _resultService.Update(entity);
+            if (resultReceived is not null)
+            {
+                int index = _resultList.FindIndex(x => x.ResultId == resultReceived.ResultId);
+                if (index != -1)
+                {
+                    _resultList[index] = resultReceived;
+                    createType = false;
+                    ResetWork();
+                    StateHasChanged();
+                }
+                else{
+                    errorMessage = "Der skete en fejl ved opdatering af resultatet.";
+                }
+            }
+            else{
+                errorMessage = "Der skete en fejl ved opdatering af resultatet.";
+            }
+        }
+    }
+
+    private async void UpdateAttachment()
+    {
+        //var entity = attachment;
+        if (attachment.AttachmentId > 0)
+        {
+            if (!Path.Exists($"{attachmentCreateDirectory}{attachment.AttachmentUrl}"))
+            {
+                if (selectedFile == null)
+                {
+                    return;
+                }
+                CreateFile();                
+            }
+
+            var result = await _attachmentService.Update(attachment);
+            if (result is not null)
+            {
+                int index = _attachmentList.FindIndex(x => x.AttachmentId == result.AttachmentId);
+                if (index != -1)
+                {
+                    _attachmentList[index] = result;
+                    createType = false;
+                    ResetWork();
+                    StateHasChanged();
+                }
+                else{
+                    errorMessage = "Der skete en fejl ved opdatering af vedhæftningen.";
+                }
+            }
+            else{
+                errorMessage = "Der skete en fejl ved opdatering af vedhæftningen.";
+            }
+        }
+    }
+
+    private async void CreateFile()
+    {
+        if(selectedFile is not null)
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName($"{attachmentCreateDirectory}{attachment.AttachmentUrl}")); // Ensure the directory exists
+
+            using (var stream = new FileStream($"{attachmentCreateDirectory}{attachment.AttachmentUrl}", FileMode.Create))
+            {
+                await selectedFile.OpenReadStream().CopyToAsync(stream);
+            }
+        }
+    }
+
+    private async void Deactivate()
+    {
+        if (workingType == "card")
+        {
+
+            var entity = await _cardService.Deactivate(card.CardId);
+            if (entity is null)
+            {
+                errorMessage = $"Fejl på deaktivering af card med id:{card.CardId}";
+                return;
+            }
+            int index = _cardList.FindIndex(x => x.CardId == entity.CardId);
+            if (index != -1)
+            {
+                _cardList[index] = entity;
+                createType = false;
+                ResetWork();
+                StateHasChanged();
+            }
+        }
+        else if (workingType == "attachment")
+        {
+            var entity = await _attachmentService.Deactivate(attachment.AttachmentId);
+            if (entity is null)
+            {
+                errorMessage = $"Fejl på deaktivering af vedhæftning med id:{attachment.AttachmentId}";
+                return;
+            }
+            int index = _attachmentList.FindIndex(x => x.AttachmentId == entity.AttachmentId);
+            if (index != -1)
+            {
+                _attachmentList[index] = entity;
+                createType = false;
+                ResetWork();
+                StateHasChanged();
+            }
+        }
+        else if (workingType == "result")
+        {
+            var entity = await _resultService.Deactivate(result.ResultId);
+            if (entity is null)
+            {
+                errorMessage = $"Fejl på deaktivering af resultat med id:{result.ResultId}";
+                return;
+            }
+            int index = _resultList.FindIndex(x => x.ResultId == entity.ResultId);
+            if (index != -1)
+            {
+                _resultList[index] = entity;
+                createType = false;
+                ResetWork();
+                StateHasChanged();
+            }
+        }
+        else if (workingType == "type")
+        {
+            var entity = await _typeService.Deactivate(type.TypeId);
+            if (entity is null)
+            {
+                errorMessage = $"Fejl på deaktivering af type med id:{type.TypeId}";
+                return;
+            }
+            int index = _typeList.FindIndex(x => x.TypeId == entity.TypeId);
+            if (index != -1)
+            {
+                _typeList[index] = entity;
+                createType = false;
+                ResetWork();
+                StateHasChanged();
+            }
+        }
+        else if (workingType == "typeCategoryList")
+        {
+            var entity = await _typeCategoryListService.Deactivate(typeCategoryList.TypeCategoryListId);
+            if (entity is null)
+            {
+                errorMessage = $"Fejl på deaktivering af type kategori med id:{typeCategoryList.TypeCategoryListId}";
+                return;
+            }
+            int index = _typeCategoryListList.FindIndex(x => x.TypeCategoryListId == entity.TypeCategoryListId);
+            if (index != -1)
+            {
+                _typeCategoryListList[index] = entity;
+                createType = false;
+                ResetWork();
+                StateHasChanged();
+            }
+        }
+    }
+
+    private void Delete()
+    {
+        errorMessage = "Slet funktionen er ikke implementeret endnu.";
+    }
+
+
+
 
 
 

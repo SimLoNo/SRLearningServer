@@ -6,7 +6,7 @@ namespace SRLearningServer.Components.Models.DTO
     public class TypeDto
     {
         public int TypeId { get; set; }
-        public string CardTypeName { get; set; }
+        public string CardTypeName { get; set; } = string.Empty;
         public DateOnly LastUpdated { get; set; }
         public bool Active { get; set; }
 
