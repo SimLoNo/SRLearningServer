@@ -41,7 +41,12 @@ namespace SRLearningServer.Components.FrontendServices
 
         public async Task<List<CardDto>> GetAll()
         {
-            return await _httpClient.GetFromJsonAsync<List<CardDto>>("api/Card");
+            var response = await _httpClient.GetAsync("api/Card");
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                return await response.Content.ReadFromJsonAsync<List<CardDto>>();
+            }
+            return new();
         }
 
         public async Task<List<CardDto>> GetByType(List<List<TypeDto>> typeList)

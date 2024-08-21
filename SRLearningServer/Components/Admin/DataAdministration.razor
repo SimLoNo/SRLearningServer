@@ -202,6 +202,7 @@
                                                     <label for="AttachmentSelect">Fil:</label>
                                                     <InputFile Required name="AttachmentSelect" OnChange="HandleFileSelected" />
                                                 </RadzenCard>
+                                                <RadzenImage Style="max-width:30vw; max-height:15vh; object-fit: contain;" Path="@($"{base64ImageString}")" AlternateText="Image" />
                                             </RadzenStack>
                                         </ChildContent>
                                     </RadzenFormField>
@@ -1152,6 +1153,7 @@
     // int[] selectedTypeIds = [];
 
     private IBrowserFile? selectedFile;
+    private string base64ImageString = "";
 
     protected override async Task OnInitializedAsync()
     {
@@ -1275,7 +1277,7 @@
         var result = await _cardService.Create(entity);
         if (result is not null)
         {
-            _cardList.ToList().Add(result);
+            _cardList.Add(result);
             createType = false;
             ResetWork();
             StateHasChanged();
@@ -1300,7 +1302,7 @@
         var result = await _attachmentService.Create(attachment);
         if (result is not null)
         {
-            _attachmentList.ToList().Add(result);
+            _attachmentList.Add(result);
             createType = false;
             ResetWork();
             StateHasChanged();
@@ -1325,13 +1327,30 @@
 
 
                 attachment.AttachmentUrl = $"{randomFileName}";
+                await LoadImage(selectedFile);
             }
             else
             {
                 selectedFile = null;
+                base64ImageString = "";
                 errorMessage = "Please upload a valid png image file.";
             }
         }
+    }
+
+    public async Task LoadImage(IBrowserFile imageFile)
+    {
+        var tempFile = await imageFile.RequestImageFileAsync("image/png", 100, 100);
+        using Stream imageStream = tempFile.OpenReadStream(300 * 300 * 10);
+
+        using MemoryStream ms = new();
+        //copy imageStream to Memory stream
+        await imageStream.CopyToAsync(ms);
+
+        //convert stream to base64
+        base64ImageString = $"data:image/png;base64,{Convert.ToBase64String(ms.ToArray())}";
+        StateHasChanged();
+
     }
 
     private async void CreateResult()
@@ -1339,7 +1358,7 @@
         var resultReceived = await _resultService.Create(result);
         if (resultReceived is not null)
         {
-            _resultList.ToList().Add(resultReceived);
+            _resultList.Add(resultReceived);
             createType = false;
             ResetWork();
             StateHasChanged();
@@ -1356,7 +1375,7 @@
         var result = await _typeService.Create(type);
         if (result is not null)
         {
-            _typeList.ToList().Add(result);
+            _typeList.Add(result);
             createType = false;
             ResetWork();
             StateHasChanged();
@@ -1377,7 +1396,7 @@
         var result = await _typeCategoryListService.Create(typeCategoryList);
         if (result is not null)
         {
-            _typeCategoryListList.ToList().Add(result);
+            _typeCategoryListList.Add(result);
             createType = false;
             ResetWork();
             StateHasChanged();

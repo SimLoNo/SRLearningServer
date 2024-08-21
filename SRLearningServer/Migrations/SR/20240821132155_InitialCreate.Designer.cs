@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SRLearningServer.Components.Context;
 
@@ -11,9 +12,11 @@ using SRLearningServer.Components.Context;
 namespace SRLearningServer.Migrations.SR
 {
     [DbContext(typeof(SRContext))]
-    partial class SRContextModelSnapshot : ModelSnapshot
+    [Migration("20240821132155_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -133,8 +136,8 @@ namespace SRLearningServer.Migrations.SR
 
                     b.Property<string>("ResultText")
                         .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.HasKey("ResultId");
 

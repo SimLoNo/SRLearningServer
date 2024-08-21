@@ -91,7 +91,7 @@ namespace SRLearningServer.Components.Services
                 List<Models.Type> types = await _typeRepository.GetAll();
                 if (types.IsNullOrEmpty())
                 {
-                    return null;
+                    return new();
                 }
                 return _domainToDtoConverter.ConvertToDtoFromDomain(types, true);
             }

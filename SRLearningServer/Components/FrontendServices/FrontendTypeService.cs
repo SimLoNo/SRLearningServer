@@ -38,7 +38,12 @@ namespace SRLearningServer.Components.FrontendServices
         }
         public async Task<List<TypeDto>> GetAll()
         {
-            return await _httpClient.GetFromJsonAsync<List<TypeDto>>("api/type");
+            var response = await _httpClient.GetAsync("api/type");
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                return await response.Content.ReadFromJsonAsync<List<TypeDto>>();
+            }
+            return new();
         }
 
         public async Task<TypeDto> Update(TypeDto type)

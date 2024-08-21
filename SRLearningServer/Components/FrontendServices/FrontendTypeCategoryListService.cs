@@ -14,7 +14,12 @@ namespace SRLearningServer.Components.FrontendServices
 
         public async Task<List<TypeCategoryListDto>> GetAll()
         {
-            return await httpClient.GetFromJsonAsync<List<TypeCategoryListDto>>("api/TypeCategoryList");
+            var response = await httpClient.GetAsync("api/TypeCategoryList");
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                return await response.Content.ReadFromJsonAsync<List<TypeCategoryListDto>>();
+            }
+            return new();
         }
 
         public async Task<TypeCategoryListDto> GetById(int id)

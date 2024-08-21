@@ -7,7 +7,7 @@ namespace SRLearningServer.Components.Models
     {
         [Key]
         public int ResultId { get; set; }
-        [MaxLength(200)]
+        [MaxLength(500)]
         public string ResultText { get; set; }
 
         [Column(TypeName = "int")]

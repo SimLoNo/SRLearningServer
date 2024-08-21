@@ -3,8 +3,6 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
-
 namespace SRLearningServer.Migrations.SR
 {
     /// <inheritdoc />
@@ -67,9 +65,9 @@ namespace SRLearningServer.Migrations.SR
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CardName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     CardText = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: false),
+                    AttachmentId = table.Column<int>(type: "int", nullable: true),
                     LastUpdated = table.Column<DateOnly>(type: "date", nullable: false),
-                    Active = table.Column<bool>(type: "bit", nullable: false),
-                    AttachmentId = table.Column<int>(type: "int", nullable: true)
+                    Active = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -88,9 +86,9 @@ namespace SRLearningServer.Migrations.SR
                     ResultId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ResultText = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    AttachmentId = table.Column<int>(type: "int", nullable: true),
                     Active = table.Column<bool>(type: "bit", nullable: false),
-                    LastUpdated = table.Column<DateOnly>(type: "date", nullable: false),
-                    AttachmentId = table.Column<int>(type: "int", nullable: true)
+                    LastUpdated = table.Column<DateOnly>(type: "date", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -172,117 +170,6 @@ namespace SRLearningServer.Migrations.SR
                         principalTable: "Results",
                         principalColumn: "ResultId",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.InsertData(
-                table: "Attachments",
-                columns: new[] { "AttachmentId", "Active", "AttachmentName", "AttachmentUrl", "LastUpdated" },
-                values: new object[,]
-                {
-                    { 1, true, "Attachment1", "Icon1234.png", new DateOnly(2024, 8, 8) },
-                    { 2, true, "Attachment2", "Icon1235.png", new DateOnly(2024, 8, 8) },
-                    { 3, true, "Attachment3", "Icon1236.png", new DateOnly(2024, 8, 8) }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Cards",
-                columns: new[] { "CardId", "Active", "AttachmentId", "CardName", "CardText", "LastUpdated" },
-                values: new object[,]
-                {
-                    { 1, true, null, "I signal Kør uden SI", "I signal uden efterfølgende SI signal med denne visning betyder?", new DateOnly(2024, 8, 8) },
-                    { 2, true, null, "I signal Kør med SI", "I signal med efterfølgende SI signal med denne visning betyder?", new DateOnly(2024, 8, 8) },
-                    { 3, true, null, "I signal Kør med begrænset hastighed med SI", "I signal med efterfølgende SI signal med denne visning betyder?", new DateOnly(2024, 8, 8) },
-                    { 4, true, null, "I signal stop", "I signal med denne visning betyder?", new DateOnly(2024, 8, 8) }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Results",
-                columns: new[] { "ResultId", "Active", "AttachmentId", "LastUpdated", "ResultText" },
-                values: new object[,]
-                {
-                    { 1, true, null, new DateOnly(1, 1, 1), "stands foran signalet" },
-                    { 2, true, null, new DateOnly(2024, 8, 8), "er der foran signalet et standsningsmærke, skal der standses med forenden ud for mærket" },
-                    { 3, true, null, new DateOnly(2024, 8, 8), "viderekørsel må kun ske ved indrangering eller for rangertræk efter tilladelse fra stationsbestyreren" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "TypeCategoryLists",
-                columns: new[] { "TypeCategoryListId", "Active", "LastUpdated", "TypeCategoryListName" },
-                values: new object[,]
-                {
-                    { 1, true, new DateOnly(2024, 8, 8), "Signaler" },
-                    { 2, true, new DateOnly(2024, 8, 8), "SignalVisninger" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Types",
-                columns: new[] { "TypeId", "Active", "CardTypeName", "LastUpdated" },
-                values: new object[,]
-                {
-                    { 1, true, "Signal", new DateOnly(2024, 8, 8) },
-                    { 2, true, "I signal", new DateOnly(2024, 8, 8) },
-                    { 3, true, "SI signal", new DateOnly(2024, 8, 8) },
-                    { 4, true, "PU signal", new DateOnly(2024, 8, 8) },
-                    { 5, true, "SU signal", new DateOnly(2024, 8, 8) },
-                    { 6, true, "U signal", new DateOnly(2024, 8, 8) },
-                    { 11, true, "Kør", new DateOnly(2024, 8, 8) },
-                    { 12, true, "Kør igennem", new DateOnly(2024, 8, 8) },
-                    { 13, true, "Stop", new DateOnly(2024, 8, 8) },
-                    { 14, true, "Kør med begrænset hastighed", new DateOnly(2024, 8, 8) }
-                });
-
-            migrationBuilder.InsertData(
-                table: "CardResult",
-                columns: new[] { "CardsCardId", "ResultsResultId" },
-                values: new object[,]
-                {
-                    { 1, 1 },
-                    { 1, 2 },
-                    { 1, 3 },
-                    { 2, 1 },
-                    { 2, 2 },
-                    { 2, 3 },
-                    { 3, 1 },
-                    { 3, 2 },
-                    { 3, 3 },
-                    { 4, 1 },
-                    { 4, 2 },
-                    { 4, 3 }
-                });
-
-            migrationBuilder.InsertData(
-                table: "CardType",
-                columns: new[] { "CardsCardId", "TypesTypeId" },
-                values: new object[,]
-                {
-                    { 1, 1 },
-                    { 1, 2 },
-                    { 1, 11 },
-                    { 2, 1 },
-                    { 2, 2 },
-                    { 2, 11 },
-                    { 3, 1 },
-                    { 3, 2 },
-                    { 3, 14 },
-                    { 4, 1 },
-                    { 4, 2 },
-                    { 4, 13 }
-                });
-
-            migrationBuilder.InsertData(
-                table: "TypeTypeCategoryList",
-                columns: new[] { "TypeCategoryListsTypeCategoryListId", "TypesTypeId" },
-                values: new object[,]
-                {
-                    { 1, 2 },
-                    { 1, 3 },
-                    { 1, 4 },
-                    { 1, 5 },
-                    { 1, 6 },
-                    { 2, 11 },
-                    { 2, 12 },
-                    { 2, 13 },
-                    { 2, 14 }
                 });
 
             migrationBuilder.CreateIndex(

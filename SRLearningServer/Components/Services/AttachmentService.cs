@@ -116,7 +116,7 @@ namespace SRLearningServer.Components.Services
                 List<Attachment> attachments = await _attachmentRepository.GetAll();
                 if (attachments.IsNullOrEmpty())
                 {
-                    return null;
+                    return new();
                 }
                 return _domainToDtoConverter.ConvertToDtoFromDomain(attachments, true);
             }

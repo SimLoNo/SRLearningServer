@@ -111,7 +111,7 @@ namespace SRLearningServer.Components.Services
                 List<TypeCategoryList> list = await _typeCategoryListRepository.GetAll();
                 if (list.IsNullOrEmpty())
                 {
-                    return null;
+                    return new();
                 }
                 return _domainToDtoConverter.ConvertToDtoFromDomain(list);
             }

@@ -40,7 +40,12 @@ namespace SRLearningServer.Components.FrontendServices
 
         public async Task<List<ResultDto>> GetAll()
         {
-            return await _httpClient.GetFromJsonAsync<List<ResultDto>>("api/Result");
+            var response =  await _httpClient.GetAsync("api/Result");
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                return await response.Content.ReadFromJsonAsync<List<ResultDto>>();
+            }
+            return new();
         }
 
         public async Task<ResultDto> Update(ResultDto entity)

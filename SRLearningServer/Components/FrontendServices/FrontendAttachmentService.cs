@@ -19,7 +19,12 @@ namespace SRLearningServer.Components.FrontendServices
         }
         public async Task<List<AttachmentDto>> GetAll()
         {
-            return await _httpClient.GetFromJsonAsync<List<AttachmentDto>>("api/Attachment");
+            var response = await _httpClient.GetAsync("api/Attachment");
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                return await response.Content.ReadFromJsonAsync<List<AttachmentDto>>();
+            }
+            return new();
         }
 
         public async Task<AttachmentDto> Deactivate(int id)

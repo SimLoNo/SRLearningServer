@@ -108,7 +108,7 @@ namespace SRLearningServer.Components.Services
                 List<Result> results = await _resultRepository.GetAll();
                 if (results.IsNullOrEmpty())
                 {
-                    return null;
+                    return new();
                 }
                 return _domainToDtoConverter.ConvertToDtoFromDomain(results, true);
             }

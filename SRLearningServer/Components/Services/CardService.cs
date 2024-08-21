@@ -93,7 +93,7 @@ namespace SRLearningServer.Components.Services
                 List<Card> cards = await _cardRepository.GetAll();
                 if (cards.IsNullOrEmpty())
                 {
-                    return null;
+                    return new();
                 }
                 return _domainToDtoConverter.ConvertToDtoFromDomain(cards, true);
             }

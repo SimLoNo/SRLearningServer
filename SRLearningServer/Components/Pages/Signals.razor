@@ -33,7 +33,6 @@
         <RadzenStack>
             <RadzenCard class="rz-background-color-secondary rz-border-primary">
                 <RadzenStack>
-                    <h5 class="rz-color-on-secondary">@cards[currentCard].CardName</h5>
                     <p class="rz-color-on-secondary">@cards[currentCard].CardText</p>
                 </RadzenStack>
                 <RadzenStack class="rz-background-color-primary rz-border-primary" Style="position: relative; display: flex;" JustifyContent="JustifyContent.Center">
@@ -51,6 +50,8 @@
                                     <li class="rz-color-on-secondary">@result.ResultText</li>
                             }
                         </ul>
+
+                        <h5 class="rz-color-on-secondary">@cards[currentCard].CardName</h5>
                         @if (alwaysShowResult == false && showResult == true)
                         {
                             <div>

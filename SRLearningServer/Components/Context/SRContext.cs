@@ -28,7 +28,7 @@ namespace SRLearningServer.Components.Context
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Card>().HasOne(p => p.Attachment).WithMany(p => p.Cards).HasForeignKey(c => c.AttachmentId);
+            /*modelBuilder.Entity<Card>().HasOne(p => p.Attachment).WithMany(p => p.Cards).HasForeignKey(c => c.AttachmentId);
             List<Attachment> attachments = new() 
             {
                 new()
@@ -259,7 +259,7 @@ namespace SRLearningServer.Components.Context
                 new { CardsCardId = 4, TypesTypeId = 1 },
                 new { CardsCardId = 4, TypesTypeId = 2 },
                 new { CardsCardId = 4, TypesTypeId = 13 }
-            }));
+            }));*/
 
         }
     }
