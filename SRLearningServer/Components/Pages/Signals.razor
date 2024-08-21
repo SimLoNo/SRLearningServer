@@ -12,63 +12,69 @@
 <h1>Signaler</h1>
 
 
-@if (alwaysShowResult == true)
-{
-    <button class="btn btn-primary" @onclick="ToggleAlwaysShowResult">Vis ikke svarene</button>
-}
-else
-{
-    <button class="btn btn-primary" @onclick="ToggleAlwaysShowResult">Vis altid svarene</button>
-}
-<div>
-    @if (cards.Count > 0 && isLoading == false)
+<RadzenStack class="rz-p-sm-12">
+    <RadzenCard class="rz-background-color-primary rz-border-primary">
+        <RadzenLabel class="rz-color-on-primary" Text="Vis altid svar" Component="AlwaysShowResult" />
+    <RadzenSwitch @bind-Value=@alwaysShowResult Name="AlwaysShowResult" />
+    </RadzenCard>
+</RadzenStack>
+
+<RadzenStack>
+    @if (isLoading)
     {
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">@cards[currentCard].CardName</h5>
-                <p class="card-text">@cards[currentCard].CardText</p>
-                <div class="card-image">
-                    <img src="/Development/Attachments/@cards[currentCard].Attachment?.AttachmentUrl" usemap="#progressmap"/>
-                    <map name="progressmap">
-                        <area shape="rect" class="left-half" coords="0,0,50%,100%" alt="Go back" @onclick="() => Progress(false)" />
-                        <area shape="rect" class="right-half" coords="50%,0,100%,100%" alt="Progress" @onclick="() => Progress(true)" />
-                    </map>
-                </div>
+        <RadzenStack JustifyContent="JustifyContent.Center" AlignItems="AlignItems.Center">
+            <RadzenProgressBarCircular ShowValue="true" Mode="ProgressBarMode.Indeterminate" Size="ProgressBarCircularSize.Large">
+                <Template>Wait</Template>
+            </RadzenProgressBarCircular>
+        </RadzenStack>
+    }
+    else if (cards.Count > 0 && isLoading == false)
+    {
+        <RadzenStack>
+            <RadzenCard class="rz-background-color-secondary rz-border-primary">
+                <RadzenStack>
+                    <h5 class="rz-color-on-secondary">@cards[currentCard].CardName</h5>
+                    <p class="rz-color-on-secondary">@cards[currentCard].CardText</p>
+                </RadzenStack>
+                <RadzenStack class="rz-background-color-primary rz-border-primary" Style="position: relative; display: flex;" JustifyContent="JustifyContent.Center">
+                    <RadzenImage Path="@($"/Development/Attachments/{cards[currentCard].Attachment?.AttachmentUrl}")" Style="max-height: 60vh; max-width:100%; object-fit: contain;" />
+                    <RadzenButton Text="Go back" Click="@(args => Progress(false))" Style="position: absolute; left: 0; width: 50%; height: 100%; opacity: 0;" />
+                    <RadzenButton Text="Progress" Click="@(args => Progress(true))" Style="position: absolute; right: 0; width: 50%; height: 100%; opacity: 0;" />
+                </RadzenStack>
+                <RadzenStack>
                 @if (showResult == true || alwaysShowResult == true)
                 {
                     <div>
-                        @if(alwaysShowResult == false && showResult == true)
+                        <ul>
+                            @foreach (var result in cards[currentCard].Results)
+                            {
+                                    <li class="rz-color-on-secondary">@result.ResultText</li>
+                            }
+                        </ul>
+                        @if (alwaysShowResult == false && showResult == true)
                         {
                             <div>
-                                <p>Klik på højre side for at se næste signal. Klik på venstre side for at skjule svarene.</p>
+                                    <p class="rz-color-on-secondary">Klik på højre side for at se næste signal. Klik på venstre side for at skjule svarene.</p>
                             </div>
                         }
                         else
                         {
                             <div>
-                                <p>Klik på højre side for at se næste signal. Klik på venstre side for at gå tilbage.</p>
+                                    <p class="rz-color-on-secondary">Klik på højre side for at se næste signal. Klik på venstre side for at gå tilbage.</p>
                             </div>
                         }
-                        <ul>
-                        @foreach (var result in cards[currentCard].Results)
-                        {
-                            <li>@result.ResultText</li>
-                        }
-                        </ul>
                     </div>
                 }
                 else
                 {
                     <div>
-                        <p>Klik på højre side for at se svarene. Klik på venstre side for at gå tilbage.</p>
+                            <p class="rz-color-on-secondary">Klik på højre side for at se svarene. Klik på venstre side for at gå tilbage.</p>
                     </div>
                 }
-            </div>
-        </div>
-    }
-    else if (isLoading)
-    {
-        <p>Indlæser Signaler...</p>
+                </RadzenStack>
+            </RadzenCard>
+        </RadzenStack>
+
     }
     else if (!string.IsNullOrEmpty(errorMessage))
     {
@@ -76,17 +82,19 @@ else
     }
     else
     {
-        <p>Ingen signaler at vise</p>
+        <RadzenText Text="Ingen signaler at vise."></RadzenText>
     }
 
     
-</div>
+</RadzenStack>
 
-<button class="btn btn-primary" @onclick="GetSignals">Opdater Signaler</button>
 
-<button class="btn btn-primary" @onclick="ToggleSignalList">Sorter Signaler</button>
 
-<div class="signal-selection">
+<RadzenButton Click="GetSignals">Opdater Signaler</RadzenButton>
+
+<RadzenButton Click="ToggleSignalList">Sorter Signaler</RadzenButton>
+
+<RadzenStack>
     @if (aspects.Types.ToList().Count == 0)
     {
         <p>Indlæser...</p>
@@ -95,27 +103,19 @@ else
     {
         @foreach (var signal in signalSelection)
         {
-            <div class="signal-type">
-                <div>
-                    <label><h3 @onclick="() => ToggleAspectList(signal.SignalType.TypeId)">@signal.SignalType.CardTypeName </h3></label>
-                    <input type="checkbox" @onchange="() => ToggleAllSignalAspects(signal.SignalType.TypeId)" checked="@IsAllAspectsSelected(signal.SignalType.TypeId)" />
-                </div>
-                @if (expandedSignalId == signal.SignalType.TypeId)
-                {
-                    <div class="aspect-list">
-                        @foreach (var aspect in aspects.Types)
-                        {
-                            <div>
-                                <input type="checkbox" @onchange="() => ToggleAspectSelection(signal.SignalType.TypeId, aspect)" checked="@IsAspectSelected(signal.SignalType.TypeId, aspect)" />
-                                <label>@aspect.CardTypeName</label>
-                            </div>
-                        }
-                    </div>
-                }
-            </div>
+            <RadzenCard class="rz-background-color-secondary">
+                <RadzenStack Orientation="Orientation.Vertical" >
+                    <RadzenLabel Text="@($"Vælg {signal.SignalType.CardTypeName}")" Component="EntitySelectionDropDown" />
+                    <RadzenDropDown Multiple=true @bind-Value=@signal.SignalAspects TextProperty="@nameof(TypeDto.CardTypeName)" Style="width:auto" Name="EntitySelectionDropDown" Data=aspects.Types TValue="IEnumerable<TypeDto>" AllowClear=true AllowFiltering=false AllowSorting=false SelectAllText="Vælg alle visninger" SelectedItemsText="Visninger er valgt" Placeholder="@($"Ingen {signal.SignalType.CardTypeName}er valgt")" Chips=true MaxSelectedLabels="10">
+                    
+                    </RadzenDropDown>
+                </RadzenStack>
+            </RadzenCard>
+
+            
         }
     }
-</div>
+</RadzenStack>
 
 
 @code {
@@ -133,8 +133,10 @@ else
     private bool showResult = false;
     private bool alwaysShowResult = false;
 
+
     protected override async Task OnInitializedAsync()
     {
+        isLoading = true;
         try
         {
             signals = await _typeCategoryListService.GetByName(signalListName);
@@ -144,7 +146,7 @@ else
                 SignalModel signal = new SignalModel()
                     {
                         SignalType = signalType,
-                        SignalAspects = new(aspects.Types)
+                        SignalAspects = new List<TypeDto>(aspects.Types)
                     };
 
                 signalSelection.Add(signal);
@@ -157,7 +159,7 @@ else
         }
         finally
         {
-
+            isLoading = false;
         }
     }
 
@@ -178,57 +180,7 @@ else
         }
     }
 
-    private void ToggleAllSignalAspects(int signalId)
-    {
-        int signalSelectionIndex = signalSelection.FindIndex(s => s.SignalType.TypeId == signalId);
-        if(signalSelectionIndex != -1)
-        {
-            if(signalSelection[signalSelectionIndex].SignalAspects.Count == aspects.Types.ToList().Count)
-            {
-                signalSelection[signalSelectionIndex].SignalAspects.Clear();
-            }
-            else
-            {
-                signalSelection[signalSelectionIndex].SignalAspects = new List<TypeDto>(aspects.Types);
-            }
-        }
-    }
-
-    private bool IsAllAspectsSelected(int signalId){
-        int signalSelectionIndex = signalSelection.FindIndex(s => s.SignalType.TypeId == signalId);
-        if(signalSelectionIndex != -1)
-        {
-            return signalSelection[signalSelectionIndex].SignalAspects.Count == aspects.Types.ToList().Count;
-        }
-        return false;
-    }
-
-    private void ToggleAspectSelection(int signalId, TypeDto aspect)
-    {
-        int signalSelectionIndex = signalSelection.FindIndex(s => s.SignalType.TypeId == signalId);
-        if(signalSelectionIndex != -1)
-        {
-            if (signalSelection[signalSelectionIndex].SignalAspects.Contains(aspect))
-            {
-                signalSelection[signalSelectionIndex].SignalAspects.Remove(aspect);
-            }
-            else
-            {
-                signalSelection[signalSelectionIndex].SignalAspects.Add(aspect);
-            }
-        }
-
-    }
-
-    private bool IsAspectSelected(int signalId, TypeDto aspect)
-    {
-        int signalSelectionIndex = signalSelection.FindIndex(s => s.SignalType.TypeId == signalId);
-        if (signalSelectionIndex != -1)
-        {
-            return signalSelection[signalSelectionIndex].SignalAspects.Contains(aspect);
-        }
-        return false;
-    }
+    
 
     private async void GetSignals()
     {
@@ -241,14 +193,17 @@ else
         List<List<TypeDto>> signalAspects = new();
         foreach (SignalModel signal in signalSelection)
         {
-            foreach (TypeDto aspect in signal.SignalAspects)
+            if (signal.SignalAspects is not null)
             {
+                foreach (TypeDto aspect in signal.SignalAspects)
+                {
 
-                List<TypeDto> Selection = new();
-                Selection.Add(signal.SignalType);
-                Selection.Add(aspect);
-                signalAspects.Add(Selection);
+                    List<TypeDto> Selection = new();
+                    Selection.Add(signal.SignalType);
+                    Selection.Add(aspect);
+                    signalAspects.Add(Selection);
 
+                }
             }
         }
         cards = await _cardService.GetByType(signalAspects);

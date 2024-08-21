@@ -117,7 +117,7 @@ namespace SRLearningServer.Components.Services
                 List<Card> cards = await _cardRepository.GetByType(typeList);
                 if (cards.IsNullOrEmpty())
                 {
-                    return null;
+                    return new List<CardDto>();
                 }
                 return _domainToDtoConverter.ConvertToDtoFromDomain(cards, true).ToList();
             }

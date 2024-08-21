@@ -16,6 +16,8 @@ using Microsoft.AspNetCore.Components;
 using SRLearningServer.Components.Interfaces.FrontendServices;
 using SRLearningServer.Components.FrontendServices;
 using Radzen;
+using SRLearningServer.Components.Interfaces.Utilities;
+using SRLearningServer.Components.Utilities;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -80,7 +82,8 @@ builder.Services
     .AddScoped<IFrontendTypeCategoryListService, FrontendTypeCategoryListService>()
     .AddScoped<IFrontendTypeService, FrontendTypeService>()
     .AddScoped<IDomainToDtoConverter, DomainToDtoConverter>()
-    .AddScoped<IDtoToDomainConverter, DtoToDomainConverter>();
+    .AddScoped<IDtoToDomainConverter, DtoToDomainConverter>()
+    .AddScoped<INotificationUtility, NotificationUtility>();
 
 // Register HttpClient with the base address of the application
 builder.Services.AddScoped(sp =>
@@ -125,6 +128,7 @@ app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 app.UseAntiforgery();
+app.UseAuthorization();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();

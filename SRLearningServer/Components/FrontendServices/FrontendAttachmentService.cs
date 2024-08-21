@@ -24,7 +24,7 @@ namespace SRLearningServer.Components.FrontendServices
 
         public async Task<AttachmentDto> Deactivate(int id)
         {
-            var response = await _httpClient.PutAsync($"api/Attachment/Deactivate/{id}", null);
+            var response = await _httpClient.PutAsync($"api/Attachment/{id}", null);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<AttachmentDto>();
         }

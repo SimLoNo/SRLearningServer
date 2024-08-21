@@ -90,18 +90,26 @@ namespace SRLearningServer.Components.Repositories
             try
             {
                 // Flatten the typeSelectors to get a list of all TypeIds
-                var typeIds = typeSelectors.SelectMany(ts => ts.Select(t => t.TypeId)).Distinct().ToList();
+                //var typeIds = typeSelectors.SelectMany(ts => ts.Select(t => t.TypeId)).Distinct().ToList();
 
                 // Fetch all active cards that have any of the specified TypeIds
-                var activeCards = await _context.Set<Card>()
-                    .Where(c => c.Active && c.Types.Any(t => typeIds.Contains(t.TypeId)))
-                    .Include(c => c.Types)
-                    .Include(c => c.Results)
-                    .Include(c => c.Attachment)
-                    .ToListAsync();
+                var activeCards = new List<Card>();
+                foreach (var typeSelector in typeSelectors)
+                {
+                    var typeIds = typeSelector.Select(t => t.TypeId).ToList();
+
+                    var tempCards = await _context.Cards
+                        .Where(c => c.Active && typeIds.All(id => c.Types.Any(t => t.TypeId == id)))
+                        .Include(c => c.Types)
+                        .Include(c => c.Results)
+                        .Include(c => c.Attachment)
+                        .ToListAsync();
+
+                    activeCards.AddRange(tempCards);
+                }
 
                 // Filter the active cards to match the typeSelectors
-                var filteredCards = new List<Card>();
+                /*var filteredCards = new List<Card>();
                 foreach (var typeSelector in typeSelectors)
                 {
                     var result = activeCards
@@ -109,9 +117,10 @@ namespace SRLearningServer.Components.Repositories
                         .ToList();
 
                     filteredCards.AddRange(result);
-                }
                 filteredCards = filteredCards.Distinct().ToList();
-                foreach (var card in filteredCards)
+                }*/
+                activeCards = activeCards.Distinct().ToList();
+                foreach (var card in activeCards)
                 {
                     card.Types.ToList().RemoveAll(t => t.Active == false);
                     card.Results.ToList().RemoveAll(r => r.Active == false);
@@ -120,7 +129,7 @@ namespace SRLearningServer.Components.Repositories
                         card.Attachment = null;
                     }
                 }
-                return filteredCards;
+                return activeCards;
             }
             catch (Exception ex)
             {

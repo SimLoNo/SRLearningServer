@@ -1,4 +1,5 @@
 ﻿using SRLearningServer.Components.Interfaces.FrontendServices;
+using SRLearningServer.Components.Interfaces.Utilities;
 using SRLearningServer.Components.Models.DTO;
 using System.Net.Http.Json;
 
@@ -7,9 +8,11 @@ namespace SRLearningServer.Components.FrontendServices
     public class FrontendCardService : IFrontendCardService
     {
         private readonly HttpClient _httpClient;
-        public FrontendCardService(HttpClient httpClient)
+        private readonly INotificationUtility _notificationUtility;
+        public FrontendCardService(HttpClient httpClient, INotificationUtility notificationUtility)
         {
             _httpClient = httpClient;
+            _notificationUtility = notificationUtility;
         }
         public async Task<CardDto> Create(CardDto cardDto)
         {
@@ -45,6 +48,11 @@ namespace SRLearningServer.Components.FrontendServices
         {
             var response = await _httpClient.PostAsJsonAsync("api/Card/GetByType", typeList);
             response.EnsureSuccessStatusCode();
+            if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+            {
+                _notificationUtility.SendNotification("Der blev ikke fundet nogle kort med de valgte kriterier.");
+                return new List<CardDto>();
+            }
             return await response.Content.ReadFromJsonAsync<List<CardDto>>();
         }
 
