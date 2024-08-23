@@ -12,7 +12,7 @@ namespace SRLearningServer.Components.FrontendServices
         {
             _httpClient = httpClient;
             _baseUrl = config["Api:Endpoints:Base"];
-            _endpoint = config["Api:Endpoints:Attachment"];
+            _endpoint = config["Api:Endpoints:Type"];
         }
 
         public async Task<TypeDto> Create(TypeDto type)
