@@ -141,7 +141,7 @@ namespace SRLearningServer.Components.Converters
                     ResultDto dto = new()
                     {
                         ResultId = result.ResultId,
-                        //AttachmentId = result.AttachmentId,
+                        AttachmentId = result.AttachmentId,
                         ResultText = result.ResultText,
                         LastUpdated = result.LastUpdated,
                         Active = result.Active,

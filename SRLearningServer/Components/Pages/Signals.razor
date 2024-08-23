@@ -1,8 +1,10 @@
 ﻿@page "/signals"
 @rendermode InteractiveServer
+@using Microsoft.AspNetCore.Authorization
 @using SRLearningServer.Components.Interfaces.FrontendServices
 @using SRLearningServer.Components.Models.DTO
 @using SRLearningServer.Components.Models.WebpageModels
+@attribute [AllowAnonymous]
 
 @inject IFrontendCardService _cardService
 @inject IFrontendTypeCategoryListService _typeCategoryListService

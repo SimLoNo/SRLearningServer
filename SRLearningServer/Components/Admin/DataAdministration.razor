@@ -2,7 +2,9 @@
 @rendermode InteractiveServer
 @using Microsoft.AspNetCore.Authorization
 @using SRLearningServer.Components.Interfaces.FrontendServices
+@using SRLearningServer.Components.Interfaces.Utilities
 @using SRLearningServer.Components.Models.DTO
+@using SRLearningServer.Components.Utilities
 
 @attribute [Authorize(Roles = "Admin")]
 
@@ -11,7 +13,8 @@
 @inject IFrontendResultService _resultService
 @inject IFrontendTypeService _typeService
 @inject IFrontendTypeCategoryListService _typeCategoryListService
-@inject NotificationService NotificationService
+@inject INotificationUtility NotificationUtility
+@inject DialogService _dialogService
 
 <PageTitle>Data administration</PageTitle>
 <RadzenCard>
@@ -79,11 +82,11 @@
                                             <Template>
                                                 @if (AttachmentContext.Active == true)
                                                 {
-                                                    <span>Navn: @AttachmentContext.AttachmentName - Aktiv</span>
+                                                    <span>Navn: @AttachmentContext.AttachmentName - Aktiv - @AttachmentContext.LastUpdated</span>
                                                 }
                                                 else
                                                 {
-                                                    <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Navn: @AttachmentContext.AttachmentName - Inaktiv</span>
+                                                    <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Navn: @AttachmentContext.AttachmentName - Inaktiv - @AttachmentContext.LastUpdated</span>
                                                 }
                                                 <RadzenImage Path="@($"{attachmentReadDirectory}{AttachmentContext.AttachmentUrl}")" Style="width: 5rem;" />
                                             </Template>
@@ -91,11 +94,11 @@
                                                     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
                                                     @if (AttachmentContext.Active == true)
                                                     {
-                                                        <span>Navn: @AttachmentContext.AttachmentName - Aktiv</span>
+                                                        <span>Navn: @AttachmentContext.AttachmentName - Aktiv - @AttachmentContext.LastUpdated</span>
                                                     }
                                                     else
                                                     {
-                                                        <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Navn: @AttachmentContext.AttachmentName - Inaktiv</span>
+                                                            <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Navn: @AttachmentContext.AttachmentName - Inaktiv - @AttachmentContext.LastUpdated</span>
                                                     }
                                                     <RadzenImage Path="@($"{attachmentReadDirectory}{AttachmentContext.AttachmentUrl}")" Style="width: 5rem;" />
 
@@ -133,11 +136,11 @@
                              <Template>
                                  @if (ResultContext.Active == true)
                                     {
-                                        <span>resultat: @ResultContext.ResultText - Aktiv</span>
+                                        <span>resultat: @ResultContext.ResultText - Aktiv - @ResultContext.LastUpdated</span>
                                     }
                                     else
                                     {
-                                        <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>resultat: @ResultContext.ResultText - Inaktiv</span>
+                                        <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>resultat: @ResultContext.ResultText - Inaktiv - @ResultContext.LastUpdated</span>
                                     }
 
                                 </Template>
@@ -155,11 +158,11 @@
                              <Template>
                                  @if (TypeContext.Active == true)
                                     {
-                                        <span>Type: @TypeContext.CardTypeName - Aktiv</span>
+                                        <span>Type: @TypeContext.CardTypeName - Aktiv - @TypeContext.LastUpdated</span>
                                     }
                                     else
                                     {
-                                        <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Type: @TypeContext.CardTypeName - Inaktiv</span>
+                                        <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Type: @TypeContext.CardTypeName - Inaktiv - @TypeContext.LastUpdated</span>
                                     }
 
                                 </Template>
@@ -232,11 +235,11 @@
                              <Template>
                                  @if (ResultContext.Active == true)
                                     {
-                                        <span>resultat: @ResultContext.ResultText - Aktiv</span>
+                                        <span>resultat: @ResultContext.ResultText - Aktiv - @ResultContext.LastUpdated</span>
                                     }
                                     else
                                     {
-                                        <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>resultat: @ResultContext.ResultText - Inaktiv</span>
+                                        <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>resultat: @ResultContext.ResultText - Inaktiv - @ResultContext.LastUpdated</span>
                                     }
 
                                 </Template>
@@ -254,11 +257,11 @@
                              <Template>
                                  @if (CardContext.Active == true)
                                     {
-                                        <span>Type: @CardContext.CardName - Aktiv</span>
+                                        <span>Type: @CardContext.CardName - Aktiv - @CardContext.LastUpdated</span>
                                     }
                                     else
                                     {
-                                        <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Type: @CardContext.CardName - Inaktiv</span>
+                                        <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Type: @CardContext.CardName - Inaktiv - @CardContext.LastUpdated</span>
                                     }
 
                                 </Template>
@@ -298,11 +301,11 @@
                                                 <Template>
                                                     @if (AttachmentContext.Active == true)
                                                     {
-                                                        <span>Navn: @AttachmentContext.AttachmentName - Aktiv</span>
+                                                        <span>Navn: @AttachmentContext.AttachmentName - Aktiv - @AttachmentContext.LastUpdated</span>
                                                     }
                                                     else
                                                     {
-                                                        <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Navn: @AttachmentContext.AttachmentName - Inaktiv</span>
+                                                        <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Navn: @AttachmentContext.AttachmentName - Inaktiv - @AttachmentContext.LastUpdated</span>
                                                     }
 
                                                     <RadzenImage Path="@($"{attachmentReadDirectory}{AttachmentContext.AttachmentUrl}")" Style="width: 5rem;" />
@@ -311,11 +314,11 @@
                                                     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
                                                         @if (AttachmentContext.Active == true)
                                                         {
-                                                            <span>Navn: @AttachmentContext.AttachmentName - Aktiv</span>
+                                                            <span>Navn: @AttachmentContext.AttachmentName - Aktiv - @AttachmentContext.LastUpdated</span>
                                                         }
                                                         else
                                                         {
-                                                            <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Navn: @AttachmentContext.AttachmentName - Inaktiv</span>
+                                                            <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Navn: @AttachmentContext.AttachmentName - Inaktiv - @AttachmentContext.LastUpdated</span>
                                                         }
                                                         <RadzenImage Path="@($"{attachmentReadDirectory}{AttachmentContext.AttachmentUrl}")" Style="width: 5rem;" />
 
@@ -350,11 +353,11 @@
                              <Template>
                                  @if (CardContext.Active == true)
                                     {
-                                        <span>resultat: @CardContext.CardName - Aktiv</span>
+                                        <span>resultat: @CardContext.CardName - Aktiv - @CardContext.LastUpdated</span>
                                     }
                                     else
                                     {
-                                        <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>resultat: @CardContext.CardName - Inaktiv</span>
+                                        <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>resultat: @CardContext.CardName - Inaktiv - @CardContext.LastUpdated</span>
                                     }
 
                                 </Template>
@@ -413,11 +416,11 @@
                              <Template>
                                  @if (CardContext.Active == true)
                                     {
-                                        <span>Kort: @CardContext.CardName - Aktiv</span>
+                                        <span>Kort: @CardContext.CardName - Aktiv - @CardContext.LastUpdated</span>
                                     }
                                     else
                                     {
-                                        <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Kort: @CardContext.CardName - Inaktiv</span>
+                                        <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Kort: @CardContext.CardName - Inaktiv - @CardContext.LastUpdated</span>
                                     }
 
                                 </Template>
@@ -435,11 +438,11 @@
                              <Template>
                                  @if (TypeCategoryContext.Active == true)
                                     {
-                                        <span>Type kategori: @TypeCategoryContext.TypeCategoryListName - Aktiv</span>
+                                        <span>Type kategori: @TypeCategoryContext.TypeCategoryListName - Aktiv - @TypeCategoryContext.LastUpdated</span>
                                     }
                                     else
                                     {
-                                        <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Type kategori: @TypeCategoryContext.TypeCategoryListName - Inaktiv</span>
+                                        <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Type kategori: @TypeCategoryContext.TypeCategoryListName - Inaktiv - @TypeCategoryContext.LastUpdated</span>
                                     }
 
                                 </Template>
@@ -495,11 +498,11 @@
                              <Template>
                                  @if (TypeContext.Active == true)
                                     {
-                                        <span>Type: @TypeContext.CardTypeName - Aktiv</span>
+                                        <span>Type: @TypeContext.CardTypeName - Aktiv - @TypeContext.LastUpdated</span>
                                     }
                                     else
                                     {
-                                        <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Type: @TypeContext.CardTypeName - Inaktiv</span>
+                                        <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Type: @TypeContext.CardTypeName - Inaktiv - @TypeContext.LastUpdated</span>
                                     }
 
                                 </Template>
@@ -527,11 +530,11 @@
                     <Template>
                         @if (context.Active == true)
                         {
-                            <span>Navn: @context.CardName - Aktiv</span>
+                            <span>Navn: @context.CardName - Aktiv - @context.LastUpdated</span>
                         }
                         else
                         {
-                            <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Navn: @context.CardName - Inaktiv</span>
+                            <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Navn: @context.CardName - Inaktiv - @context.LastUpdated</span>
                         }
 
                     </Template>
@@ -575,11 +578,11 @@
                                                     <Template>
                                                         @if (AttachmentContext.Active == true)
                                                         {
-                                                            <span>Navn: @AttachmentContext.AttachmentName - Aktiv</span>
+                                                            <span>Navn: @AttachmentContext.AttachmentName - Aktiv - @AttachmentContext.LastUpdated</span>
                                                         }
                                                         else
                                                         {
-                                                            <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Navn: @AttachmentContext.AttachmentName - Inaktiv</span>
+                                                            <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Navn: @AttachmentContext.AttachmentName - Inaktiv - @AttachmentContext.LastUpdated</span>
                                                         }
                                                         <RadzenImage Path="@($"{attachmentReadDirectory}{AttachmentContext.AttachmentUrl}")" Style="width: 5rem;" />
 
@@ -588,11 +591,11 @@
                                                     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
                                                     @if (AttachmentContext.Active == true)
                                                     {
-                                                        <span>Navn: @AttachmentContext.AttachmentName - Aktiv</span>
+                                                        <span>Navn: @AttachmentContext.AttachmentName - Aktiv - @AttachmentContext.LastUpdated</span>
                                                     }
                                                     else
                                                     {
-                                                        <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Navn: @AttachmentContext.AttachmentName - Inaktiv</span>
+                                                                <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Navn: @AttachmentContext.AttachmentName - Inaktiv - @AttachmentContext.LastUpdated</span>
                                                     }
                                                     <RadzenImage Path="@($"{attachmentReadDirectory}{AttachmentContext.AttachmentUrl}")" Style="width: 5rem;" />
 
@@ -630,11 +633,11 @@
                                  <Template>
                                      @if (ResultContext.Active == true)
                                         {
-                                            <span>resultat: @ResultContext.ResultText - Aktiv</span>
+                                            <span>resultat: @ResultContext.ResultText - Aktiv - @ResultContext.LastUpdated</span>
                                         }
                                         else
                                         {
-                                            <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>resultat: @ResultContext.ResultText - Inaktiv</span>
+                                            <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>resultat: @ResultContext.ResultText - Inaktiv - @ResultContext.LastUpdated</span>
                                         }
 
                                     </Template>
@@ -652,11 +655,11 @@
                                  <Template>
                                      @if (TypeContext.Active == true)
                                         {
-                                            <span>Type: @TypeContext.CardTypeName - Aktiv</span>
+                                            <span>Type: @TypeContext.CardTypeName - Aktiv - @TypeContext.LastUpdated</span>
                                         }
                                         else
                                         {
-                                            <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Type: @TypeContext.CardTypeName - Inaktiv</span>
+                                            <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Type: @TypeContext.CardTypeName - Inaktiv - @TypeContext.LastUpdated</span>
                                         }
 
                                     </Template>
@@ -682,11 +685,11 @@
                     <Template>
                         @if (context.Active == true)
                         {
-                            <span>Navn: @context.AttachmentName - Aktiv</span>
+                            <span>Navn: @context.AttachmentName - Aktiv - @context.LastUpdated</span>
                         }
                         else
                         {
-                            <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Navn: @context.AttachmentName- Inaktiv</span>
+                            <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Navn: @context.AttachmentName- Inaktiv - @context.LastUpdated</span>
                         }
                         <RadzenImage Path="@($"{attachmentReadDirectory}{context.AttachmentUrl}")" Style="width: 4rem;" />
 
@@ -750,11 +753,11 @@
                                  <Template>
                                      @if (ResultContext.Active == true)
                                         {
-                                            <span>resultat: @ResultContext.ResultText - Aktiv</span>
+                                            <span>resultat: @ResultContext.ResultText - Aktiv - @ResultContext.LastUpdated</span>
                                         }
                                         else
                                         {
-                                            <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>resultat: @ResultContext.ResultText - Inaktiv</span>
+                                            <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>resultat: @ResultContext.ResultText - Inaktiv - @ResultContext.LastUpdated</span>
                                         }
 
                                     </Template>
@@ -772,11 +775,11 @@
                                  <Template>
                                      @if (CardContext.Active == true)
                                         {
-                                            <span>Type: @CardContext.CardName - Aktiv</span>
+                                            <span>Type: @CardContext.CardName - Aktiv - @CardContext.LastUpdated</span>
                                         }
                                         else
                                         {
-                                            <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Type: @CardContext.CardName - Inaktiv</span>
+                                            <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Type: @CardContext.CardName - Inaktiv - @CardContext.LastUpdated</span>
                                         }
 
                                     </Template>
@@ -802,11 +805,11 @@
                     <Template>
                         @if (context.Active == true)
                         {
-                            <span>Tekts: @context.ResultText - Aktiv</span>
+                            <span>Tekts: @context.ResultText - Aktiv - @context.LastUpdated</span>
                         }
                         else
                         {
-                            <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Tekst: @context.ResultText - Inaktiv</span>
+                            <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Tekst: @context.ResultText - Inaktiv - @context.LastUpdated</span>
                         }
 
                     </Template>
@@ -837,15 +840,15 @@
                                 <RadzenColumn>
                                         <RadzenFormField Text="Vedhæftning" Variant="@variant" Style="width: 100%">
                                         <ChildContent>
-                                                <RadzenDropDownDataGrid Style="height:auto" Context="AttachmentContext" Name="AttachmentDropDown" @bind-Value="result.AttachmentId" Data="@attachmentList" ValueProperty="@nameof(AttachmentDto.AttachmentId)" TextProperty="@nameof(AttachmentDto.AttachmentName)" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.Contains" AllowFiltering="true" AllowClear="true">
+                                                <RadzenDropDownDataGrid Style="height:auto" Context="AttachmentContext" Name="AttachmentDropDown" @bind-Value="result.AttachmentId" Data="@attachmentList" ValueProperty="@nameof(AttachmentDto.AttachmentId)" TextProperty="@nameof(AttachmentDto.AttachmentName)" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.Contains" AllowFiltering="true">
                                                 <Template>
                                                     @if (AttachmentContext.Active == true)
                                                     {
-                                                        <span>Navn: @AttachmentContext.AttachmentName - Aktiv</span>
+                                                        <span>Navn: @AttachmentContext.AttachmentName - Aktiv - @AttachmentContext.LastUpdated</span>
                                                     }
                                                     else
                                                     {
-                                                        <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Navn: @AttachmentContext.AttachmentName - Inaktiv</span>
+                                                        <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Navn: @AttachmentContext.AttachmentName - Inaktiv - @AttachmentContext.LastUpdated</span>
                                                     }
                                                         <RadzenImage Path="@($"{attachmentReadDirectory}{AttachmentContext.AttachmentUrl}")" Style="width: 5rem;" />
                                                 </Template>
@@ -853,11 +856,11 @@
                                                         <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
                                                             @if (AttachmentContext.Active == true)
                                                             {
-                                                                <span>Navn: @AttachmentContext.AttachmentName - Aktiv</span>
+                                                                <span>Navn: @AttachmentContext.AttachmentName - Aktiv - @AttachmentContext.LastUpdated</span>
                                                             }
                                                             else
                                                             {
-                                                                <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Navn: @AttachmentContext.AttachmentName - Inaktiv</span>
+                                                                <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Navn: @AttachmentContext.AttachmentName - Inaktiv - @AttachmentContext.LastUpdated</span>
                                                             }
                                                             <RadzenImage Path="@($"{attachmentReadDirectory}{AttachmentContext.AttachmentUrl}")" Style="width: 5rem;" />
 
@@ -892,11 +895,11 @@
                              <Template>
                                  @if (CardContext.Active == true)
                                     {
-                                        <span>resultat: @CardContext.CardName - Aktiv</span>
+                                        <span>resultat: @CardContext.CardName - Aktiv - @CardContext.LastUpdated</span>
                                     }
                                     else
                                     {
-                                        <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>resultat: @CardContext.CardName - Inaktiv</span>
+                                            <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>resultat: @CardContext.CardName - Inaktiv - @CardContext.LastUpdated</span>
                                     }
 
                                 </Template>
@@ -924,11 +927,11 @@
                     <Template>
                         @if (context.Active == true)
                         {
-                            <span>Navn: @context.CardTypeName - Aktiv</span>
+                            <span>Navn: @context.CardTypeName - Aktiv - @context.LastUpdated</span>
                         }
                         else
                         {
-                            <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Navn: @context.CardTypeName - Inaktiv</span>
+                            <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Navn: @context.CardTypeName - Inaktiv - @context.LastUpdated</span>
                         }
 
                     </Template>
@@ -978,11 +981,11 @@
                                  <Template>
                                      @if (CardContext.Active == true)
                                         {
-                                            <span>Kort: @CardContext.CardName - Aktiv</span>
+                                            <span>Kort: @CardContext.CardName - Aktiv - @CardContext.LastUpdated</span>
                                         }
                                         else
                                         {
-                                            <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Kort: @CardContext.CardName - Inaktiv</span>
+                                            <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Kort: @CardContext.CardName - Inaktiv - @CardContext.LastUpdated</span>
                                         }
 
                                     </Template>
@@ -1000,11 +1003,11 @@
                                  <Template>
                                      @if (TypeCategoryContext.Active == true)
                                         {
-                                            <span>Type kategori: @TypeCategoryContext.TypeCategoryListName - Aktiv</span>
+                                            <span>Type kategori: @TypeCategoryContext.TypeCategoryListName - Aktiv - @TypeCategoryContext.LastUpdated</span>
                                         }
                                         else
                                         {
-                                            <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Type kategori: @TypeCategoryContext.TypeCategoryListName - Inaktiv</span>
+                                            <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Type kategori: @TypeCategoryContext.TypeCategoryListName - Inaktiv - @TypeCategoryContext.LastUpdated</span>
                                         }
 
                                     </Template>
@@ -1030,11 +1033,11 @@
                     <Template>
                         @if (context.Active == true)
                         {
-                            <span>Navn: @context.TypeCategoryListName - Aktiv</span>
+                            <span>Navn: @context.TypeCategoryListName - Aktiv - @context.LastUpdated</span>
                         }
                         else
                         {
-                            <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Navn: @context.TypeCategoryListName - Inaktiv</span>
+                            <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Navn: @context.TypeCategoryListName - Inaktiv - @context.LastUpdated</span>
                         }
 
                     </Template>
@@ -1084,11 +1087,11 @@
                                  <Template>
                                      @if (TypeContext.Active == true)
                                         {
-                                            <span>Type: @TypeContext.CardTypeName - Aktiv</span>
+                                            <span>Type: @TypeContext.CardTypeName - Aktiv - @TypeContext.LastUpdated</span>
                                         }
                                         else
                                         {
-                                            <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Type: @TypeContext.CardTypeName - Inaktiv</span>
+                                            <span style='background-color: var(--rz-danger); color: var(--rz-text-contrast-color)'>Type: @TypeContext.CardTypeName - Inaktiv - @TypeContext.LastUpdated</span>
                                         }
 
                                     </Template>
@@ -1154,7 +1157,7 @@
 
     private IBrowserFile? selectedFile;
     private string base64ImageString = "";
-
+    #region Initial
     protected override async Task OnInitializedAsync()
     {
         try
@@ -1214,7 +1217,8 @@
         typeCategoryListList = new List<TypeCategoryListDto>(_typeCategoryListList);
         errorMessage = "";
     }
-
+    #endregion
+    #region GetLists
     private async Task<List<AttachmentDto>> GetAttachments()
     {
         var result = await _attachmentService.GetAll();
@@ -1270,9 +1274,11 @@
         }
         return result;
     }
+    #endregion
+    #region CreateModels
     private async void CreateCard()
     {
-        ShowSuccessNotification("Kortet blev oprettet.");
+        CheckCard();
         var entity = card;
         var result = await _cardService.Create(entity);
         if (result is not null)
@@ -1281,11 +1287,11 @@
             createType = false;
             ResetWork();
             StateHasChanged();
-            ShowSuccessNotification("Kortet blev oprettet.");
+            NotificationUtility.SendSuccessNotification("Kortet blev oprettet.");
         }
         else
         {
-            ShowErrorNotification("Der opstod en fejl under oprettelsen af kortet.");
+            NotificationUtility.SendErrorNotification("Der opstod en fejl under oprettelsen af kortet.");
         }
     }
 
@@ -1293,12 +1299,11 @@
     {
         if (selectedFile == null)
         {
-            ShowErrorNotification("Vælg en fil at uploade.");
+            NotificationUtility.SendErrorNotification("Vælg en fil at uploade.");
             errorMessage = "Please select a file to upload.";
             return;
         }
-        CreateFile();
-
+        CheckAttachment();
         var result = await _attachmentService.Create(attachment);
         if (result is not null)
         {
@@ -1306,11 +1311,12 @@
             createType = false;
             ResetWork();
             StateHasChanged();
-            ShowSuccessNotification("Vedhæftningen blev oprettet.");
+            NotificationUtility.SendSuccessNotification("Vedhæftningen blev oprettet.");
+            CreateFile();
         }
         else
         {
-            ShowErrorNotification("Der opstod en fejl under oprettelsen af vedhæftningen.");
+            NotificationUtility.SendErrorNotification("Der opstod en fejl under oprettelsen af vedhæftningen.");
         }
     }
 
@@ -1355,6 +1361,11 @@
 
     private async void CreateResult()
     {
+        var isValid = await CheckResult();
+        if (isValid == false)
+        {
+            return;
+        }
         var resultReceived = await _resultService.Create(result);
         if (resultReceived is not null)
         {
@@ -1362,16 +1373,17 @@
             createType = false;
             ResetWork();
             StateHasChanged();
-            ShowSuccessNotification("Resultatet blev oprettet.");
+            NotificationUtility.SendSuccessNotification("Resultatet blev oprettet.");
         }
         else
         {
-            ShowErrorNotification("Der opstod en fejl under oprettelsen af resultatet.");
+            NotificationUtility.SendErrorNotification("Der opstod en fejl under oprettelsen af resultatet.");
         }
     }
 
     private async void CreateType()
     {
+        CheckType();
         var result = await _typeService.Create(type);
         if (result is not null)
         {
@@ -1379,20 +1391,17 @@
             createType = false;
             ResetWork();
             StateHasChanged();
-            ShowSuccessNotification("Typen blev oprettet.");
+            NotificationUtility.SendSuccessNotification("Typen blev oprettet.");
         }
         else
         {
-            ShowErrorNotification("Der opstod en fejl under oprettelsen af typen.");
+            NotificationUtility.SendErrorNotification("Der opstod en fejl under oprettelsen af typen.");
         }
     }
 
     private async void CreateTypeCategoryList()
     {
-        // if (selectedTypeIds.Length > 0)
-        // {
-        //     typeCategoryList.Types = typeList.Where(x => selectedTypeIds.Contains(x.TypeId)).ToList();
-        // }
+        CheckTypeCategoryList();
         var result = await _typeCategoryListService.Create(typeCategoryList);
         if (result is not null)
         {
@@ -1400,14 +1409,15 @@
             createType = false;
             ResetWork();
             StateHasChanged();
-            ShowSuccessNotification("Type kategorien blev oprettet.");
+            NotificationUtility.SendSuccessNotification("Type kategorien blev oprettet.");
         }
         else
         {
-            ShowErrorNotification("Der opstod en fejl under oprettelsen af type kategorien.");
+            NotificationUtility.SendErrorNotification("Der opstod en fejl under oprettelsen af type kategorien.");
         }
     }
-
+    #endregion
+    #region SelectModels
     private async void SelectCard(object e) //int entityId
     {
         int entityId = (int)e;
@@ -1524,6 +1534,8 @@
         }
     }
 
+    #endregion
+    #region SortLists
     private IEnumerable<ResultDto> FilterResults(IEnumerable<ResultDto> results)
     {
         return _resultList.Where(result => !results.Any(r => r.ResultId == result.ResultId)).ToList();
@@ -1542,11 +1554,13 @@
     {
         return _typeCategoryListList.Where(tcl => !tcls.Any(t => t.TypeCategoryListId == tcl.TypeCategoryListId)).ToList();
     }
-
+    #endregion
+    #region UpdateModels
     private async void UpdateCard()
     {
         var entity = card;
         if(entity.CardId > 0){
+            CheckCard();
             var result = await _cardService.Update(entity);
             if (result is not null)
             {
@@ -1557,15 +1571,15 @@
                     createType = false;
                     ResetWork();
                     StateHasChanged();
-                    ShowSuccessNotification("Kortet blev opdateret.");
+                    NotificationUtility.SendSuccessNotification("Kortet blev opdateret.");
                 }
                 else{
-                    ShowErrorNotification("Der skete en fejl ved opdatering af kortet.");
+                    NotificationUtility.SendErrorNotification("Der skete en fejl ved opdatering af kortet.");
                     errorMessage = "Der skete en fejl ved opdatering af kortet.";
                 }
             }
             else{
-                ShowErrorNotification("Der skete en fejl ved opdatering af kortet.");
+                NotificationUtility.SendErrorNotification("Der skete en fejl ved opdatering af kortet.");
                 errorMessage = "Der skete en fejl ved opdatering af kortet.";
             }
         }
@@ -1575,6 +1589,7 @@
         var entity = type;
         if(entity.TypeId > 0)
         {
+            CheckType();
             var result = await _typeService.Update(entity);
             if (result is not null)
             {
@@ -1585,15 +1600,15 @@
                     createType = false;
                     ResetWork();
                     StateHasChanged();
-                    ShowSuccessNotification("Typen blev opdateret.");
+                    NotificationUtility.SendSuccessNotification("Typen blev opdateret.");
                 }
                 else{
-                    ShowErrorNotification("Der skete en fejl ved opdatering af typen.");
+                    NotificationUtility.SendErrorNotification("Der skete en fejl ved opdatering af typen.");
                     errorMessage = "Der skete en fejl ved opdatering af typen.";
                 }
             }
             else{
-                ShowErrorNotification("Der skete en fejl ved opdatering af typen.");
+                NotificationUtility.SendErrorNotification("Der skete en fejl ved opdatering af typen.");
                 errorMessage = "Der skete en fejl ved opdatering af typen.";
             }
 
@@ -1604,6 +1619,7 @@
         var entity = typeCategoryList;
         if(entity.TypeCategoryListId > 0)
         {
+            CheckTypeCategoryList();
             var result = await _typeCategoryListService.Update(entity);
             if (result is not null)
             {
@@ -1614,15 +1630,15 @@
                     createType = false;
                     ResetWork();
                     StateHasChanged();
-                    ShowSuccessNotification("Type kategorien blev opdateret.");
+                    NotificationUtility.SendSuccessNotification("Type kategorien blev opdateret.");
                 }
                 else{
-                    ShowErrorNotification("Der skete en fejl ved opdatering af type kategorien.");
+                    NotificationUtility.SendErrorNotification("Der skete en fejl ved opdatering af type kategorien.");
                     errorMessage = "Der skete en fejl ved opdatering af typen.";
                 }
             }
             else{
-                ShowErrorNotification("Der skete en fejl ved opdatering af type kategorien.");
+                NotificationUtility.SendErrorNotification("Der skete en fejl ved opdatering af type kategorien.");
                 errorMessage = "Der skete en fejl ved opdatering af typen.";
             }
 
@@ -1634,6 +1650,11 @@
         var entity = result;
         if(entity.ResultId > 0)
         {
+            var isValid = await CheckResult();
+            if (isValid == false)
+            {
+                return;
+            }
             var resultReceived = await _resultService.Update(entity);
             if (resultReceived is not null)
             {
@@ -1644,15 +1665,15 @@
                     createType = false;
                     ResetWork();
                     StateHasChanged();
-                    ShowSuccessNotification("Resultatet blev opdateret.");
+                    NotificationUtility.SendSuccessNotification("Resultatet blev opdateret.");
                 }
                 else{
-                    ShowErrorNotification("Der skete en fejl ved opdatering af resultatet.");
+                    NotificationUtility.SendErrorNotification("Der skete en fejl ved opdatering af resultatet.");
                     errorMessage = "Der skete en fejl ved opdatering af resultatet.";
                 }
             }
             else{
-                ShowErrorNotification("Der skete en fejl ved opdatering af resultatet.");
+                NotificationUtility.SendErrorNotification("Der skete en fejl ved opdatering af resultatet.");
                 errorMessage = "Der skete en fejl ved opdatering af resultatet.";
             }
         }
@@ -1667,12 +1688,12 @@
             {
                 if (selectedFile == null)
                 {
-                    ShowErrorNotification("Der er ikke valgt en gyldig fil.");
+                    NotificationUtility.SendErrorNotification("Der er ikke valgt en gyldig fil.");
                     return;
                 }
                 CreateFile();                
             }
-
+            CheckAttachment();
             var result = await _attachmentService.Update(attachment);
             if (result is not null)
             {
@@ -1683,19 +1704,20 @@
                     createType = false;
                     ResetWork();
                     StateHasChanged();
-                    ShowSuccessNotification("Vedhæftningen blev opdateret.");
+                    NotificationUtility.SendSuccessNotification("Vedhæftningen blev opdateret.");
                 }
                 else{
-                    ShowErrorNotification("Der skete en fejl ved opdatering af vedhæftningen.");
+                    NotificationUtility.SendErrorNotification("Der skete en fejl ved opdatering af vedhæftningen.");
                     errorMessage = "Der skete en fejl ved opdatering af vedhæftningen.";
                 }
             }
             else{
-                ShowErrorNotification("Der skete en fejl ved opdatering af vedhæftningen.");
+                NotificationUtility.SendErrorNotification("Der skete en fejl ved opdatering af vedhæftningen.");
                 errorMessage = "Der skete en fejl ved opdatering af vedhæftningen.";
             }
         }
     }
+    #endregion
 
     private async void CreateFile()
     {
@@ -1718,7 +1740,7 @@
             var entity = await _cardService.Deactivate(card.CardId);
             if (entity is null)
             {
-                ShowErrorNotification($"Fejl på deaktivering af kort med id:{card.CardId}");
+                NotificationUtility.SendErrorNotification($"Fejl på deaktivering af kort med id:{card.CardId}");
                 errorMessage = $"Fejl på deaktivering af card med id:{card.CardId}";
                 return;
             }
@@ -1729,7 +1751,7 @@
                 createType = false;
                 ResetWork();
                 StateHasChanged();
-                ShowSuccessNotification("Kortet blev deaktiveret.");
+                NotificationUtility.SendSuccessNotification("Kortet blev deaktiveret.");
             }
         }
         else if (workingType == "attachment")
@@ -1737,7 +1759,7 @@
             var entity = await _attachmentService.Deactivate(attachment.AttachmentId);
             if (entity is null)
             {
-                ShowErrorNotification($"Fejl på deaktivering af vedhæftning med id:{attachment.AttachmentId}");
+                NotificationUtility.SendErrorNotification($"Fejl på deaktivering af vedhæftning med id:{attachment.AttachmentId}");
                 errorMessage = $"Fejl på deaktivering af vedhæftning med id:{attachment.AttachmentId}";
                 return;
             }
@@ -1748,7 +1770,7 @@
                 createType = false;
                 ResetWork();
                 StateHasChanged();
-                ShowSuccessNotification("Vedhæftningen blev deaktiveret.");
+                NotificationUtility.SendSuccessNotification("Vedhæftningen blev deaktiveret.");
             }
         }
         else if (workingType == "result")
@@ -1756,7 +1778,7 @@
             var entity = await _resultService.Deactivate(result.ResultId);
             if (entity is null)
             {
-                ShowErrorNotification($"Fejl på deaktivering af resultat med id:{result.ResultId}");
+                NotificationUtility.SendErrorNotification($"Fejl på deaktivering af resultat med id:{result.ResultId}");
                 errorMessage = $"Fejl på deaktivering af resultat med id:{result.ResultId}";
                 return;
             }
@@ -1767,7 +1789,7 @@
                 createType = false;
                 ResetWork();
                 StateHasChanged();
-                ShowSuccessNotification("Resultatet blev deaktiveret.");
+                NotificationUtility.SendSuccessNotification("Resultatet blev deaktiveret.");
             }
         }
         else if (workingType == "type")
@@ -1775,7 +1797,7 @@
             var entity = await _typeService.Deactivate(type.TypeId);
             if (entity is null)
             {
-                ShowErrorNotification($"Fejl på deaktivering af type med id:{type.TypeId}");
+                NotificationUtility.SendErrorNotification($"Fejl på deaktivering af type med id:{type.TypeId}");
                 errorMessage = $"Fejl på deaktivering af type med id:{type.TypeId}";
                 return;
             }
@@ -1786,7 +1808,7 @@
                 createType = false;
                 ResetWork();
                 StateHasChanged();
-                ShowSuccessNotification("Typen blev deaktiveret.");
+                NotificationUtility.SendSuccessNotification("Typen blev deaktiveret.");
             }
         }
         else if (workingType == "typeCategoryList")
@@ -1794,7 +1816,7 @@
             var entity = await _typeCategoryListService.Deactivate(typeCategoryList.TypeCategoryListId);
             if (entity is null)
             {
-                ShowErrorNotification($"Fejl på deaktivering af type kategori med id:{typeCategoryList.TypeCategoryListId}");
+                NotificationUtility.SendErrorNotification($"Fejl på deaktivering af type kategori med id:{typeCategoryList.TypeCategoryListId}");
                 errorMessage = $"Fejl på deaktivering af type kategori med id:{typeCategoryList.TypeCategoryListId}";
                 return;
             }
@@ -1805,30 +1827,174 @@
                 createType = false;
                 ResetWork();
                 StateHasChanged();
-                ShowSuccessNotification("Type kategorien blev deaktiveret.");
+                NotificationUtility.SendSuccessNotification("Type kategorien blev deaktiveret.");
             }
         }
     }
-    void ShowSuccessNotification(string detail = "NoMessage")
-    {
-        ShowNotification(new NotificationMessage { Severity = NotificationSeverity.Success, Summary = "Success", Detail = $"{detail}", Duration = 4000 });
-    
-    }
 
-    void ShowErrorNotification(string detail = "NoMessage")
-    {
-        ShowNotification(new NotificationMessage { Severity = NotificationSeverity.Error, Summary = "Error", Detail = $"{detail}", Duration = 4000 });
 
-    }
-
-    void ShowNotification(NotificationMessage message)
-    {
-        NotificationService.Notify(message);
-
-    }
     private void Delete()
     {
         errorMessage = "Slet funktionen er ikke implementeret endnu.";
+    }
+    #region CheckModels
+
+    private async Task<bool> CheckAttachment(){
+
+        List<string> inactiveRelations = new();
+        if (attachment.Results == null)
+        {
+            attachment.Results = new List<ResultDto>();
+        }
+        if(attachment.Cards == null)
+        {
+            attachment.Cards = new List<CardDto>();
+        }
+        if (attachment.Active == true)
+        {
+            foreach (ResultDto result in attachment.Results)
+            {
+                if (result.Active == false)
+                {
+                    inactiveRelations.Add($"Resultat: {result.ResultText} er inaktiv");
+                }
+            }
+            foreach (CardDto card in attachment.Cards)
+            {
+                if (card.Active == false)
+                {
+                    inactiveRelations.Add($"Kort: {card.CardName} er inaktiv");
+                }
+            }
+            if (inactiveRelations.Count > 0)
+            {
+                var IsConfirmed = await ConfirmDialog("Der er fundet inaktive relationer", $"Vedhæftningen indeholder inaktive relationer der ikke vil blive vist for brugerne. Er du sikker på at du vil fortsætte? følgende relationer er inaktive: <br> {string.Join("<br>", inactiveRelations)}");
+                if (IsConfirmed == true)
+                {
+                    return true;
+                }
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void CheckCard()
+    {
+        List<string> inactiveRelations = new();
+        if (card.Results == null)
+        {
+            card.Results = new List<ResultDto>();
+        }
+        if(card.Types == null)
+        {
+            card.Types = new List<TypeDto>();
+        }
+        if(card.Active == true)
+        {
+            foreach (ResultDto result in card.Results)
+            {
+                if (result.Active == false)
+                {
+                    inactiveRelations.Add($"Resultat: {result.ResultText} er inaktiv");
+                }
+            }
+            foreach (TypeDto type in card.Types)
+            {
+                if (type.Active == false)
+                {
+                    inactiveRelations.Add($"Type: {type.CardTypeName} er inaktiv");
+                }
+            }
+            if(card.AttachmentId is not null)
+            {
+                AttachmentDto relatedAttachment = _attachmentList.FirstOrDefault(a => a.AttachmentId == card.AttachmentId);
+                if(relatedAttachment is not null)
+                {
+                    if (relatedAttachment.Active == false)
+                    {
+                        inactiveRelations.Add($"Vedhæftning: {relatedAttachment.AttachmentName} er inaktiv");
+                    }
+                }
+            }
+            {
+                
+            }
+            if (inactiveRelations.Count > 0)
+            {
+                var IsConfirmed = ConfirmDialog("Der er fundet inaktive relationer", $"Kortet indeholder inaktive relationer der ikke vil blive vist for brugerne. Er du sikker på at du vil fortsætte? følgende relationer er inaktive: <br> {string.Join("<br>", inactiveRelations)}");
+                if (IsConfirmed.Result == true)
+                {
+                    return;
+                }
+            }
+        }
+    }
+
+    private async Task<bool> CheckResult()
+    {
+        List<string> inactiveRelations = new();
+        if (result.Cards == null)
+        {
+            result.Cards = new List<CardDto>();
+        }
+        if (result.Active == true)
+        {
+            foreach (CardDto card in result.Cards)
+            {
+                if (card.Active == false)
+                {
+                    inactiveRelations.Add($"Kort: {card.CardName} er inaktiv");
+                }
+            }
+            if (result.AttachmentId is not null)
+            {
+                AttachmentDto relatedAttachment = _attachmentList.FirstOrDefault(a => a.AttachmentId == result.AttachmentId);
+                if(relatedAttachment is not null)
+                {
+                    if (relatedAttachment.Active == false)
+                    {
+                        inactiveRelations.Add($"Vedhæftning: {relatedAttachment.AttachmentName} er inaktiv");
+                    }
+                }
+            }
+            if (inactiveRelations.Count > 0)
+            {
+                var IsConfirmed = await ConfirmDialog("Der er fundet inaktive relationer", $"Resultatet indeholder inaktive relationer der ikke vil blive vist for brugerne. Er du sikker på at du vil fortsætte? følgende relationer er inaktive: <br> {string.Join("<br>", inactiveRelations)}");
+                if(IsConfirmed == true)
+                {
+                    return true;
+                }
+                return false;
+            }
+        }
+        return true;
+
+    }
+
+    private void CheckType()
+    {
+        if (type.Cards == null)
+        {
+            type.Cards = new List<CardDto>();
+        }
+        if (type.TypeCategoryLists == null)
+        {
+            type.TypeCategoryLists = new List<TypeCategoryListDto>();
+        }
+    }
+
+    private void CheckTypeCategoryList()
+    {
+        if (typeCategoryList.Types == null)
+        {
+            typeCategoryList.Types = new List<TypeDto>();
+        }
+    }
+    #endregion
+    private async Task<bool?> ConfirmDialog(string title, string message)
+    {
+        return await _dialogService.Confirm(message, title, new ConfirmOptions() {OkButtonText = "Fortsæt", CancelButtonText = "Afbryd"});
     }
 
 

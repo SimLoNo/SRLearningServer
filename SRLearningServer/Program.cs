@@ -18,6 +18,8 @@ using SRLearningServer.Components.FrontendServices;
 using Radzen;
 using SRLearningServer.Components.Interfaces.Utilities;
 using SRLearningServer.Components.Utilities;
+using Microsoft.AspNetCore.Authorization;
+using SRLearningServer.Components.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -60,8 +62,17 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
     .AddSignInManager()
     .AddDefaultTokenProviders();
 
-builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+builder.Services.AddTransient<IEmailSender<ApplicationUser>, EmailSender>();
+builder.Services.AddTransient<IBaseEmailSender, BaseEmailSender>();
+builder.Services.Configure<AuthMessageSenderOptions>(builder.Configuration);
 
+builder.Services.ConfigureApplicationCookie(options => {
+    options.ExpireTimeSpan = TimeSpan.FromDays(5);
+    options.SlidingExpiration = true;
+});
+
+builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
+    options.TokenLifespan = TimeSpan.FromHours(3));
 /*builder.Services.AddDbContext<SRContext>(options =>
     options.UseSqlServer(SRConnectionString));*/
 
@@ -83,7 +94,8 @@ builder.Services
     .AddScoped<IFrontendTypeService, FrontendTypeService>()
     .AddScoped<IDomainToDtoConverter, DomainToDtoConverter>()
     .AddScoped<IDtoToDomainConverter, DtoToDomainConverter>()
-    .AddScoped<INotificationUtility, NotificationUtility>();
+    .AddScoped<INotificationUtility, NotificationUtility>()
+    .AddSingleton<IAuthorizationHandler, IsAdminAuthorizationHandler>();
 
 // Register HttpClient with the base address of the application
 builder.Services.AddScoped(sp =>
@@ -97,6 +109,13 @@ builder.Services.AddControllers()
         {
             options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
         });
+
+/*builder.Services.AddAuthorization(options =>
+{
+    options.FallbackPolicy = new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .Build();
+});*/
 
 /*string userFolder = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 userFolder = Path.Combine(userFolder, ".aspnet");

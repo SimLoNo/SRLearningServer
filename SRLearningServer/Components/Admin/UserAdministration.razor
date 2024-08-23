@@ -1,9 +1,218 @@
 ﻿@page "/admin/user"
+@rendermode InteractiveServer
 @using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Mvc
+@using Microsoft.EntityFrameworkCore
+@using SRLearningServer.Data
+@using System.Text
+@using System.Security.Cryptography
 @attribute [Authorize(Roles = "Admin")]
 
-<p>You can only see this if you're in the 'Admin' or 'Superuser' role.</p
+@inject UserManager<ApplicationUser> _UserManager
+@inject RoleManager<IdentityRole> _RoleManager
+@inject IUserStore<ApplicationUser> _UserStore
+@inject IAuthorizationService _AuthorizationService
+@inject ApplicationDbContext _Context
 
-@code {
+<PageTitle>Bruger administration</PageTitle>
+<RadzenButton ButtonType="ButtonType.Button" Text="Ny Bruger" Click="SetCreateUser"></RadzenButton>
+<RadzenCard>
+    <RadzenLabel Text="Vælg Bruger" Component="EntitySelectionDropDown" />
+    <RadzenDropDown Style="width:auto" Name="EntitySelectionDropDown" TValue="string" Data="@user" ValueProperty="@nameof(ApplicationUser.Id)" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.Contains" AllowFiltering="true"
+                            Change="@(args => OnGetAsync(args))" AllowClear=true @bind-Value="@selectedUserId">
+    </RadzenDropDown>
+</RadzenCard>
+    <RadzenCard>
+        <RadzenStack class="rz-p-0 rz-p-md-12">
+            <h3>Opret Kort</h3>
+        <RadzenTemplateForm TItem="ApplicationUser" Data=@selectedUser Submit="UpdateUser">
+                <RadzenRow>
+                    <RadzenColumn Size="12" SizeMD="12">
+                        <RadzenColumn Size="12">
+                            <RadzenFormField Text="Navn" Variant="@variant" Style="width: 100%">
+                                <ChildContent>
+                                    <RadzenTextBox Style="width: 100%" Name="CardName" @bind-Value="selectedUser.UserName" />
+                                </ChildContent>
+                                <Helper>
+                                    <RadzenRequiredValidator Text="Navn er påkrævet" Component="CardName" />
+                                </Helper>
+                            </RadzenFormField>
+                        </RadzenColumn>
 
+                        <RadzenColumn>
+                        <RadzenFormField Text="Email" Variant="@variant" Style="width: 100%">
+                                <ChildContent>
+                                    <RadzenTextBox Name="CardText" @bind-Value="selectedUser.Email" />
+                                </ChildContent>
+                                <Helper>
+                                    <RadzenRequiredValidator Text="Email er påkrævet" Component="CardText" />
+                                </Helper>
+                            </RadzenFormField>
+                        </RadzenColumn>
+
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow>
+                    <RadzenPickList Style="width: 100%; max-height:30vh;" Multiple Context="RoleContext" @bind-Target="@selectedRoles" @bind-Source="@roles">
+                     <SourceHeader>
+                         Fravalgte roller
+                     </SourceHeader>
+                     <TargetHeader>
+                         Valgte roller
+                     </TargetHeader>
+                     <Template>
+                         <RadzenText Text="@($"Navn: {@RoleContext}")"/>
+                         
+
+                        </Template>
+                    </RadzenPickList>
+                </RadzenRow>
+
+                
+                <RadzenButton ButtonType="ButtonType.Submit" Text="Gem"></RadzenButton>
+
+            </RadzenTemplateForm>
+        </RadzenStack>
+    </RadzenCard>
+
+ @code {
+
+    private IEnumerable<ApplicationUser> user;
+    private IEnumerable<string> _roles;
+    private IEnumerable<string> roles;
+    private IEnumerable<string> selectedRoles;
+    private ApplicationUser selectedUser = new();
+    private string? selectedUserId;
+    bool createNewUser = true;
+
+    Variant variant = Variant.Filled;
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        var users = await _UserManager.Users.ToListAsync();
+
+        var foundRoles= await _RoleManager.Roles.ToListAsync();
+        if (foundRoles == null)
+        {
+            _roles = new List<string>();
+        }
+        _roles = foundRoles.Select(r => r.Name).ToList();
+
+        if (users == null)
+        {
+            user = new List<ApplicationUser>();
+        }
+        user = users;
+    }
+
+    private void SetCreateUser()
+    {
+        selectedUserId = null;
+        createNewUser = true;
+        selectedUser = new ApplicationUser();
+        roles = _roles;
+        selectedRoles = new List<string>();
+    }
+
+    private async void OnGetAsync(object e)
+    {
+        createNewUser = false;
+        string id = (string)e;
+        ApplicationUser? foundUser = await _UserManager.FindByIdAsync(id);
+        if (foundUser == null)
+        {
+            return;
+        }
+        selectedRoles = await _UserManager.GetRolesAsync(foundUser);
+        roles = SortRoles(selectedRoles);
+        selectedUser = foundUser;
+        StateHasChanged();
+    }
+
+    private List<string> SortRoles(IEnumerable<string> SortingRoles)
+    {
+        return _roles.Where(r => !SortingRoles.Any(t => t == r)).ToList();
+    }
+
+    private async void UpdateUser()
+    {
+        if (createNewUser == true)
+        {
+            var newUser = CreateUser();
+            await _UserStore.SetUserNameAsync(newUser, selectedUser.UserName, CancellationToken.None);
+            var emailStore = GetEmailStore();
+            await emailStore.SetEmailAsync(newUser, selectedUser.Email, CancellationToken.None);
+            var result = await _UserManager.CreateAsync(newUser, GenerateRandomPassword(15));
+            await _UserManager.AddToRolesAsync(newUser, selectedRoles);
+
+            if (!result.Succeeded)
+            {
+                createNewUser = false;
+                return;
+            }
+
+        }
+        else
+        {
+            await _UserManager.UpdateAsync(selectedUser);
+            await _UserManager.RemoveFromRolesAsync(selectedUser, await _UserManager.GetRolesAsync(selectedUser));
+            await _UserManager.AddToRolesAsync(selectedUser, selectedRoles);
+            if (selectedRoles == null)
+            {
+                createNewUser = false;
+                return;
+            }
+        }
+        user = await _UserManager.Users.ToListAsync();
+        selectedUser = new();
+        selectedUserId = null;
+        createNewUser = false;
+        roles = new List<string>();
+        selectedRoles = new List<string>();
+        StateHasChanged();
+    }
+
+    private ApplicationUser CreateUser()
+    {
+        try
+        {
+            return Activator.CreateInstance<ApplicationUser>();
+        }
+        catch
+        {
+            throw new InvalidOperationException($"Can't create an instance of '{nameof(ApplicationUser)}'. " +
+                $"Ensure that '{nameof(ApplicationUser)}' is not an abstract class and has a parameterless constructor.");
+        }
+    }
+
+    private IUserEmailStore<ApplicationUser> GetEmailStore()
+    {
+        if (!_UserManager.SupportsUserEmail)
+        {
+            throw new NotSupportedException("The default UI requires a user store with email support.");
+        }
+        return (IUserEmailStore<ApplicationUser>)_UserStore;
+    }
+
+    private string GenerateRandomPassword(int length = 12)
+    {
+        const string validChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()";
+        StringBuilder password = new StringBuilder();
+        using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
+        {
+            byte[] uintBuffer = new byte[sizeof(uint)];
+
+            while (length-- > 0)
+            {
+                rng.GetBytes(uintBuffer);
+                uint num = BitConverter.ToUInt32(uintBuffer, 0);
+                password.Append(validChars[(int)(num % (uint)validChars.Length)]);
+            }
+        }
+
+        return password.ToString();
+    }
 }
