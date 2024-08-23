@@ -1280,22 +1280,26 @@
     private async void CreateCard()
     {
         var entity = card;
-        var isValid = await CheckCard(entity);
-        if (isValid == true)
+        if (entity.Active == true)
         {
-            var result = await _cardService.Create(entity);
-            if (result is not null)
+            var isValid = await CheckCard(entity);
+            if (isValid == false)
             {
-                _cardList.Add(result);
-                createType = false;
-                ResetWork();
-                StateHasChanged();
-                NotificationUtility.SendSuccessNotification("Kortet blev oprettet.");
+                return;
             }
-            else
-            {
-                NotificationUtility.SendErrorNotification("Der opstod en fejl under oprettelsen af kortet.");
-            }
+        }
+        var result = await _cardService.Create(entity);
+        if (result is not null)
+        {
+            _cardList.Add(result);
+            createType = false;
+            ResetWork();
+            StateHasChanged();
+            NotificationUtility.SendSuccessNotification("Kortet blev oprettet.");
+        }
+        else
+        {
+            NotificationUtility.SendErrorNotification("Der opstod en fejl under oprettelsen af kortet.");
         }
     }
 
@@ -1308,23 +1312,27 @@
             return;
         }
         var entity = attachment;
-        var isValid = await CheckAttachment(entity);
-        if(isValid == true)
+        if (entity.Active == true)
         {
-            var result = await _attachmentService.Create(entity);
-            if (result is not null)
+            var isValid = await CheckAttachment(entity);
+            if (isValid == false)
             {
-                _attachmentList.Add(result);
-                createType = false;
-                ResetWork();
-                CreateFile();
-                NotificationUtility.SendSuccessNotification("Vedhæftningen blev oprettet.");
-                StateHasChanged();
+                return;
             }
-            else
-            {
-                NotificationUtility.SendErrorNotification("Der opstod en fejl under oprettelsen af vedhæftningen.");
-            }
+        }
+        var result = await _attachmentService.Create(entity);
+        if (result is not null)
+        {
+            _attachmentList.Add(result);
+            createType = false;
+            ResetWork();
+            CreateFile();
+            NotificationUtility.SendSuccessNotification("Vedhæftningen blev oprettet.");
+            StateHasChanged();
+        }
+        else
+        {
+            NotificationUtility.SendErrorNotification("Der opstod en fejl under oprettelsen af vedhæftningen.");
         }
     }
 
@@ -1370,10 +1378,13 @@
     private async void CreateResult()
     {
         var entity = result;
-        var isValid = await CheckResult(entity);
-        if (isValid == false)
+        if (entity.Active == true)
         {
-            return;
+            var isValid = await CheckResult(entity);
+            if (isValid == false)
+            {
+                return;
+            }
         }
         var resultReceived = await _resultService.Create(result);
         if (resultReceived is not null)
@@ -1393,10 +1404,13 @@
     private async void CreateType()
     {
         var entity = type;
-        var isValid = await CheckType(entity);
-        if (isValid == false)
+        if(entity.Active == true)
         {
-            return;
+            var isValid = await CheckType(entity);
+            if (isValid == false)
+            {
+                return;
+            }
         }
         var result = await _typeService.Create(entity);
         if (result is not null)
@@ -1416,10 +1430,13 @@
     private async void CreateTypeCategoryList()
     {
         var entity = typeCategoryList;
-        var isValid = await CheckTypeCategoryList(entity);
-        if (isValid == false)
+        if(entity.Active == true)
         {
-            return;
+            var isValid = await CheckTypeCategoryList(entity);
+            if (isValid == false)
+            {
+                return;
+            }
         }
         var result = await _typeCategoryListService.Create(entity);
         if (result is not null)
@@ -1578,11 +1595,15 @@
     private async void UpdateCard()
     {
         var entity = card;
-        if(entity.CardId > 0){
-            var isValid = await CheckCard(entity);
-            if (isValid == false)
+        if(entity.CardId > 0)
+        {
+            if(entity.Active == true)
             {
-                return;
+                var isValid = await CheckCard(entity);
+                if (isValid == false)
+                {
+                    return;
+                }
             }
             var result = await _cardService.Update(entity);
             if (result is not null)
@@ -1613,10 +1634,13 @@
 
         if(entity.TypeId > 0)
         {
-            var isValid = await CheckType(entity);
-            if (isValid == false)
+            if(entity.Active == true)
             {
-                return;
+                var isValid = await CheckType(entity);
+                if (isValid == false)
+                {
+                    return;
+                }
             }
             var result = await _typeService.Update(entity);
             if (result is not null)
@@ -1647,10 +1671,13 @@
         var entity = typeCategoryList;
         if(entity.TypeCategoryListId > 0)
         {
-            var isValid = await CheckTypeCategoryList(entity);
-            if(isValid == false)
+            if(entity.Active == true)
             {
-                return;
+                var isValid = await CheckTypeCategoryList(entity);
+                if(isValid == false)
+                {
+                    return;
+                }
             }
             var result = await _typeCategoryListService.Update(entity);
             if (result is not null)
@@ -1682,10 +1709,13 @@
         var entity = result;
         if(entity.ResultId > 0)
         {
-            var isValid = await CheckResult(entity);
-            if (isValid == false)
+            if(entity.Active == true)
             {
-                return;
+                var isValid = await CheckResult(entity);
+                if (isValid == false)
+                {
+                    return;
+                }    
             }
             var resultReceived = await _resultService.Update(entity);
             if (resultReceived is not null)
@@ -1716,10 +1746,13 @@
         var entity = attachment;
         if (entity.AttachmentId > 0)
         {
-            var isValid = await CheckAttachment(entity);
-            if(isValid == false)
+            if (entity.Active == true)
             {
-                return;
+                var isValid = await CheckAttachment(entity);
+                if(isValid == false)
+                {
+                    return;
+                }
             }
             if (!Path.Exists($"{attachmentCreateDirectory}{entity.AttachmentUrl}"))
             {
