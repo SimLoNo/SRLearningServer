@@ -120,7 +120,10 @@ namespace SRLearningServer.Components.Repositories
         {
             try
             {
-                Models.Type trackedType = await _context.Set<Models.Type>().FirstOrDefaultAsync(t => t.TypeId == type.TypeId);
+                Models.Type trackedType = await _context.Set<Models.Type>()
+                    .Include(t => t.Cards)
+                    .Include(t => t.TypeCategoryLists)
+                    .FirstOrDefaultAsync(t => t.TypeId == type.TypeId);
                 if (trackedType == null)
                 {
                     return null;

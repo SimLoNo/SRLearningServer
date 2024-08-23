@@ -98,10 +98,6 @@
 <RadzenButton Click="ToggleSignalList">Sorter Signaler</RadzenButton>
 
 <RadzenStack>
-    @if (aspects.Types.ToList().Count == 0)
-    {
-        <p>Indlæser...</p>
-    }
     @if (showSignalList)
     {
         @foreach (var signal in signalSelection)
@@ -109,7 +105,7 @@
             <RadzenCard class="rz-background-color-secondary">
                 <RadzenStack Orientation="Orientation.Vertical" >
                     <RadzenLabel Text="@($"Vælg {signal.SignalType.CardTypeName}")" Component="EntitySelectionDropDown" />
-                    <RadzenDropDown Multiple=true @bind-Value=@signal.SignalAspects TextProperty="@nameof(TypeDto.CardTypeName)" Style="width:auto" Name="EntitySelectionDropDown" Data=aspects.Types TValue="IEnumerable<TypeDto>" AllowClear=true AllowFiltering=false AllowSorting=false SelectAllText="Vælg alle visninger" SelectedItemsText="Visninger er valgt" Placeholder="@($"Ingen {signal.SignalType.CardTypeName}er valgt")" Chips=true MaxSelectedLabels="10">
+                    <RadzenDropDown Multiple=true @bind-Value=@signal.SelectedSignalAspects TextProperty="@nameof(TypeDto.CardTypeName)" Style="width:auto" Name="EntitySelectionDropDown" Data=@signal.AllowedSignalAspects TValue="IEnumerable<TypeDto>" AllowClear=true AllowFiltering=false AllowSorting=false SelectAllText="Vælg alle visninger" SelectedItemsText="Visninger er valgt" Placeholder="@($"Ingen {signal.SignalType.CardTypeName}er valgt")" Chips=true MaxSelectedLabels="10">
                     
                     </RadzenDropDown>
                 </RadzenStack>
@@ -127,7 +123,7 @@
     private int currentCard = 0;
     private List<CardDto> cards = new();
     private TypeCategoryListDto signals = new();
-    private TypeCategoryListDto aspects = new();
+    //private TypeCategoryListDto aspects = new();
     private List<SignalModel> signalSelection = new();
     private string errorMessage = "";
     private bool isLoading = false;
@@ -143,13 +139,14 @@
         try
         {
             signals = await _typeCategoryListService.GetByName(signalListName);
-            aspects = await _typeCategoryListService.GetByName(aspectListName);
             foreach (TypeDto signalType in signals.Types)
             {
+                TypeCategoryListDto aspects = await _typeCategoryListService.GetByName($"{signalType.CardTypeName}Liste");
                 SignalModel signal = new SignalModel()
                     {
                         SignalType = signalType,
-                        SignalAspects = new List<TypeDto>(aspects.Types)
+                        AllowedSignalAspects = new List<TypeDto>(aspects.Types),
+                        SelectedSignalAspects = new List<TypeDto>(aspects.Types)
                     };
 
                 signalSelection.Add(signal);
@@ -196,9 +193,9 @@
         List<List<TypeDto>> signalAspects = new();
         foreach (SignalModel signal in signalSelection)
         {
-            if (signal.SignalAspects is not null)
+            if (signal.SelectedSignalAspects is not null)
             {
-                foreach (TypeDto aspect in signal.SignalAspects)
+                foreach (TypeDto aspect in signal.SelectedSignalAspects)
                 {
 
                     List<TypeDto> Selection = new();
