@@ -15,6 +15,7 @@
 @inject IFrontendTypeCategoryListService _typeCategoryListService
 @inject INotificationUtility NotificationUtility
 @inject DialogService _dialogService
+@inject IActiveCheckService _activeCheckService
 
 <PageTitle>Data administration</PageTitle>
 <RadzenCard>
@@ -1278,20 +1279,23 @@
     #region CreateModels
     private async void CreateCard()
     {
-        CheckCard();
         var entity = card;
-        var result = await _cardService.Create(entity);
-        if (result is not null)
+        var isValid = await CheckCard(entity);
+        if (isValid == true)
         {
-            _cardList.Add(result);
-            createType = false;
-            ResetWork();
-            StateHasChanged();
-            NotificationUtility.SendSuccessNotification("Kortet blev oprettet.");
-        }
-        else
-        {
-            NotificationUtility.SendErrorNotification("Der opstod en fejl under oprettelsen af kortet.");
+            var result = await _cardService.Create(entity);
+            if (result is not null)
+            {
+                _cardList.Add(result);
+                createType = false;
+                ResetWork();
+                StateHasChanged();
+                NotificationUtility.SendSuccessNotification("Kortet blev oprettet.");
+            }
+            else
+            {
+                NotificationUtility.SendErrorNotification("Der opstod en fejl under oprettelsen af kortet.");
+            }
         }
     }
 
@@ -1303,20 +1307,24 @@
             errorMessage = "Please select a file to upload.";
             return;
         }
-        CheckAttachment();
-        var result = await _attachmentService.Create(attachment);
-        if (result is not null)
+        var entity = attachment;
+        var isValid = await CheckAttachment(entity);
+        if(isValid == true)
         {
-            _attachmentList.Add(result);
-            createType = false;
-            ResetWork();
-            StateHasChanged();
-            NotificationUtility.SendSuccessNotification("Vedhæftningen blev oprettet.");
-            CreateFile();
-        }
-        else
-        {
-            NotificationUtility.SendErrorNotification("Der opstod en fejl under oprettelsen af vedhæftningen.");
+            var result = await _attachmentService.Create(entity);
+            if (result is not null)
+            {
+                _attachmentList.Add(result);
+                createType = false;
+                ResetWork();
+                CreateFile();
+                NotificationUtility.SendSuccessNotification("Vedhæftningen blev oprettet.");
+                StateHasChanged();
+            }
+            else
+            {
+                NotificationUtility.SendErrorNotification("Der opstod en fejl under oprettelsen af vedhæftningen.");
+            }
         }
     }
 
@@ -1361,7 +1369,8 @@
 
     private async void CreateResult()
     {
-        var isValid = await CheckResult();
+        var entity = result;
+        var isValid = await CheckResult(entity);
         if (isValid == false)
         {
             return;
@@ -1383,8 +1392,13 @@
 
     private async void CreateType()
     {
-        CheckType();
-        var result = await _typeService.Create(type);
+        var entity = type;
+        var isValid = await CheckType(entity);
+        if (isValid == false)
+        {
+            return;
+        }
+        var result = await _typeService.Create(entity);
         if (result is not null)
         {
             _typeList.Add(result);
@@ -1401,8 +1415,13 @@
 
     private async void CreateTypeCategoryList()
     {
-        CheckTypeCategoryList();
-        var result = await _typeCategoryListService.Create(typeCategoryList);
+        var entity = typeCategoryList;
+        var isValid = await CheckTypeCategoryList(entity);
+        if (isValid == false)
+        {
+            return;
+        }
+        var result = await _typeCategoryListService.Create(entity);
         if (result is not null)
         {
             _typeCategoryListList.Add(result);
@@ -1560,7 +1579,11 @@
     {
         var entity = card;
         if(entity.CardId > 0){
-            CheckCard();
+            var isValid = await CheckCard(entity);
+            if (isValid == false)
+            {
+                return;
+            }
             var result = await _cardService.Update(entity);
             if (result is not null)
             {
@@ -1587,9 +1610,14 @@
 
     private async void UpdateType(){
         var entity = type;
+
         if(entity.TypeId > 0)
         {
-            CheckType();
+            var isValid = await CheckType(entity);
+            if (isValid == false)
+            {
+                return;
+            }
             var result = await _typeService.Update(entity);
             if (result is not null)
             {
@@ -1619,7 +1647,11 @@
         var entity = typeCategoryList;
         if(entity.TypeCategoryListId > 0)
         {
-            CheckTypeCategoryList();
+            var isValid = await CheckTypeCategoryList(entity);
+            if(isValid == false)
+            {
+                return;
+            }
             var result = await _typeCategoryListService.Update(entity);
             if (result is not null)
             {
@@ -1650,7 +1682,7 @@
         var entity = result;
         if(entity.ResultId > 0)
         {
-            var isValid = await CheckResult();
+            var isValid = await CheckResult(entity);
             if (isValid == false)
             {
                 return;
@@ -1681,10 +1713,15 @@
 
     private async void UpdateAttachment()
     {
-        //var entity = attachment;
-        if (attachment.AttachmentId > 0)
+        var entity = attachment;
+        if (entity.AttachmentId > 0)
         {
-            if (!Path.Exists($"{attachmentCreateDirectory}{attachment.AttachmentUrl}"))
+            var isValid = await CheckAttachment(entity);
+            if(isValid == false)
+            {
+                return;
+            }
+            if (!Path.Exists($"{attachmentCreateDirectory}{entity.AttachmentUrl}"))
             {
                 if (selectedFile == null)
                 {
@@ -1693,8 +1730,7 @@
                 }
                 CreateFile();                
             }
-            CheckAttachment();
-            var result = await _attachmentService.Update(attachment);
+            var result = await _attachmentService.Update(entity);
             if (result is not null)
             {
                 int index = _attachmentList.FindIndex(x => x.AttachmentId == result.AttachmentId);
@@ -1839,33 +1875,21 @@
     }
     #region CheckModels
 
-    private async Task<bool> CheckAttachment(){
+    private async Task<bool> CheckAttachment(AttachmentDto entity){
 
         List<string> inactiveRelations = new();
-        if (attachment.Results == null)
+        if (entity.Results == null)
         {
-            attachment.Results = new List<ResultDto>();
+            entity.Results = new List<ResultDto>();
         }
-        if(attachment.Cards == null)
+        if(entity.Cards == null)
         {
-            attachment.Cards = new List<CardDto>();
+            entity.Cards = new List<CardDto>();
         }
-        if (attachment.Active == true)
+        if (entity.Active == true)
         {
-            foreach (ResultDto result in attachment.Results)
-            {
-                if (result.Active == false)
-                {
-                    inactiveRelations.Add($"Resultat: {result.ResultText} er inaktiv");
-                }
-            }
-            foreach (CardDto card in attachment.Cards)
-            {
-                if (card.Active == false)
-                {
-                    inactiveRelations.Add($"Kort: {card.CardName} er inaktiv");
-                }
-            }
+            inactiveRelations.AddRange(_activeCheckService.CheckActive(entity.Results));
+            inactiveRelations.AddRange(_activeCheckService.CheckActive(entity.Cards));
             if (inactiveRelations.Count > 0)
             {
                 var IsConfirmed = await ConfirmDialog("Der er fundet inaktive relationer", $"Vedhæftningen indeholder inaktive relationer der ikke vil blive vist for brugerne. Er du sikker på at du vil fortsætte? følgende relationer er inaktive: <br> {string.Join("<br>", inactiveRelations)}");
@@ -1879,84 +1903,101 @@
         return true;
     }
 
-    private void CheckCard()
+    private async Task<bool> CheckCard(CardDto entity)
     {
         List<string> inactiveRelations = new();
-        if (card.Results == null)
+        if (entity.Results == null)
         {
-            card.Results = new List<ResultDto>();
+            entity.Results = new List<ResultDto>();
         }
-        if(card.Types == null)
+        if(entity.Types == null)
         {
-            card.Types = new List<TypeDto>();
+            entity.Types = new List<TypeDto>();
         }
-        if(card.Active == true)
+        if(entity.Active == true)
         {
-            foreach (ResultDto result in card.Results)
+            inactiveRelations.AddRange(_activeCheckService.CheckActive(entity.Results));
+            inactiveRelations.AddRange(_activeCheckService.CheckActive(entity.Types));
+            if(entity.Attachment is not null)
             {
-                if (result.Active == false)
+                var inactiveString = _activeCheckService.CheckActive(entity.Attachment);
+                if (!string.IsNullOrEmpty(inactiveString))
                 {
-                    inactiveRelations.Add($"Resultat: {result.ResultText} er inaktiv");
+                    inactiveRelations.Add(inactiveString);
                 }
             }
-            foreach (TypeDto type in card.Types)
+            else
             {
-                if (type.Active == false)
+                if (entity.AttachmentId is null)
                 {
-                    inactiveRelations.Add($"Type: {type.CardTypeName} er inaktiv");
+                    return false;
                 }
-            }
-            if(card.AttachmentId is not null)
-            {
-                AttachmentDto relatedAttachment = _attachmentList.FirstOrDefault(a => a.AttachmentId == card.AttachmentId);
-                if(relatedAttachment is not null)
+                AttachmentDto relatedAttachment = _attachmentList.FirstOrDefault(a => a.AttachmentId == entity.AttachmentId);
+                if (relatedAttachment is not null)
                 {
-                    if (relatedAttachment.Active == false)
+                    var inactiveString = _activeCheckService.CheckActive(relatedAttachment);
+                    if (!string.IsNullOrEmpty(inactiveString))
                     {
-                        inactiveRelations.Add($"Vedhæftning: {relatedAttachment.AttachmentName} er inaktiv");
+                        inactiveRelations.Add(inactiveString);
                     }
                 }
-            }
-            {
-                
+                else
+                {
+                    return false;
+                }
+
             }
             if (inactiveRelations.Count > 0)
             {
-                var IsConfirmed = ConfirmDialog("Der er fundet inaktive relationer", $"Kortet indeholder inaktive relationer der ikke vil blive vist for brugerne. Er du sikker på at du vil fortsætte? følgende relationer er inaktive: <br> {string.Join("<br>", inactiveRelations)}");
-                if (IsConfirmed.Result == true)
+                var IsConfirmed = await ConfirmDialog("Der er fundet inaktive relationer", $"Kortet indeholder inaktive relationer der ikke vil blive vist for brugerne. Er du sikker på at du vil fortsætte? følgende relationer er inaktive: <br> {string.Join("<br>", inactiveRelations)}");
+                if (IsConfirmed == true)
                 {
-                    return;
+                    return true;
                 }
             }
         }
+        return true;
     }
 
-    private async Task<bool> CheckResult()
+    private async Task<bool> CheckResult(ResultDto entity)
     {
         List<string> inactiveRelations = new();
-        if (result.Cards == null)
+        if (entity.Cards == null)
         {
-            result.Cards = new List<CardDto>();
+            entity.Cards = new List<CardDto>();
         }
-        if (result.Active == true)
+        if (entity.Active == true)
         {
-            foreach (CardDto card in result.Cards)
+            inactiveRelations.AddRange(_activeCheckService.CheckActive(entity.Cards));
+
+            if (entity.Attachment is not null)
             {
-                if (card.Active == false)
+                var inactiveString = _activeCheckService.CheckActive(entity.Attachment);
+                if (!string.IsNullOrEmpty(inactiveString))
                 {
-                    inactiveRelations.Add($"Kort: {card.CardName} er inaktiv");
+                    inactiveRelations.Add(inactiveString);
                 }
             }
-            if (result.AttachmentId is not null)
+            else
             {
-                AttachmentDto relatedAttachment = _attachmentList.FirstOrDefault(a => a.AttachmentId == result.AttachmentId);
-                if(relatedAttachment is not null)
+                if (entity.AttachmentId is null)
                 {
-                    if (relatedAttachment.Active == false)
+                    return false;
+                }
+                AttachmentDto relatedAttachment = _attachmentList.FirstOrDefault(a => a.AttachmentId == entity.AttachmentId);
+                if (relatedAttachment is not null)
+                {
+                    var inactiveString = _activeCheckService.CheckActive(relatedAttachment);
+                    if (!string.IsNullOrEmpty(inactiveString))
                     {
-                        inactiveRelations.Add($"Vedhæftning: {relatedAttachment.AttachmentName} er inaktiv");
+                        inactiveRelations.Add(inactiveString);
                     }
                 }
+                else
+                {
+                    return false;
+                }
+
             }
             if (inactiveRelations.Count > 0)
             {
@@ -1972,24 +2013,56 @@
 
     }
 
-    private void CheckType()
+    private async Task<bool> CheckType(TypeDto entity)
     {
-        if (type.Cards == null)
+        List<string> inactiveRelations = new();
+        if (entity.Cards == null)
         {
-            type.Cards = new List<CardDto>();
+            entity.Cards = new List<CardDto>();
         }
-        if (type.TypeCategoryLists == null)
+        if (entity.TypeCategoryLists == null)
         {
-            type.TypeCategoryLists = new List<TypeCategoryListDto>();
+            entity.TypeCategoryLists = new List<TypeCategoryListDto>();
         }
+        if (entity.Active == true)
+        {
+            inactiveRelations.AddRange(_activeCheckService.CheckActive(entity.Cards));
+            inactiveRelations.AddRange(_activeCheckService.CheckActive(entity.TypeCategoryLists));
+            if (inactiveRelations.Count > 0)
+            {
+                var IsConfirmed = await ConfirmDialog("Der er fundet inaktive relationer", $"Typen indeholder inaktive relationer der ikke vil blive vist for brugerne. Er du sikker på at du vil fortsætte? følgende relationer er inaktive: <br> {string.Join("<br>", inactiveRelations)}");
+                if (IsConfirmed == true)
+                {
+                    return true;
+                }
+                return false;
+            }
+        }
+        return true;
     }
 
-    private void CheckTypeCategoryList()
+    private async Task<bool> CheckTypeCategoryList(TypeCategoryListDto entity)
     {
-        if (typeCategoryList.Types == null)
+        List<string> inactiveRelations = new();
+        if (entity.Types == null)
         {
-            typeCategoryList.Types = new List<TypeDto>();
+            entity.Types = new List<TypeDto>();
         }
+        if (entity.Active == true)
+        {
+            inactiveRelations.AddRange(_activeCheckService.CheckActive(entity.Types));
+            if (inactiveRelations.Count > 0)
+            {
+                var IsConfirmed = await ConfirmDialog("Der er fundet inaktive relationer", $"Type kategorien indeholder inaktive relationer der ikke vil blive vist for brugerne. Er du sikker på at du vil fortsætte? følgende relationer er inaktive: <br> {string.Join("<br>", inactiveRelations)}");
+                if (IsConfirmed == true)
+                {
+                    return true;
+                }
+                return false;
+            }
+        }
+        return true;
+
     }
     #endregion
     private async Task<bool?> ConfirmDialog(string title, string message)

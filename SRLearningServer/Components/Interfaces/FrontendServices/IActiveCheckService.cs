@@ -9,7 +9,7 @@ namespace SRLearningServer.Components.Interfaces.FrontendServices
         /// </summary>
         /// <param name="entities">List of CardDto to go through and check for any inactive.</param>
         /// <returns>Returns a list of strings indicating inactive entities.</returns>
-        public List<string> CheckActive(List<CardDto> entities);
+        public List<string> CheckActive(IEnumerable<CardDto> entities);
         /// <summary>
         /// Takes a CardDto object and checks if it is active.
         /// </summary>
@@ -22,7 +22,7 @@ namespace SRLearningServer.Components.Interfaces.FrontendServices
         /// </summary>
         /// <param name="entities"></param>
         /// <returns>Returns a list of strings indicating inactive entities.</returns>
-        public List<string> CheckActive(List<TypeCategoryListDto> entities);
+        public List<string> CheckActive(IEnumerable<TypeCategoryListDto> entities);
         /// <summary>
         /// Takes a TypeCategoryListDto object and checks if it is active.
         /// </summary>
@@ -35,7 +35,7 @@ namespace SRLearningServer.Components.Interfaces.FrontendServices
         /// </summary>
         /// <param name="entities"></param>
         /// <returns>Returns a list of strings indicating inactive entities.</returns>
-        public List<string> CheckActive(List<AttachmentDto> entities);
+        public List<string> CheckActive(IEnumerable<AttachmentDto> entities);
         /// <summary>
         /// Takes an AttachmentDto object and check if it is inactive.
         /// </summary>
@@ -48,7 +48,7 @@ namespace SRLearningServer.Components.Interfaces.FrontendServices
         /// </summary>
         /// <param name="entities"></param>
         /// <returns>Returns a list of strings indicating inactive entities</returns>
-        public List<string> CheckActive(List<ResultDto> entities);
+        public List<string> CheckActive(IEnumerable<ResultDto> entities);
         /// <summary>
         /// Takes a ResultDto object and checks if it is active.
         /// </summary>
@@ -61,7 +61,7 @@ namespace SRLearningServer.Components.Interfaces.FrontendServices
         /// </summary>
         /// <param name="entities"></param>
         /// <returns>Returns a list of strings indicating inactive entities</returns>
-        public List<string> CheckActive(List<TypeDto> entities);
+        public List<string> CheckActive(IEnumerable<TypeDto> entities);
         /// <summary>
         /// Takes a TypeDto object and checks if it is active.
         /// </summary>
