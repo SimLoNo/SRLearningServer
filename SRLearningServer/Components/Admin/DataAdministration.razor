@@ -723,7 +723,14 @@
                                                     <RadzenCard>
                                                         <label for="AttachmentSelect">Fil:</label>
                                                         <InputFile name="AttachmentSelect" OnChange="HandleFileSelected" />
-                                                        <RadzenImage Path="@($"{attachmentReadDirectory}{attachment.AttachmentUrl}")" />
+                                                        @if (string.IsNullOrEmpty(base64ImageString))
+                                                        {
+                                                            <RadzenImage Path="@($"{attachmentReadDirectory}{attachment.AttachmentUrl}")" />
+                                                        }
+                                                        else
+                                                        {
+                                                            <RadzenImage Path="@($"{base64ImageString}")" />
+                                                        }
                                                     </RadzenCard>
                                                 </RadzenStack>
                                             </ChildContent>
@@ -1156,10 +1163,7 @@
     Variant variant = Variant.Filled;
 
 
-    // int attachmentId = 0;
-    // int[] selectedResultIds = [];
-    // int[] selectedTypeIds = [];
-
+    private string oldAttachmentUrl = "";
     private IBrowserFile? selectedFile;
     private string base64ImageString = "";
     #region Initial
@@ -1220,6 +1224,7 @@
         resultList = new List<ResultDto>(_resultList);
         typeList = new List<TypeDto>(_typeList);
         typeCategoryListList = new List<TypeCategoryListDto>(_typeCategoryListList);
+        oldAttachmentUrl = "";
         errorMessage = "";
     }
     #endregion
@@ -1343,11 +1348,14 @@
             var format = "image/png"; // You can add more formats if needed
             if (selectedFile.ContentType.StartsWith(format))
             {
-                var fileExtension = Path.GetExtension(selectedFile.Name);
-                var randomFileName = $"{Guid.NewGuid()}{fileExtension}";
+                if (string.IsNullOrEmpty(attachment.AttachmentUrl))
+                {
+                    var fileExtension = Path.GetExtension(selectedFile.Name);
+                    var randomFileName = $"{Guid.NewGuid()}{fileExtension}";
+                    attachment.AttachmentUrl = $"{randomFileName}";        
+                }
 
 
-                attachment.AttachmentUrl = $"{randomFileName}";
                 await LoadImage(selectedFile);
             }
             else
@@ -1729,13 +1737,8 @@
             {
                 return;
             }
-            if (!Path.Exists($"{attachmentCreateDirectory}{entity.AttachmentUrl}"))
+            if (selectedFile is not null)
             {
-                if (selectedFile == null)
-                {
-                    NotificationUtility.SendErrorNotification("Der er ikke valgt en gyldig fil.");
-                    return;
-                }
                 CreateFile();                
             }
             var result = await _attachmentService.Update(entity);
