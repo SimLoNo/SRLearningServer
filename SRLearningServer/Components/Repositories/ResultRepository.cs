@@ -86,13 +86,17 @@ namespace SRLearningServer.Components.Repositories
         {
             try
             {
-                Result trackedResult = await _context.Set<Result>().FirstOrDefaultAsync(t => t.ResultId == result.ResultId);
+                Result trackedResult = await _context.Set<Result>()
+                    .Include(r => r.Cards)
+                    .Include(r => r.Attachment)
+                    .FirstOrDefaultAsync(t => t.ResultId == result.ResultId);
                 if (trackedResult == null)
                 {
                     return null;
                 }
                 trackedResult.ResultText = result.ResultText;
                 trackedResult.Active = result.Active;
+                trackedResult.AttachmentId = result.AttachmentId;
                 trackedResult.Attachment = result.Attachment;
                 var trackedCardIds = new HashSet<int>(trackedResult.Cards.Select(r => r.CardId));
                 var resultCardIds = new HashSet<int>(result.Cards.Select(r => r.CardId));

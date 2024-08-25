@@ -84,7 +84,9 @@ namespace SRLearningServer.Components.Repositories
         {
             try
             {
-                TypeCategoryList trackedTypeCategoryList = await _context.Set<TypeCategoryList>().FirstOrDefaultAsync(tcl => tcl.TypeCategoryListId == typeCategoryList.TypeCategoryListId);
+                TypeCategoryList trackedTypeCategoryList = await _context.Set<TypeCategoryList>()
+                    .Include(tcl => tcl.Types)
+                    .FirstOrDefaultAsync(tcl => tcl.TypeCategoryListId == typeCategoryList.TypeCategoryListId);
                 if (trackedTypeCategoryList == null)
                 {
                     return null;

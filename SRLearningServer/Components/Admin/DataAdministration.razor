@@ -1324,8 +1324,8 @@
         {
             _attachmentList.Add(result);
             createType = false;
-            ResetWork();
             CreateFile();
+            ResetWork();
             NotificationUtility.SendSuccessNotification("Vedhæftningen blev oprettet.");
             StateHasChanged();
         }
@@ -1382,7 +1382,7 @@
         {
             return;
         }
-        var resultReceived = await _resultService.Create(result);
+        var resultReceived = await _resultService.Create(entity);
         if (resultReceived is not null)
         {
             _resultList.Add(resultReceived);
@@ -1979,12 +1979,8 @@
                 inactiveRelations.Add(inactiveString);
             }
         }
-        else
+        else if(entity.AttachmentId is not null)
         {
-            if (entity.AttachmentId is null)
-            {
-                return false;
-            }
             AttachmentDto relatedAttachment = _attachmentList.FirstOrDefault(a => a.AttachmentId == entity.AttachmentId);
             if (relatedAttachment is not null)
             {

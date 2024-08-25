@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SRLearningServer.Components.Interfaces.Services;
+using SRLearningServer.Components.Models;
 using SRLearningServer.Components.Models.DTO;
 
 namespace SRLearningServer.Components.Controllers
@@ -128,6 +129,10 @@ namespace SRLearningServer.Components.Controllers
         {
             try
             {
+                if (entity == null)
+                {
+                    return BadRequest("TypeCategoryList data is null.");
+                }
                 var result = await _service.Update(entity);
                 if (result == null)
                 {
