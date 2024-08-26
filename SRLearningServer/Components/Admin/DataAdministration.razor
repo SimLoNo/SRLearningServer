@@ -1765,7 +1765,7 @@
     }
     #endregion
 
-    private async void CreateFile()
+    private async Task CreateFile()
     {
         if(selectedFile is not null)
         {
@@ -1776,112 +1776,309 @@
                 await selectedFile.OpenReadStream().CopyToAsync(stream);
             }
         }
+        return;
+    }
+    private void DeleteFile(string name)
+    {
+        if (File.Exists($"{attachmentCreateDirectory}{name}"))
+        {
+            File.Delete($"{attachmentCreateDirectory}{name}");
+        }
     }
 
-    private async void Deactivate()
+    private async Task Deactivate()
     {
+        bool isValid = false;
         if (workingType == "card")
         {
+            card.Active = false;
+            isValid = await CheckCard(card);
+            if(isValid == true)
+            {
+                var entity = await _cardService.Deactivate(card.CardId);
+                if (entity is null)
+                {
+                    NotificationUtility.SendErrorNotification($"Fejl på deaktivering af kort med id:{card.CardId}");
+                    errorMessage = $"Fejl på deaktivering af card med id:{card.CardId}";
+                    return;
+                }
+                int index = _cardList.FindIndex(x => x.CardId == entity.CardId);
+                if (index != -1)
+                {
+                    _cardList[index] = entity;
+                    createType = false;
+                    ResetWork();
+                    StateHasChanged();
+                    NotificationUtility.SendSuccessNotification("Kortet blev deaktiveret.");
+                }
+            }
 
-            var entity = await _cardService.Deactivate(card.CardId);
-            if (entity is null)
-            {
-                NotificationUtility.SendErrorNotification($"Fejl på deaktivering af kort med id:{card.CardId}");
-                errorMessage = $"Fejl på deaktivering af card med id:{card.CardId}";
-                return;
-            }
-            int index = _cardList.FindIndex(x => x.CardId == entity.CardId);
-            if (index != -1)
-            {
-                _cardList[index] = entity;
-                createType = false;
-                ResetWork();
-                StateHasChanged();
-                NotificationUtility.SendSuccessNotification("Kortet blev deaktiveret.");
-            }
         }
         else if (workingType == "attachment")
         {
-            var entity = await _attachmentService.Deactivate(attachment.AttachmentId);
-            if (entity is null)
+            attachment.Active = false;
+            isValid = await CheckAttachment(attachment);
+            if (isValid == true)
             {
-                NotificationUtility.SendErrorNotification($"Fejl på deaktivering af vedhæftning med id:{attachment.AttachmentId}");
-                errorMessage = $"Fejl på deaktivering af vedhæftning med id:{attachment.AttachmentId}";
-                return;
-            }
-            int index = _attachmentList.FindIndex(x => x.AttachmentId == entity.AttachmentId);
-            if (index != -1)
-            {
-                _attachmentList[index] = entity;
-                createType = false;
-                ResetWork();
-                StateHasChanged();
-                NotificationUtility.SendSuccessNotification("Vedhæftningen blev deaktiveret.");
+                var entity = await _attachmentService.Deactivate(attachment.AttachmentId);
+                if (entity is null)
+                {
+                    NotificationUtility.SendErrorNotification($"Fejl på deaktivering af vedhæftning med id:{attachment.AttachmentId}");
+                    errorMessage = $"Fejl på deaktivering af vedhæftning med id:{attachment.AttachmentId}";
+                    return;
+                }
+                int index = _attachmentList.FindIndex(x => x.AttachmentId == entity.AttachmentId);
+                if (index != -1)
+                {
+                    _attachmentList[index] = entity;
+                    createType = false;
+                    ResetWork();
+                    StateHasChanged();
+                    NotificationUtility.SendSuccessNotification("Vedhæftningen blev deaktiveret.");
+                }
             }
         }
         else if (workingType == "result")
         {
-            var entity = await _resultService.Deactivate(result.ResultId);
-            if (entity is null)
+            result.Active = false;
+            isValid = await CheckResult(result);
+            if (isValid == true)
             {
-                NotificationUtility.SendErrorNotification($"Fejl på deaktivering af resultat med id:{result.ResultId}");
-                errorMessage = $"Fejl på deaktivering af resultat med id:{result.ResultId}";
-                return;
-            }
-            int index = _resultList.FindIndex(x => x.ResultId == entity.ResultId);
-            if (index != -1)
-            {
-                _resultList[index] = entity;
-                createType = false;
-                ResetWork();
-                StateHasChanged();
-                NotificationUtility.SendSuccessNotification("Resultatet blev deaktiveret.");
+                var entity = await _resultService.Deactivate(result.ResultId);
+                if (entity is null)
+                {
+                    NotificationUtility.SendErrorNotification($"Fejl på deaktivering af resultat med id:{result.ResultId}");
+                    errorMessage = $"Fejl på deaktivering af resultat med id:{result.ResultId}";
+                    return;
+                }
+                int index = _resultList.FindIndex(x => x.ResultId == entity.ResultId);
+                if (index != -1)
+                {
+                    _resultList[index] = entity;
+                    createType = false;
+                    ResetWork();
+                    StateHasChanged();
+                    NotificationUtility.SendSuccessNotification("Resultatet blev deaktiveret.");
+                }
             }
         }
         else if (workingType == "type")
         {
-            var entity = await _typeService.Deactivate(type.TypeId);
-            if (entity is null)
+            type.Active = false;
+            isValid = await CheckType(type);
+            if (isValid == true)
             {
-                NotificationUtility.SendErrorNotification($"Fejl på deaktivering af type med id:{type.TypeId}");
-                errorMessage = $"Fejl på deaktivering af type med id:{type.TypeId}";
-                return;
-            }
-            int index = _typeList.FindIndex(x => x.TypeId == entity.TypeId);
-            if (index != -1)
-            {
-                _typeList[index] = entity;
-                createType = false;
-                ResetWork();
-                StateHasChanged();
-                NotificationUtility.SendSuccessNotification("Typen blev deaktiveret.");
+                var entity = await _typeService.Deactivate(type.TypeId);
+                if (entity is null)
+                {
+                    NotificationUtility.SendErrorNotification($"Fejl på deaktivering af type med id:{type.TypeId}");
+                    errorMessage = $"Fejl på deaktivering af type med id:{type.TypeId}";
+                    return;
+                }
+                int index = _typeList.FindIndex(x => x.TypeId == entity.TypeId);
+                if (index != -1)
+                {
+                    _typeList[index] = entity;
+                    createType = false;
+                    ResetWork();
+                    StateHasChanged();
+                    NotificationUtility.SendSuccessNotification("Typen blev deaktiveret.");
+                }
             }
         }
         else if (workingType == "typeCategoryList")
         {
-            var entity = await _typeCategoryListService.Deactivate(typeCategoryList.TypeCategoryListId);
-            if (entity is null)
+            typeCategoryList.Active = false;
+            isValid = await CheckTypeCategoryList(typeCategoryList);
+            if (isValid == true)
             {
-                NotificationUtility.SendErrorNotification($"Fejl på deaktivering af type kategori med id:{typeCategoryList.TypeCategoryListId}");
-                errorMessage = $"Fejl på deaktivering af type kategori med id:{typeCategoryList.TypeCategoryListId}";
-                return;
-            }
-            int index = _typeCategoryListList.FindIndex(x => x.TypeCategoryListId == entity.TypeCategoryListId);
-            if (index != -1)
-            {
-                _typeCategoryListList[index] = entity;
-                createType = false;
-                ResetWork();
-                StateHasChanged();
-                NotificationUtility.SendSuccessNotification("Type kategorien blev deaktiveret.");
+                var entity = await _typeCategoryListService.Deactivate(typeCategoryList.TypeCategoryListId);
+                if (entity is null)
+                {
+                    NotificationUtility.SendErrorNotification($"Fejl på deaktivering af type kategori med id:{typeCategoryList.TypeCategoryListId}");
+                    errorMessage = $"Fejl på deaktivering af type kategori med id:{typeCategoryList.TypeCategoryListId}";
+                    return;
+                }
+                int index = _typeCategoryListList.FindIndex(x => x.TypeCategoryListId == entity.TypeCategoryListId);
+                if (index != -1)
+                {
+                    _typeCategoryListList[index] = entity;
+                    createType = false;
+                    ResetWork();
+                    StateHasChanged();
+                    NotificationUtility.SendSuccessNotification("Type kategorien blev deaktiveret.");
+                }
             }
         }
+        return;
     }
 
 
-    private void Delete()
+    private async void Delete()
     {
-        errorMessage = "Slet funktionen er ikke implementeret endnu.";
+        if (workingType == "card")
+        {
+            var entity = card;
+            var isConfirmed = await ConfirmDialog("Slet kort", $"Er du sikker på at du vil slette kortet? <br> ID: {entity.CardId} <br> Navn: {entity.CardName} <br> Tekst: {entity.CardText}");
+            if(isConfirmed == true)
+            {
+                try
+                {
+                    var result = await _cardService.Delete(entity.CardId);
+                    if(result is not null)
+                    {
+                        _cardList.Remove(result);
+                        createType = false;
+                        editType = false;
+                        ResetWork();
+                        StateHasChanged();
+                        NotificationUtility.SendSuccessNotification("Kortet blev slettet.");
+                    }
+                    else
+                    {
+                        NotificationUtility.SendErrorNotification("Der opstod en fejl på sletning af kortet.");
+                        errorMessage = $"Der opstod en fejl på sletning af kortet {entity.CardName}";
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    NotificationUtility.SendErrorNotification("Der opstod en fejl på sletning af kortet.");
+                    errorMessage = $"Der opstod en fejl på sletning af kortet {entity.CardName}, fejlbesked: {ex.Message}";
+                }
+            }
+
+        }
+        else if (workingType == "attachment")
+        {
+            var entity = attachment;
+            try
+            {
+                var isConfirmed = await ConfirmDialog("Slet vedhæftning", $"Er du sikker på at du vil slette kortet? <br> ID: {entity.AttachmentId} <br> Navn: {entity.AttachmentName}");
+                if(isConfirmed == true)
+                {
+                    var result = await _attachmentService.Delete(entity.AttachmentId);
+                    if (result is not null)
+                    {
+                        DeleteFile(result.AttachmentUrl);
+                        _attachmentList.Remove(result);
+                        createType = false;
+                        editType = false;
+                        ResetWork();
+                        StateHasChanged();
+                        NotificationUtility.SendSuccessNotification("Vedhæftningen blev slettet.");
+                    }
+                    else
+                    {
+                        NotificationUtility.SendErrorNotification("Der opstod en fejl på sletning af vedhæftningen.");
+                        errorMessage = $"Der opstod en fejl på sletning af vedhæftningen {entity.AttachmentName}";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                
+                NotificationUtility.SendErrorNotification("Der opstod en fejl på sletning af vedhæftningen.");
+                errorMessage = $"Der opstod en fejl på sletning af vedhæftningen {entity.AttachmentName}, fejlbesked: {ex.Message}";
+            }
+
+        }
+        else if (workingType == "result")
+        {
+            var entity = result;
+            try
+            {
+                var isConfirmed = await ConfirmDialog("Slet resultat", $"Er du sikker på at du vil slette resultatet? <br> ID: {entity.ResultId} <br> Tekst: {entity.ResultText}");
+                if(isConfirmed == true)
+                {
+                    var result = await _resultService.Delete(entity.ResultId);
+                    if (result is not null)
+                    {
+                        _resultList.Remove(result);
+                        createType = false;
+                        editType = false;
+                        ResetWork();
+                        StateHasChanged();
+                        NotificationUtility.SendSuccessNotification("Resultatet blev slettet.");
+                    }
+                    else
+                    {
+                        NotificationUtility.SendErrorNotification("Der opstod en fejl på sletning af resultatet.");
+                        errorMessage = $"Der opstod en fejl på sletning af resultatet {entity.ResultText}";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                NotificationUtility.SendErrorNotification("Der opstod en fejl på sletning af resultatet.");
+                errorMessage = $"Der opstod en fejl på sletning af resultatet {entity.ResultText}, fejlbesked: {ex.Message}";
+            }
+            
+        }
+        else if (workingType == "type")
+        {
+            var entity = type;
+            try
+            {
+                var isConfirmed = await ConfirmDialog("Slet type", $"Er du sikker på at du vil slette typen? <br> ID: {entity.TypeId} <br> Navn: {entity.CardTypeName}");
+                if(isConfirmed == true)
+                {
+                    var result = await _typeService.Delete(entity.TypeId);
+                    if (result is not null)
+                    {
+                        _typeList.Remove(result);
+                        createType = false;
+                        editType = false;
+                        ResetWork();
+                        StateHasChanged();
+                        NotificationUtility.SendSuccessNotification("Typen blev slettet.");
+                    }
+                    else
+                    {
+                        NotificationUtility.SendErrorNotification("Der opstod en fejl på sletning af typen.");
+                        errorMessage = $"Der opstod en fejl på sletning af typen {entity.CardTypeName}";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                NotificationUtility.SendErrorNotification("Der opstod en fejl på sletning af typen.");
+                errorMessage = $"Der opstod en fejl på sletning af typen {entity.CardTypeName}, fejlbesked: {ex.Message}";
+            }
+            
+        }
+        else if (workingType == "typeCategoryList")
+        {
+            var entity = typeCategoryList;
+try
+            {
+                var isConfirmed = await ConfirmDialog("Slet type kategori", $"Er du sikker på at du vil slette type kategorien? <br> ID: {entity.TypeCategoryListId} <br> Navn: {entity.TypeCategoryListName}");
+                if(isConfirmed == true)
+                {
+                    var result = await _typeCategoryListService.Delete(entity.TypeCategoryListId);
+                    if (result is not null)
+                    {
+                        _typeCategoryListList.Remove(result);
+                        createType = false;
+                        editType = false;
+                        ResetWork();
+                        StateHasChanged();
+                        NotificationUtility.SendSuccessNotification("Type kategorien blev slettet.");
+                    }
+                    else
+                    {
+                        NotificationUtility.SendErrorNotification("Der opstod en fejl på sletning af type kategorien.");
+                        errorMessage = $"Der opstod en fejl på sletning af type kategorien {entity.TypeCategoryListName}";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                NotificationUtility.SendErrorNotification("Der opstod en fejl på sletning af type kategorien.");
+                errorMessage = $"Der opstod en fejl på sletning af type kategorien {entity.TypeCategoryListName}, fejlbesked: {ex.Message}";
+            }
+            
+        }
     }
     #region CheckModels
 
