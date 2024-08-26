@@ -96,6 +96,7 @@ builder.Services
     .AddScoped<IDtoToDomainConverter, DtoToDomainConverter>()
     .AddScoped<INotificationUtility, NotificationUtility>()
     .AddScoped<IActiveCheckService, ActiveCheckService>()
+    .AddScoped<IReportUtility, ReportUtility>()
     .AddSingleton<IAuthorizationHandler, IsAdminAuthorizationHandler>();
 
 // Register HttpClient with the base address of the application

@@ -2,12 +2,16 @@
 @rendermode InteractiveServer
 @using Microsoft.AspNetCore.Authorization
 @using SRLearningServer.Components.Interfaces.FrontendServices
+@using SRLearningServer.Components.Interfaces.Services
+@using SRLearningServer.Components.Interfaces.Utilities
 @using SRLearningServer.Components.Models.DTO
 @using SRLearningServer.Components.Models.WebpageModels
 @attribute [AllowAnonymous]
 
 @inject IFrontendCardService _cardService
 @inject IFrontendTypeCategoryListService _typeCategoryListService
+@inject DialogService _dialogService
+@inject IReportUtility _reportUtility
 
 <PageTitle>Signaler</PageTitle>
 
@@ -96,6 +100,7 @@
 <RadzenButton Click="GetSignals">Opdater Signaler</RadzenButton>
 
 <RadzenButton Click="ToggleSignalList">Sorter Signaler</RadzenButton>
+<RadzenButton Click="SendReport">Raporter fejl</RadzenButton>
 
 <RadzenStack>
     @if (showSignalList)
@@ -180,7 +185,7 @@
         }
     }
 
-    
+
 
     private async void GetSignals()
     {
@@ -261,6 +266,52 @@
             else
             {
                 showResult = false;
+            }
+        }
+    }
+
+    private async void SendReport()
+    {
+        var result = await _dialogService.OpenAsync<DialogReportPage>("Rapport");
+        string reportString = "Rapport angivet for Signaler. <br>";
+        if (result is not null)
+        {
+            try
+            {
+                reportString += $"Bruger besked: {result} <br>";
+                reportString += $"Brugerens valgte signaler: <br>";
+                foreach (var item in signalSelection)
+                {
+                    reportString += "<div>";
+                    reportString += $"Signal: {item.SignalType.CardTypeName} <br>";
+                    reportString += _reportUtility.Format(item.SelectedSignalAspects, "<br>");
+                    reportString += "</div>";
+
+                }
+                reportString += "<div>";
+                reportString += $"Det viste kort er: <br>";
+                reportString += _reportUtility.Format(cards[currentCard], "<br>");
+                reportString += $"Fejlbesked: {errorMessage} <br>";
+                reportString += "</div>";
+
+                reportString += "<div>";
+                reportString += $"SIDE DATA: <br>";
+                reportString += $"Følgende signaler er hentet fra serveren: <br>";
+                foreach (var item in signalSelection)
+                {
+                    reportString += "<div>";
+                    reportString += $"Signal: {_reportUtility.Format(item.SignalType, "<br>")}";
+                    reportString += $"Signal Visninger: {_reportUtility.Format(item.AllowedSignalAspects, "<br>")}";
+                    reportString += "</div>";
+                }
+                reportString += "</div>";
+                await _reportUtility.GenerateReport(reportString);
+
+            }
+            catch (Exception ex)
+            {
+                
+                throw;
             }
         }
     }

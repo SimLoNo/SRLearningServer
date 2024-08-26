@@ -1163,7 +1163,6 @@
     Variant variant = Variant.Filled;
 
 
-    private string oldAttachmentUrl = "";
     private IBrowserFile? selectedFile;
     private string base64ImageString = "";
     #region Initial
@@ -1224,7 +1223,7 @@
         resultList = new List<ResultDto>(_resultList);
         typeList = new List<TypeDto>(_typeList);
         typeCategoryListList = new List<TypeCategoryListDto>(_typeCategoryListList);
-        oldAttachmentUrl = "";
+        base64ImageString = "";
         errorMessage = "";
     }
     #endregion
@@ -1987,7 +1986,7 @@
             AttachmentDto relatedAttachment = _attachmentList.FirstOrDefault(a => a.AttachmentId == entity.AttachmentId);
             if (relatedAttachment is not null)
             {
-            var inactiveString = _activeCheckService.CheckActive(relatedAttachment, !entity.Active);
+                var inactiveString = _activeCheckService.CheckActive(relatedAttachment, !entity.Active);
                 if (!string.IsNullOrEmpty(inactiveString))
                 {
                     inactiveRelations.Add(inactiveString);
@@ -2062,6 +2061,8 @@
     {
         return await _dialogService.Confirm(message, title, new ConfirmOptions() {OkButtonText = "Fortsæt", CancelButtonText = "Afbryd"});
     }
+
+    
 
 
 

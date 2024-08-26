@@ -1,0 +1,18 @@
+﻿@page "/dialogcard/report"
+@inject Radzen.DialogService dialogService
+
+<RadzenRow>
+    <RadzenColumn Size="12" SizeMD="4">
+        <RadzenCard>
+            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Reporter fejl</RadzenText>
+            <RadzenTextArea Placeholder="Beskriv fejl..." @bind-Value=@ReportText Style="width: 100%" aria-label="TextArea with placeholder" />
+        </RadzenCard>
+        <RadzenButton Click="@((args) => dialogService.Close())" Variant="Variant.Flat" Text="Afbryd" Style="width: 120px" />
+        <RadzenButton Click="@((args) => dialogService.Close(ReportText))" Variant="Variant.Flat" Text="Send" Style="width: 120px" />
+    </RadzenColumn>
+</RadzenRow>
+
+@code {
+    private string ReportText { get; set; } = "";
+    
+}
