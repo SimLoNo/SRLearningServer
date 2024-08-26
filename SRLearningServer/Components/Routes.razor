@@ -1,4 +1,6 @@
 ﻿@using SRLearningServer.Components.Account.Shared
+@using SRLearningServer.Components.Pages
+@using Microsoft.AspNetCore.Components.Routing
 <Router AppAssembly="@typeof(Program).Assembly">
     <Found Context="routeData">
         <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(Layout.MainLayout)">
@@ -8,4 +10,16 @@
         </AuthorizeRouteView>
         <FocusOnNavigate RouteData="@routeData" Selector="h1" />
     </Found>
+    <NotFound>
+        <LayoutView Layout="@typeof(Layout.MainLayout)">
+            <RadzenRow>
+                <RadzenColumn>
+                    <h1 class="text-danger">Page not found</h1>
+                    <h2 class="text-danger">The page you are looking for doesn't exist.</h2>
+                    <h3>Unless of course this is the page you are looking for, in which case, you have indeed found it. CONGRATULATIONS!</h3>
+                    <RadzenText>But seriously, if you are seeing this page, it means that the page you are looking for doesn't exist. Please check the URL and try again.</RadzenText>
+                </RadzenColumn>
+            </RadzenRow>
+        </LayoutView>
+    </NotFound>
 </Router>

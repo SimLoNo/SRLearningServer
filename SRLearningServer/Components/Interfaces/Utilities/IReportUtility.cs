@@ -66,7 +66,19 @@ namespace SRLearningServer.Components.Interfaces.Utilities
         /// <returns></returns>
         public string Format(TypeCategoryListDto entity, string seperator);
 
+        /// <summary>
+        /// Sends a report to the team
+        /// </summary>
+        /// <param name="report"></param>
+        /// <returns></returns>
         public Task GenerateReport(string report);
+        /// <summary>
+        /// Sents a contact form message to the team
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="topic"></param>
+        /// <returns></returns>
+        public Task GenerateContact(string message, string topic);
 
     }
 }

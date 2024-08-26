@@ -309,5 +309,10 @@ namespace SRLearningServer.Components.Utilities
             await _emailSender.SendEmailAsync(_reportEmail, "Fejl Raporteret", message);
             return;
         }
+        public async Task GenerateContact(string message, string topic)
+        {
+            await _emailSender.SendEmailAsync(_reportEmail, $"Kontakt form {topic} - {Guid.NewGuid()}", message);
+            return;
+        }
     }
 }

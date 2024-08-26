@@ -1,0 +1,123 @@
+﻿@page "/contact"
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Authorization
+@using SRLearningServer.Components.Interfaces.FrontendServices
+@using SRLearningServer.Components.Interfaces.Services
+@using SRLearningServer.Components.Interfaces.Utilities
+@using SRLearningServer.Components.Models.DTO
+
+@inject IFrontendTypeCategoryListService _service
+@inject IReportUtility _reportUtility
+@inject INotificationUtility _notificationUtility
+
+@attribute [AllowAnonymous]
+@if(isLoading)
+{
+    <RadzenCard Style="width: 100%;" >
+        <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" Style="width: 100%;">
+            <RadzenText Text="Loading..." />
+        </RadzenStack>
+    </RadzenCard>
+    return;
+}
+else
+{
+    <RadzenCard Style="width: 100%;" >
+        <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" Style="width: 100%;">
+            <RadzenCard Style="width: 100%;">
+                <RadzenRow>
+                    <RadzenColumn>
+                    <RadzenText  TextStyle="TextStyle.DisplayH4" Text="Kontakt form" />
+                    <RadzenText>Her kan du skrive til os</RadzenText>
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow>
+                    <RadzenColumn>
+                    <RadzenText TextStyle="TextStyle.Subtitle2" Text="Kontakt muligheder" />
+                        <RadzenDropDownDataGrid @bind-Value=@selectedContactOption Data=@contactOptionsList.Types TValue=string ValueProperty="@nameof(TypeDto.CardTypeName)" AllowClear=true>
+                            <Template  >
+                                <RadzenText Style="max-width: 100%;"  Text=@context.CardTypeName  />
+                            </Template>
+                    </RadzenDropDownDataGrid>
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow>
+                </RadzenRow>
+            </RadzenCard>
+
+            <RadzenCard id="Message" Style="width: 100%;">
+                <RadzenColumn>
+                    <RadzenText TextStyle="TextStyle.Subtitle2" Text="Kontakt formular" />
+                    <RadzenText>Her kan du skrive til os</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Besked</RadzenText>
+                    <RadzenTextArea Placeholder="Skriv din besked..." oninput="event.target.style.height = Math.max(event.target.clientHeight, event.target.scrollHeight) + 'px';"  @bind-Value=message Style="width: 100%" aria-label="TextBox with placeholder" />
+
+                    <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Email (frivillig)</RadzenText>
+                    <RadzenTextBox Placeholder="Din email..." @bind-Value=contactEmail Style="width: 100%" aria-label="TextBox with placeholder" />
+                    <RadzenButton ButtonStyle="ButtonStyle.Primary" Text="Send" Click="SendEmail" />
+                </RadzenColumn>
+            </RadzenCard>
+
+            <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" Gap="2rem">
+                <RadzenText Text=@errorMessage />
+            </RadzenRow>
+        </RadzenStack>
+    </RadzenCard>    
+}
+
+@code {
+    private string contactOptionsListName = "KontaktValg";
+    private TypeCategoryListDto contactOptionsList = new();
+    private string selectedContactOption = "";
+    private string message = "";
+    private string contactEmail = "";
+    private string errorMessage = "";
+    private bool isLoading;
+
+    protected override async Task OnInitializedAsync()
+    {
+        isLoading = true;
+        try
+        {
+            contactOptionsList = await _service.GetByName(contactOptionsListName);
+
+        }
+        catch (Exception ex)
+        {
+
+            errorMessage = ex.Message;
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task SendEmail()
+    {
+        if (!string.IsNullOrEmpty(message) && !string.IsNullOrEmpty(selectedContactOption))
+        {
+            try
+            {
+                string formattedMessage = $"Besked: {message} <br> Email: {contactEmail}";
+                await _reportUtility.GenerateContact(formattedMessage, selectedContactOption);
+                _notificationUtility.SendSuccessNotification("Din besked er sendt til os");
+                selectedContactOption = "";
+                message = "";
+                contactEmail = "";
+                errorMessage = "";
+                return;
+
+            }
+            catch (Exception ex)
+            {
+
+                errorMessage = $"Fejl i forsendelsen - {ex.Message}";
+                return;
+            }
+        }
+        _notificationUtility.SendErrorNotification("Besked og valg af kontaktmulighed skal udfyldes");
+        return;
+    }
+}
