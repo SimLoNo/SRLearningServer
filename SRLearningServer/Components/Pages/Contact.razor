@@ -10,7 +10,7 @@
 @inject IReportUtility _reportUtility
 @inject INotificationUtility _notificationUtility
 
-@attribute [AllowAnonymous]
+@*@attribute [AllowAnonymous]*@
 @if(isLoading)
 {
     <RadzenCard Style="width: 100%;" >
@@ -50,11 +50,11 @@ else
                     <RadzenText TextStyle="TextStyle.Subtitle2" Text="Kontakt formular" />
                     <RadzenText>Her kan du skrive til os</RadzenText>
                     <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Besked</RadzenText>
-                    <RadzenTextArea Placeholder="Skriv din besked..." oninput="event.target.style.height = Math.max(event.target.clientHeight, event.target.scrollHeight) + 'px';"  @bind-Value=message Style="width: 100%" aria-label="TextBox with placeholder" />
+                    <RadzenTextArea Placeholder="Skriv din besked..." Rows="10" @bind-Value=message Style="width: 100%" aria-label="TextBox with placeholder" />
 
                     <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Email (frivillig)</RadzenText>
                     <RadzenTextBox Placeholder="Din email..." @bind-Value=contactEmail Style="width: 100%" aria-label="TextBox with placeholder" />
-                    <RadzenButton ButtonStyle="ButtonStyle.Primary" Text="Send" Click="SendEmail" />
+                    <RadzenButton Icon="send" ButtonStyle="ButtonStyle.Primary" Text="Send" Click="SendEmail" />
                 </RadzenColumn>
             </RadzenCard>
 

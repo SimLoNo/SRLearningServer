@@ -6,12 +6,13 @@
 @using SRLearningServer.Components.Interfaces.Utilities
 @using SRLearningServer.Components.Models.DTO
 @using SRLearningServer.Components.Models.WebpageModels
-@attribute [AllowAnonymous]
+@*@attribute [AllowAnonymous]*@
 
 @inject IFrontendCardService _cardService
 @inject IFrontendTypeCategoryListService _typeCategoryListService
 @inject DialogService _dialogService
 @inject IReportUtility _reportUtility
+@inject IActivitySortingUtility _activitySortingUtility
 
 <PageTitle>Signaler</PageTitle>
 
@@ -97,9 +98,9 @@
 
 
 
-<RadzenButton Click="GetSignals">Opdater Signaler</RadzenButton>
-<RadzenButton Click="ToggleSignalList">Sorter Signaler</RadzenButton>
-<RadzenButton Click="SendReport">Raporter fejl</RadzenButton>
+<RadzenButton Icon="update" Text="Opdater Signaler" Click="GetSignals"></RadzenButton>
+<RadzenButton Icon="swap_horiz" Text="Sorter Signaler" Click="ToggleSignalList"></RadzenButton>
+<RadzenButton Icon="bug_report" Text="Raporter fejl" Click="SendReport"></RadzenButton>
 
 <RadzenStack>
     @if (showSignalList)
@@ -141,17 +142,34 @@
         try
         {
             signals = await _typeCategoryListService.GetByName(signalListName);
-            foreach (TypeDto signalType in signals.Types)
+            signals = _activitySortingUtility.SortActiveByStatus(signals);
+            if (signals is not null)
             {
-                TypeCategoryListDto aspects = await _typeCategoryListService.GetByName($"{signalType.CardTypeName}Liste");
-                SignalModel signal = new SignalModel()
+                foreach (TypeDto signalType in signals.Types)
+                {
+                    TypeCategoryListDto aspects = await _typeCategoryListService.GetByName($"{signalType.CardTypeName}Liste");
+                    aspects = _activitySortingUtility.SortActiveByStatus(aspects);
+                    if (aspects is not null)
                     {
-                        SignalType = signalType,
-                        AllowedSignalAspects = new List<TypeDto>(aspects.Types),
-                        SelectedSignalAspects = new List<TypeDto>(aspects.Types)
-                    };
+                        SignalModel signal = new SignalModel()
+                            {
+                                SignalType = signalType,
+                                AllowedSignalAspects = new List<TypeDto>(aspects.Types),
+                                SelectedSignalAspects = new List<TypeDto>(aspects.Types)
+                            };
 
-                signalSelection.Add(signal);
+                        signalSelection.Add(signal);
+                    }
+                    else
+                    {
+                        errorMessage = $"Ingen signalvisninger blev fundet på signal {signalType.CardTypeName}";
+                    }
+                }
+            }
+            else
+            {
+                errorMessage = "Ingen signaler blev fundet.";
+            
             }
         }
         catch (Exception ex)
@@ -209,6 +227,7 @@
             }
         }
         cards = await _cardService.GetByType(signalAspects);
+        cards = _activitySortingUtility.SortActiveByStatus(cards).ToList();
         if (cards is null)
         {
             cards = new();

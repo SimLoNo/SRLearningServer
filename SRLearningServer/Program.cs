@@ -97,6 +97,7 @@ builder.Services
     .AddScoped<INotificationUtility, NotificationUtility>()
     .AddScoped<IActiveCheckService, ActiveCheckService>()
     .AddScoped<IReportUtility, ReportUtility>()
+    .AddScoped<IActivitySortingUtility, ActivitySortingUtility>()
     .AddSingleton<IAuthorizationHandler, IsAdminAuthorizationHandler>();
 
 // Register HttpClient with the base address of the application
@@ -112,12 +113,12 @@ builder.Services.AddControllers()
             options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
         });
 
-/*builder.Services.AddAuthorization(options =>
+builder.Services.AddAuthorization(options =>
 {
     options.FallbackPolicy = new AuthorizationPolicyBuilder()
         .RequireAuthenticatedUser()
         .Build();
-});*/
+});
 
 /*string userFolder = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 userFolder = Path.Combine(userFolder, ".aspnet");

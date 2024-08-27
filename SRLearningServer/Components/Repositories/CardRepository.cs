@@ -188,6 +188,7 @@ namespace SRLearningServer.Components.Repositories
                 trackedCard.Active = card.Active;
                 trackedCard.AttachmentId = card.AttachmentId;
                 var trackedResultIds = new HashSet<int>(trackedCard.Results.Select(r => r.ResultId));
+                var trackedTypeIds = new HashSet<int>(trackedCard.Types.Select(r => r.TypeId));
                 var cardResultIds = new HashSet<int>(card.Results.Select(r => r.ResultId));
 
                 // Add new results
@@ -205,6 +206,25 @@ namespace SRLearningServer.Components.Repositories
                     if (!card.Results.Any(r => r.ResultId == result.ResultId))
                     {
                         trackedCard.Results.Remove(result);
+                    }
+                }
+
+
+                // Add new types
+                foreach (var type in card.Types)
+                {
+                    if (!trackedTypeIds.Contains(type.TypeId))
+                    {
+                        trackedCard.Types.Add(type);
+                    }
+                }
+
+                // Remove old types
+                foreach (var Type in trackedCard.Types.ToList())
+                {
+                    if (!card.Types.Any(r => r.TypeId == Type.TypeId))
+                    {
+                        trackedCard.Types.Remove(Type);
                     }
                 }
                 //trackedCard.Results.ToList().RemoveAll(r => !cardResultIds.Contains(r.ResultId));

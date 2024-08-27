@@ -2,14 +2,17 @@
 @inject Radzen.DialogService dialogService
 
 <RadzenRow>
-    <RadzenColumn Size="12" SizeMD="4">
-        <RadzenCard>
-            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Reporter fejl</RadzenText>
-            <RadzenTextArea Placeholder="Beskriv fejl..." @bind-Value=@ReportText Style="width: 100%" aria-label="TextArea with placeholder" />
+    <RadzenColumn Size="12" >
+        <RadzenCard >
+            <RadzenText Style="width:100%" TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Reporter fejl</RadzenText>
+            <RadzenTextArea Placeholder="Beskriv fejl..." @bind-Value=@ReportText Style="width: 100%" aria-label="TextArea with placeholder" Rows="10" />
         </RadzenCard>
-        <RadzenButton Click="@((args) => dialogService.Close())" Variant="Variant.Flat" Text="Afbryd" Style="width: 120px" />
-        <RadzenButton Click="@((args) => dialogService.Close(ReportText))" Variant="Variant.Flat" Text="Send" Style="width: 120px" />
+        
     </RadzenColumn>
+</RadzenRow>
+<RadzenRow JustifyContent="JustifyContent.SpaceBetween" >
+    <RadzenButton Icon="close" Click="@((args) => dialogService.Close())" Variant="Variant.Flat" Text="Afbryd" />
+    <RadzenButton Icon="send" Click="@((args) => dialogService.Close(ReportText))" Variant="Variant.Flat" Text="Send" />
 </RadzenRow>
 
 @code {
