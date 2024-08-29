@@ -59,10 +59,14 @@ namespace SRLearningServer.Components.FrontendServices
             return await response.Content.ReadFromJsonAsync<TypeCategoryListDto>();
         }
 
-        public async Task<TypeCategoryListDto> GetByName(string name)
+        public async Task<TypeCategoryListDto?> GetByName(string name)
         {
-            var result = await httpClient.GetFromJsonAsync<TypeCategoryListDto>($"{_baseUrl}/{_endpoint}/{name}");
-            return result;
+            var response = await httpClient.GetAsync($"{_baseUrl}/{_endpoint}/{name}");
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<TypeCategoryListDto>();
+            }
+            return null;
         }
 
 

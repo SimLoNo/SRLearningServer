@@ -21,8 +21,17 @@ using SRLearningServer.Components.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using SRLearningServer.Components.Authorization;
 
+using Azure.Identity;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.Extensions.Azure;
+using System.Net.Http.Headers;
+using System.Net.Http;
+
+
 var builder = WebApplication.CreateBuilder(args);
 
+var BlobStorageUri = builder.Configuration["AzureURIs:BlobStorage"];
+var KeyVaultURI = builder.Configuration["AzureURIs:KeyVault"];
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
@@ -61,6 +70,14 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddSignInManager()
     .AddDefaultTokenProviders();
+
+builder.Services.AddAzureClientsCore();
+
+/*builder.Services.AddDataProtection()
+                .PersistKeysToAzureBlobStorage(new Uri(BlobStorageUri),
+                                                new DefaultAzureCredential())
+                .ProtectKeysWithAzureKeyVault(new Uri(KeyVaultURI),
+                                                new DefaultAzureCredential());*/
 
 builder.Services.AddTransient<IEmailSender<ApplicationUser>, EmailSender>();
 builder.Services.AddTransient<IBaseEmailSender, BaseEmailSender>();
@@ -104,7 +121,21 @@ builder.Services
 builder.Services.AddScoped(sp =>
 {
     var navigationManager = sp.GetRequiredService<NavigationManager>();
-    return new HttpClient { BaseAddress = new Uri(navigationManager.BaseUri) };
+    var httpClient = new HttpClient { BaseAddress = new Uri(navigationManager.BaseUri) };
+    var authStateProvider = sp.GetRequiredService<AuthenticationStateProvider>();
+    var authState = authStateProvider.GetAuthenticationStateAsync().Result;
+    var user = authState.User;
+
+    if (user.Identity.IsAuthenticated)
+    {
+        var token = user.FindFirst("access_token")?.Value;
+        if (!string.IsNullOrEmpty(token))
+        {
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        }
+    }
+
+    return httpClient;
 });
 
 builder.Services.AddControllers()
@@ -113,12 +144,12 @@ builder.Services.AddControllers()
             options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
         });
 
-builder.Services.AddAuthorization(options =>
+/*builder.Services.AddAuthorization(options =>
 {
     options.FallbackPolicy = new AuthorizationPolicyBuilder()
         .RequireAuthenticatedUser()
         .Build();
-});
+});*/
 
 /*string userFolder = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 userFolder = Path.Combine(userFolder, ".aspnet");

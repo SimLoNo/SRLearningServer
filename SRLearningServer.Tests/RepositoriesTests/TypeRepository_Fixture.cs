@@ -190,7 +190,7 @@ namespace SRLearningServer.Tests.RepositoriesTests
             List<Components.Models.Type> allTypes = await _context.Types.ToListAsync();
             Assert.AreEqual(2, allTypes.Count);
             List<Card> allCards = await _context.Cards.ToListAsync();
-            Assert.AreEqual(1, allCards.Count);
+            Assert.AreEqual(0, allCards.Count);
 
         }
 

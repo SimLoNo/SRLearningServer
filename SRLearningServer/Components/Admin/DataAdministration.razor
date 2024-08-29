@@ -16,6 +16,7 @@
 @inject INotificationUtility NotificationUtility
 @inject DialogService _dialogService
 @inject IActiveCheckService _activeCheckService
+@inject IConfiguration _configuration
 
 <PageTitle>Data administration</PageTitle>
 <RadzenCard>
@@ -1170,6 +1171,8 @@
     {
         try
         {
+            attachmentReadDirectory = $"{_configuration["AttachmentReadPath"]}";
+            attachmentCreateDirectory = $"{_configuration["AttachmentWritePath"]}";
             _attachmentList = await GetAttachments();
             _cardList = await GetCards();
             _resultList = await GetResults();
@@ -1299,7 +1302,7 @@
         {
             _cardList.Add(result);
             createType = false;
-            ResetWork();
+            SoftResetWork();
             StateHasChanged();
             NotificationUtility.SendSuccessNotification("Kortet blev oprettet.");
         }
@@ -1329,7 +1332,7 @@
             _attachmentList.Add(result);
             createType = false;
             CreateFile();
-            ResetWork();
+            SoftResetWork();
             NotificationUtility.SendSuccessNotification("Vedhæftningen blev oprettet.");
             StateHasChanged();
         }
@@ -1393,8 +1396,8 @@
         if (resultReceived is not null)
         {
             _resultList.Add(resultReceived);
-            createType = false;
-            ResetWork();
+            //createType = false;
+            SoftResetWork();
             StateHasChanged();
             NotificationUtility.SendSuccessNotification("Resultatet blev oprettet.");
         }
@@ -1416,8 +1419,8 @@
         if (result is not null)
         {
             _typeList.Add(result);
-            createType = false;
-            ResetWork();
+            //createType = false;
+            SoftResetWork();
             StateHasChanged();
             NotificationUtility.SendSuccessNotification("Typen blev oprettet.");
         }
@@ -1439,8 +1442,8 @@
         if (result is not null)
         {
             _typeCategoryListList.Add(result);
-            createType = false;
-            ResetWork();
+            //createType = false;
+            SoftResetWork();
             StateHasChanged();
             NotificationUtility.SendSuccessNotification("Type kategorien blev oprettet.");
         }
@@ -1451,7 +1454,7 @@
     }
     #endregion
     #region SelectModels
-    private async void SelectCard(object e) //int entityId
+    private async Task SelectCard(object e) //int entityId
     {
         int entityId = (int)e;
         if (entityId > 0) //int.TryParse(e.Value.ToString(), out int entityId)
@@ -1475,8 +1478,9 @@
                 StateHasChanged();
             }
         }
+        return;
     }
-    private async void SelectType(object e)
+    private async Task SelectType(object e)
     {
         int entityId = (int)e;
         if (true)
@@ -1497,9 +1501,10 @@
                 StateHasChanged();
             }
         }
+        return;
     }
 
-    private async void SelectResult(object e)
+    private async Task SelectResult(object e)
     {
         int entityId = (int)e;
         if (true)
@@ -1520,9 +1525,10 @@
                 StateHasChanged();
             }
         }
+        return;
     }
 
-    private async void SelectAttachment(object e)
+    private async Task SelectAttachment(object e)
     {
         int entityId = (int)e;
         if (true)
@@ -1544,9 +1550,10 @@
                 StateHasChanged();
             }
         }
+        return;
     }
 
-    private async void SelectTypeCategory(object e)
+    private async Task SelectTypeCategory(object e)
     {
         int entityId = (int)e;
         if (true)
@@ -1565,6 +1572,7 @@
                 StateHasChanged();
             }
         }
+        return;
     }
 
     #endregion
@@ -1606,8 +1614,9 @@
                 if (index != -1)
                 {
                     _cardList[index] = result;
-                    createType = false;
-                    ResetWork();
+                    //createType = false;
+                    SoftResetWork();
+                    SelectCard(result.CardId);
                     StateHasChanged();
                     NotificationUtility.SendSuccessNotification("Kortet blev opdateret.");
                 }
@@ -1640,8 +1649,9 @@
                 if (index != -1)
                 {
                     _typeList[index] = result;
-                    createType = false;
-                    ResetWork();
+                    //createType = false;
+                    SoftResetWork();
+                    SelectType(result.TypeId);
                     StateHasChanged();
                     NotificationUtility.SendSuccessNotification("Typen blev opdateret.");
                 }
@@ -1674,8 +1684,9 @@
                 if (index != -1)
                 {
                     _typeCategoryListList[index] = result;
-                    createType = false;
-                    ResetWork();
+                    //createType = false;
+                    SoftResetWork();
+                    await SelectTypeCategory(result.TypeCategoryListId);
                     StateHasChanged();
                     NotificationUtility.SendSuccessNotification("Type kategorien blev opdateret.");
                 }
@@ -1709,8 +1720,9 @@
                 if (index != -1)
                 {
                     _resultList[index] = resultReceived;
-                    createType = false;
-                    ResetWork();
+                    //createType = false;
+                    SoftResetWork();
+                    await SelectResult(resultReceived.ResultId);
                     StateHasChanged();
                     NotificationUtility.SendSuccessNotification("Resultatet blev opdateret.");
                 }
@@ -1738,7 +1750,7 @@
             }
             if (selectedFile is not null)
             {
-                CreateFile();                
+                await CreateFile();                
             }
             var result = await _attachmentService.Update(entity);
             if (result is not null)
@@ -1747,8 +1759,9 @@
                 if (index != -1)
                 {
                     _attachmentList[index] = result;
-                    createType = false;
-                    ResetWork();
+                    //createType = false;
+                    SoftResetWork();
+                    await SelectAttachment(result.AttachmentId);
                     StateHasChanged();
                     NotificationUtility.SendSuccessNotification("Vedhæftningen blev opdateret.");
                 }
@@ -1806,8 +1819,8 @@
                 if (index != -1)
                 {
                     _cardList[index] = entity;
-                    createType = false;
-                    ResetWork();
+                    //createType = false;
+                    SoftResetWork();
                     StateHasChanged();
                     NotificationUtility.SendSuccessNotification("Kortet blev deaktiveret.");
                 }
@@ -1831,8 +1844,8 @@
                 if (index != -1)
                 {
                     _attachmentList[index] = entity;
-                    createType = false;
-                    ResetWork();
+                    //createType = false;
+                    SoftResetWork();
                     StateHasChanged();
                     NotificationUtility.SendSuccessNotification("Vedhæftningen blev deaktiveret.");
                 }
@@ -1855,8 +1868,8 @@
                 if (index != -1)
                 {
                     _resultList[index] = entity;
-                    createType = false;
-                    ResetWork();
+                    //createType = false;
+                    SoftResetWork();
                     StateHasChanged();
                     NotificationUtility.SendSuccessNotification("Resultatet blev deaktiveret.");
                 }
@@ -1879,8 +1892,8 @@
                 if (index != -1)
                 {
                     _typeList[index] = entity;
-                    createType = false;
-                    ResetWork();
+                    //createType = false;
+                    SoftResetWork();
                     StateHasChanged();
                     NotificationUtility.SendSuccessNotification("Typen blev deaktiveret.");
                 }
@@ -1903,8 +1916,8 @@
                 if (index != -1)
                 {
                     _typeCategoryListList[index] = entity;
-                    createType = false;
-                    ResetWork();
+                    //createType = false;
+                    SoftResetWork();
                     StateHasChanged();
                     NotificationUtility.SendSuccessNotification("Type kategorien blev deaktiveret.");
                 }
@@ -1928,9 +1941,9 @@
                     if(result is not null)
                     {
                         _cardList.Remove(result);
-                        createType = false;
-                        editType = false;
-                        ResetWork();
+                        //createType = false;
+                        //editType = false;
+                        SoftResetWork();
                         StateHasChanged();
                         NotificationUtility.SendSuccessNotification("Kortet blev slettet.");
                     }
@@ -1962,9 +1975,9 @@
                     {
                         DeleteFile(result.AttachmentUrl);
                         _attachmentList.Remove(result);
-                        createType = false;
-                        editType = false;
-                        ResetWork();
+                        //createType = false;
+                        //editType = false;
+                        SoftResetWork();
                         StateHasChanged();
                         NotificationUtility.SendSuccessNotification("Vedhæftningen blev slettet.");
                     }
@@ -1995,9 +2008,9 @@
                     if (result is not null)
                     {
                         _resultList.Remove(result);
-                        createType = false;
-                        editType = false;
-                        ResetWork();
+                        //createType = false;
+                        //editType = false;
+                        SoftResetWork();
                         StateHasChanged();
                         NotificationUtility.SendSuccessNotification("Resultatet blev slettet.");
                     }
@@ -2027,9 +2040,9 @@
                     if (result is not null)
                     {
                         _typeList.Remove(result);
-                        createType = false;
-                        editType = false;
-                        ResetWork();
+                        //createType = false;
+                        //editType = false;
+                        SoftResetWork();
                         StateHasChanged();
                         NotificationUtility.SendSuccessNotification("Typen blev slettet.");
                     }
@@ -2059,9 +2072,9 @@ try
                     if (result is not null)
                     {
                         _typeCategoryListList.Remove(result);
-                        createType = false;
-                        editType = false;
-                        ResetWork();
+                        //createType = false;
+                        //editType = false;
+                        SoftResetWork();
                         StateHasChanged();
                         NotificationUtility.SendSuccessNotification("Type kategorien blev slettet.");
                     }

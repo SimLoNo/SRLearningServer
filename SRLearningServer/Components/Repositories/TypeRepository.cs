@@ -20,11 +20,11 @@ namespace SRLearningServer.Components.Repositories
                 entity.LastUpdated = DateOnly.FromDateTime(DateTime.UtcNow);
                 foreach (var card in entity.Cards.ToList())
                 {
-                    var newCard = _context.Cards.FirstOrDefaultAsync(c => c.CardId == card.CardId);
+                    var newCard = await _context.Cards.FirstOrDefaultAsync(c => c.CardId == card.CardId);
                     entity.Cards.Remove(card);
                     if (newCard != null)
                     {
-                        entity.Cards.Add(newCard.Result);
+                        entity.Cards.Add(newCard);
                     }
                 }
                 foreach (var typeCategory in entity.TypeCategoryLists.ToList())

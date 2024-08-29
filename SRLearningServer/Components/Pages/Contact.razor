@@ -11,6 +11,7 @@
 @inject INotificationUtility _notificationUtility
 
 @*@attribute [AllowAnonymous]*@
+@attribute [Authorize(Roles = "User")]
 @if(isLoading)
 {
     <RadzenCard Style="width: 100%;" >

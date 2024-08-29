@@ -25,7 +25,7 @@ namespace SRLearningServer.Components.Services
             {
                 throw new Exception("Null Server Port");
             }
-            if (string.IsNullOrEmpty(Options.EmailName))
+            if (string.IsNullOrEmpty(Options.DefaultEmailSenderName))
             {
                 throw new Exception("Null Email");
             }
@@ -34,7 +34,7 @@ namespace SRLearningServer.Components.Services
                 throw new Exception("Null Password");
             }
 
-            await Execute(Options.SMTPServerUrl, Options.SMTPServerPort, Options.EmailName, Options.EmailPassword, subject, message, toEmail);
+            await Execute(Options.SMTPServerUrl, Options.SMTPServerPort, Options.DefaultEmailSenderName, Options.EmailPassword, subject, message, toEmail);
         }
 
         public async Task Execute(string url, string port, string email, string password, string subject, string message, string toEmail)

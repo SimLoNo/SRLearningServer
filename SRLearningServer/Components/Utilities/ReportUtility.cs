@@ -13,7 +13,7 @@ namespace SRLearningServer.Components.Utilities
         public ReportUtility(IBaseEmailSender emailSender, IConfiguration config)
         {
             _emailSender = emailSender;
-            _reportEmail = config["ReportEmail"];
+            _reportEmail = config["DefaultEmailReceiver"];
         }
         public string Format(AttachmentDto entity, string seperator = "<br>")
         {
@@ -306,12 +306,12 @@ namespace SRLearningServer.Components.Utilities
 
         public async Task GenerateReport(string message)
         {
-            await _emailSender.SendEmailAsync(_reportEmail, "Fejl Raporteret", message);
+            await _emailSender.SendEmailAsync(_reportEmail, $"Fejl Raporteret - {Guid.NewGuid()}", message);
             return;
         }
         public async Task GenerateContact(string message, string topic)
         {
-            await _emailSender.SendEmailAsync(_reportEmail, $"Kontakt form {topic} - {Guid.NewGuid()}", message);
+            await _emailSender.SendEmailAsync(_reportEmail, $"Kontakt form: {topic} - {Guid.NewGuid()}", message);
             return;
         }
     }

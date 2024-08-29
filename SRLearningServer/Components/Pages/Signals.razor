@@ -7,12 +7,14 @@
 @using SRLearningServer.Components.Models.DTO
 @using SRLearningServer.Components.Models.WebpageModels
 @*@attribute [AllowAnonymous]*@
+@attribute [Authorize(Roles = "User")]
 
 @inject IFrontendCardService _cardService
 @inject IFrontendTypeCategoryListService _typeCategoryListService
 @inject DialogService _dialogService
 @inject IReportUtility _reportUtility
 @inject IActivitySortingUtility _activitySortingUtility
+@inject IConfiguration _configuration
 
 <PageTitle>Signaler</PageTitle>
 
@@ -43,7 +45,7 @@
                     <p class="rz-color-on-secondary">@cards[currentCard].CardText</p>
                 </RadzenStack>
                 <RadzenStack class="rz-background-color-primary rz-border-primary" Style="position: relative; display: flex;" JustifyContent="JustifyContent.Center">
-                    <RadzenImage Path="@($"/Development/Attachments/{cards[currentCard].Attachment?.AttachmentUrl}")" Style="max-height: 60vh; max-width:100%; object-fit: contain;" />
+                    <RadzenImage Path="@($"{attachmentLocation}{cards[currentCard].Attachment?.AttachmentUrl}")" Style="max-height: 60vh; max-width:100%; object-fit: contain;" />
                     <RadzenButton Text="Go back" Click="@(args => Progress(false))" Style="position: absolute; left: 0; width: 50%; height: 100%; opacity: 0;" />
                     <RadzenButton Text="Progress" Click="@(args => Progress(true))" Style="position: absolute; right: 0; width: 50%; height: 100%; opacity: 0;" />
                 </RadzenStack>
@@ -135,12 +137,15 @@
     private bool showResult = false;
     private bool alwaysShowResult = false;
 
+    string attachmentLocation = "";
+
 
     protected override async Task OnInitializedAsync()
     {
         isLoading = true;
         try
         {
+            attachmentLocation = $"{_configuration["AttachmentReadPath"]}";
             signals = await _typeCategoryListService.GetByName(signalListName);
             signals = _activitySortingUtility.SortActiveByStatus(signals);
             if (signals is not null)
@@ -304,11 +309,23 @@
                     reportString += "</div>";
 
                 }
-                reportString += "<div>";
-                reportString += $"Det viste kort er: <br>";
-                reportString += _reportUtility.Format(cards[currentCard], "<br>");
-                reportString += $"Fejlbesked: {errorMessage} <br>";
-                reportString += "</div>";
+                if (cards is not null && cards.Count() > currentCard)
+                {
+                    reportString += "<div>";
+                    reportString += $"Det viste kort er: <br>";
+                    reportString += _reportUtility.Format(cards[currentCard], "<br>");
+                    reportString += $"Fejlbesked: {errorMessage} <br>";
+                    reportString += "</div>";    
+                }
+                else
+                {
+                    reportString += "<div>";
+                    reportString += $"Der er ingen kort at vise. <br>";
+                    reportString += $"cards længde: {cards.Count} <br>";
+                    reportString += $"currentCard værdi: {currentCard} <br>";
+                    reportString += $"Fejlbesked: {errorMessage} <br>";
+                    reportString += "</div>";
+                }
 
                 reportString += "<div>";
                 reportString += $"SIDE DATA: <br>";
