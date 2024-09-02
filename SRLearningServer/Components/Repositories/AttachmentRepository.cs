@@ -50,7 +50,7 @@ namespace SRLearningServer.Components.Repositories
         /// Returns an Attachment with it's relations with the given id. If no Attachment is found, returns null.
         /// </summary>
         /// <param name="id"></param>
-        /// <returns></returns>
+        /// <returns>Attachment if found, otherwise returns null.</returns>
         public async Task<Attachment> Get(int id)
         {
             try

@@ -71,6 +71,10 @@ namespace SRLearningServer.Components.Converters
 
         public List<CardDto> ConvertToDtoFromDomain(IEnumerable<Card> entities, bool convertRelations = false)
         {
+            if (entities.IsNullOrEmpty())
+            {
+                return null;
+            }
             List<CardDto> cardDtos = new();
             try
             {
@@ -118,6 +122,10 @@ namespace SRLearningServer.Components.Converters
 
         public CardDto ConvertToDtoFromDomain(Card entity, bool convertRelations = false)
         {
+            if (entity is null)
+            {
+                return null;
+            }
             try
             {
                 List<Card> entities = new() { entity };
@@ -133,6 +141,10 @@ namespace SRLearningServer.Components.Converters
 
         public List<ResultDto> ConvertToDtoFromDomain(IEnumerable<Result> entities, bool convertRelations = false)
         {
+            if (entities.IsNullOrEmpty())
+            {
+                return null;
+            }
             List<ResultDto> dtos = new();
             try
             {
@@ -173,6 +185,10 @@ namespace SRLearningServer.Components.Converters
 
         public ResultDto ConvertToDtoFromDomain(Result entity, bool convertRelations = false)
         {
+            if (entity is null)
+            {
+                return null;
+            }
             try
             {
                 List<Result> entities = new() { entity };
@@ -188,6 +204,10 @@ namespace SRLearningServer.Components.Converters
 
         public List<TypeDto> ConvertToDtoFromDomain(IEnumerable<Models.Type> entities, bool convertRelations = false)
         {
+            if (entities.IsNullOrEmpty())
+            {
+                return null;
+            }
             List<TypeDto> typeDtos = new();
             try
             {
@@ -226,14 +246,29 @@ namespace SRLearningServer.Components.Converters
 
         public TypeDto ConvertToDtoFromDomain(Models.Type entity, bool convertRelations = false)
         {
+            if (entity is null)
+            {
+                return null;
+            }
+            try
+            {
+                List<Models.Type> entities = new() { entity };
+                List<TypeDto> typeDtos = ConvertToDtoFromDomain(entities, convertRelations).ToList();
+                return typeDtos[0];
+            }
+            catch (Exception ex)
+            {
 
-            List<Models.Type> entities = new() { entity };
-            List<TypeDto> typeDtos = ConvertToDtoFromDomain(entities, convertRelations).ToList();
-            return typeDtos[0];
+                throw new Exception(ex.Message);
+            }
         }
 
         public List<TypeCategoryListDto> ConvertToDtoFromDomain(IEnumerable<TypeCategoryList> entities, bool convertRelations = false)
         {
+            if (entities.IsNullOrEmpty())
+            {
+                return null;
+            }
             List<TypeCategoryListDto> typeDtos = new();
             try
             {
@@ -267,10 +302,22 @@ namespace SRLearningServer.Components.Converters
 
         public TypeCategoryListDto ConvertToDtoFromDomain(TypeCategoryList entity, bool convertRelations = false)
         {
+            if (entity is null)
+            {
+                return null;
+            }
+            try
+            {
+                List<TypeCategoryList> entities = new() { entity };
+                List<TypeCategoryListDto> typeCategoryListDtos = ConvertToDtoFromDomain(entities, convertRelations).ToList();
+                return typeCategoryListDtos[0];
+            }
+            catch (Exception ex)
+            {
 
-            List<TypeCategoryList> entities = new() { entity };
-            List<TypeCategoryListDto> typeCategoryListDtos = ConvertToDtoFromDomain(entities, convertRelations).ToList();
-            return typeCategoryListDtos[0];
+                throw new Exception(ex.Message);
+            }
+
         }
     }
 }
