@@ -72,6 +72,10 @@ namespace SRLearningServer.Components.Converters
 
         public List<Card> ConvertToDomainFromDto(List<CardDto> entities)
         {
+            if (entities.IsNullOrEmpty())
+            {
+                return null;
+            }
             List<Card> cards = new();
             try
             {
@@ -121,6 +125,10 @@ namespace SRLearningServer.Components.Converters
 
         public Card ConvertToDomainFromDto(CardDto entity)
         {
+            if (entity is null)
+            {
+                return null;
+            }
             try
             {
                 List<CardDto> entities = new() { entity };
@@ -136,6 +144,10 @@ namespace SRLearningServer.Components.Converters
 
         public List<Result> ConvertToDomainFromDto(List<ResultDto> entities)
         {
+            if (entities.IsNullOrEmpty())
+            {
+                return null;
+            }
             List<Result> results = new();
             try
             {
@@ -178,6 +190,10 @@ namespace SRLearningServer.Components.Converters
 
         public Result ConvertToDomainFromDto(ResultDto entity)
         {
+            if (entity is null)
+            {
+                return null;
+            }
             try
             {
                 List<ResultDto> entities = new() { entity };
@@ -193,6 +209,10 @@ namespace SRLearningServer.Components.Converters
 
         public List<Models.Type> ConvertToDomainFromDto(List<TypeDto> entities)
         {
+            if (entities.IsNullOrEmpty())
+            {
+                return null;
+            }
             List<Models.Type> types = new();
             try
             {
@@ -232,6 +252,10 @@ namespace SRLearningServer.Components.Converters
 
         public Models.Type ConvertToDomainFromDto(TypeDto entity)
         {
+            if (entity is null)
+            {
+                return null;
+            }
             List<TypeDto> entities = new() { entity };
             List<Models.Type> types = ConvertToDomainFromDto(entities).ToList();
             return types[0];
@@ -239,6 +263,10 @@ namespace SRLearningServer.Components.Converters
 
         public List<TypeCategoryList> ConvertToDomainFromDto(List<TypeCategoryListDto> entities)
         {
+            if (entities.IsNullOrEmpty())
+            {
+                return null;
+            }
             List<TypeCategoryList> typeCategoryLists = new();
             try
             {
@@ -271,6 +299,10 @@ namespace SRLearningServer.Components.Converters
 
         public TypeCategoryList ConvertToDomainFromDto(TypeCategoryListDto entity)
         {
+            if (entity is null)
+            {
+                return null;
+            }
             List<TypeCategoryListDto> entities = new() { entity };
             List<TypeCategoryList> typeCategoryLists = ConvertToDomainFromDto(entities).ToList();
             return typeCategoryLists[0];

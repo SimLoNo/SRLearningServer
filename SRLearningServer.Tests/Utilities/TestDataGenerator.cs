@@ -166,5 +166,16 @@ namespace SRLearningServer.Tests.Utilities
             };
             return entity;
         }
+        public TypeCategoryListDto CreateTypeCategoryListDto(int id, string name, DateOnly updated, bool active)
+        {
+            TypeCategoryListDto entity = new()
+            {
+                TypeCategoryListId = id,
+                TypeCategoryListName = name,
+                LastUpdated = updated,
+                Active = active,
+            };
+            return entity;
+        }
     }
 }
