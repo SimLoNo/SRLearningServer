@@ -1,4 +1,4 @@
-﻿@page "/signals"
+﻿@page "/memorycards/{listName}"
 @rendermode InteractiveServer
 @using Microsoft.AspNetCore.Authorization
 @using SRLearningServer.Components.Interfaces.FrontendServices
@@ -16,9 +16,9 @@
 @inject IActivitySortingUtility _activitySortingUtility
 @inject IConfiguration _configuration
 
-<PageTitle>Signaler</PageTitle>
+<PageTitle>Huskekort - @listName</PageTitle>
 
-<h1>Signaler</h1>
+    <h1>Huskekort - @listName</h1>
 
 
 <RadzenStack class="rz-p-sm-12">
@@ -31,7 +31,9 @@
 <RadzenStack>
     @if (isLoading)
     {
-        <RadzenStack JustifyContent="JustifyContent.Center" AlignItems="AlignItems.Center">
+        <RadzenStack JustifyContent
+        ="JustifyContent.Center" AlignItems
+        ="AlignItems.Center">
             <RadzenProgressBarCircular ShowValue="true" Mode="ProgressBarMode.Indeterminate" Size="ProgressBarCircularSize.Large">
                 <Template>Wait</Template>
             </RadzenProgressBarCircular>
@@ -50,58 +52,65 @@
                     <RadzenButton Text="Progress" Click="@(args => Progress(true))" Style="position: absolute; right: 0; width: 50%; height: 100%; opacity: 0;" />
                 </RadzenStack>
                 <RadzenStack>
-                @if (showResult == true || alwaysShowResult == true)
-                {
-                    <div>
-                        <ul>
-                            @foreach (var result in cards[currentCard].Results)
-                            {
+                    @if (showResult == true || alwaysShowResult == true)
+                    {
+                        <div>
+                            <ul>
+                                @foreach (var result in cards[currentCard].Results)
+                                {
                                     <li class="rz-color-on-secondary">@result.ResultText</li>
-                            }
-                        </ul>
+                                }
+                            </ul>
 
-                        <h5 class="rz-color-on-secondary">@cards[currentCard].CardName</h5>
-                        @if (alwaysShowResult == false && showResult == true)
-                        {
-                            <div>
-                                    <p class="rz-color-on-secondary">Klik på højre side for at se næste signal. Klik på venstre side for at skjule svarene.</p>
-                            </div>
-                        }
-                        else
-                        {
-                            <div>
-                                    <p class="rz-color-on-secondary">Klik på højre side for at se næste signal. Klik på venstre side for at gå tilbage.</p>
-                            </div>
-                        }
-                    </div>
-                }
-                else
-                {
-                    <div>
+                            <h5 class="rz-color-on-secondary">@cards[currentCard].CardName</h5>
+                            @if (alwaysShowResult == false && showResult == true)
+                            {
+                                <div>
+                                    <p class="rz-color-on-secondary">Klik på højre side for at se næste kort. Klik på venstre side for at skjule svarene.</p>
+                                </div>
+                            }
+                            else
+                            {
+                                <div>
+                                    <p class="rz-color-on-secondary">Klik på højre side for at se næste kort. Klik på venstre side for at gå tilbage.</p>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div>
                             <p class="rz-color-on-secondary">Klik på højre side for at se svarene. Klik på venstre side for at gå tilbage.</p>
-                    </div>
-                }
+                        </div>
+                    }
                 </RadzenStack>
             </RadzenCard>
         </RadzenStack>
-
     }
     else if (!string.IsNullOrEmpty(errorMessage))
     {
-        <p class="error">@errorMessage</p>
-    }
+        <p class="error">@errorMessage
+        </p>
+    }@* 
     else
     {
         <RadzenText Text="Ingen signaler at vise."></RadzenText>
-    }
+    } *@
 
-    
+
 </RadzenStack>
 
 
 
-<RadzenButton Icon="update" Text="Opdater Signaler" Click="GetSignals"></RadzenButton>
-<RadzenButton Icon="swap_horiz" Text="Sorter Signaler" Click="ToggleSignalList"></RadzenButton>
+@if (cards.Count == 0)
+{
+    <RadzenButton Icon="update" Text="@($"Vis {listName}")" Click="GetSignals"></RadzenButton>
+}
+else
+{
+    <RadzenButton Icon="update" Text="@($"Opdater {listName}")" Click="GetSignals"></RadzenButton>
+}
+<RadzenButton Icon="swap_horiz" Text="@($"Til/fravælg {listName}")" Click="ToggleSignalList"></RadzenButton>
 <RadzenButton Icon="bug_report" Text="Raporter fejl" Click="SendReport"></RadzenButton>
 
 <RadzenStack>
@@ -111,21 +120,23 @@
         {
             <RadzenCard class="rz-background-color-secondary">
                 <RadzenStack Orientation="Orientation.Vertical" >
-                    <RadzenLabel Text="@($"Vælg {signal.SignalType.CardTypeName}")" Component="EntitySelectionDropDown" />
-                    <RadzenDropDown Multiple=true @bind-Value=@signal.SelectedSignalAspects TextProperty="@nameof(TypeDto.CardTypeName)" Style="width:auto" Name="EntitySelectionDropDown" Data=@signal.AllowedSignalAspects TValue="IEnumerable<TypeDto>" AllowClear=true AllowFiltering=false AllowSorting=false SelectAllText="Vælg alle visninger" SelectedItemsText="Visninger er valgt" Placeholder="@($"Ingen {signal.SignalType.CardTypeName}er valgt")" Chips=true MaxSelectedLabels="10">
-                    
+                    <RadzenLabel Text="@($"Vælg hvilke {signal.SignalType.CardTypeName} du vil se.")" Component="EntitySelectionDropDown" />
+                    <RadzenDropDown Multiple=true @bind-Value=@signal.SelectedSignalAspects TextProperty="@nameof(TypeDto.CardTypeName)" Style="width:auto" Name="EntitySelectionDropDown" Data=@signal.AllowedSignalAspects TValue="IEnumerable<TypeDto>" AllowClear=true AllowFiltering=false AllowSorting=false SelectAllText="@($"Vælg alle {listName}")" SelectedItemsText="@($"{listName} er valgt")" Placeholder="@($"Ingen {signal.SignalType.CardTypeName}er valgt")" Chips=true MaxSelectedLabels="10">
+
                     </RadzenDropDown>
                 </RadzenStack>
             </RadzenCard>
 
-            
         }
+
     }
 </RadzenStack>
 
 
 @code {
-    private string signalListName = "Signaler";
+    [Parameter]
+
+    public string? listName { get; set;}
     private int currentCard = 0;
     private List<CardDto> cards = new();
     private TypeCategoryListDto signals = new();
@@ -146,7 +157,7 @@
         try
         {
             attachmentLocation = $"{_configuration["AttachmentReadPath"]}";
-            signals = await _typeCategoryListService.GetByName(signalListName);
+            signals = await _typeCategoryListService.GetByName(listName);
             signals = _activitySortingUtility.SortActiveByStatus(signals);
             if (signals is not null)
             {
@@ -167,20 +178,20 @@
                     }
                     else
                     {
-                        errorMessage = $"Ingen signalvisninger blev fundet på signal {signalType.CardTypeName}";
+                        errorMessage = $"Ingen {listName} blev fundet på entitet {signalType.CardTypeName}";
                     }
                 }
             }
             else
             {
-                errorMessage = "Ingen signaler blev fundet.";
+                errorMessage = $"Ingen {listName} blev fundet.";
             
             }
         }
         catch (Exception ex)
         {
 
-            errorMessage = $"Error on getting signals or aspects: {ex.Message}";
+            errorMessage = $"Error on getting {listName}: {ex.Message}";
         }
         finally
         {
@@ -294,17 +305,17 @@
     private async void SendReport()
     {
         var result = await _dialogService.OpenAsync<DialogReportPage>("Rapport");
-        string reportString = "Rapport angivet for Signaler. <br>";
+        string reportString = $"Rapport angivet for {listName}. <br>";
         if (result is not null)
         {
             try
             {
                 reportString += $"Bruger besked: {result} <br>";
-                reportString += $"Brugerens valgte signaler: <br>";
+                reportString += $"Brugerens valgte {listName}: <br>";
                 foreach (var item in signalSelection)
                 {
                     reportString += "<div>";
-                    reportString += $"Signal: {item.SignalType.CardTypeName} <br>";
+                    reportString += $"{listName}: {item.SignalType.CardTypeName} <br>";
                     reportString += _reportUtility.Format(item.SelectedSignalAspects, "<br>");
                     reportString += "</div>";
 
@@ -329,12 +340,12 @@
 
                 reportString += "<div>";
                 reportString += $"SIDE DATA: <br>";
-                reportString += $"Følgende signaler er hentet fra serveren: <br>";
+                reportString += $"Følgende {listName} er hentet fra serveren: <br>";
                 foreach (var item in signalSelection)
                 {
                     reportString += "<div>";
-                    reportString += $"Signal: {_reportUtility.Format(item.SignalType, "<br>")}";
-                    reportString += $"Signal Visninger: {_reportUtility.Format(item.AllowedSignalAspects, "<br>")}";
+                    reportString += $"{listName} kategori: {_reportUtility.Format(item.SignalType, "<br>")}";
+                    reportString += $"{listName} typer: {_reportUtility.Format(item.AllowedSignalAspects, "<br>")}";
                     reportString += "</div>";
                 }
                 reportString += "</div>";

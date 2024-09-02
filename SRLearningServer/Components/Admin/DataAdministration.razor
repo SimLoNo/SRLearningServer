@@ -25,6 +25,10 @@
     <RadzenButton Click="SetEditType" Text="Opdater Eksisterende" />
 
 </RadzenCard>
+<RadzenCard>
+    <RadzenText TextStyle="TextStyle.H3" Text="@($"{(createType == true ? "Opret" : "")}{(editType == true ? "Opdater" : "")}")"></RadzenText>
+
+</RadzenCard>
 
 <div>
     @if (createType == true || editType == true)
@@ -527,7 +531,7 @@
         {
             <RadzenCard >
                 <RadzenLabel Text="Vælg Kort" Component="EntitySelectionDropDown" />
-                <RadzenDropDownDataGrid Style="width:auto" Name="EntitySelectionDropDown" TValue="int" Data="@_cardList" ValueProperty="@nameof(CardDto.CardId)" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.Contains" AllowFiltering="true"
+                <RadzenDropDownDataGrid Style="width:auto" Name="EntitySelectionDropDown" TValue="int" Data="@_cardList" ValueProperty="@nameof(CardDto.CardId)" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.Contains" AllowFiltering="true" AllowClear=true
                 Change="@SelectCard">
                     <Template>
                         @if (context.Active == true)
@@ -1301,7 +1305,7 @@
         if (result is not null)
         {
             _cardList.Add(result);
-            createType = false;
+            //createType = false;
             SoftResetWork();
             StateHasChanged();
             NotificationUtility.SendSuccessNotification("Kortet blev oprettet.");
@@ -1330,7 +1334,7 @@
         if (result is not null)
         {
             _attachmentList.Add(result);
-            createType = false;
+            //createType = false;
             CreateFile();
             SoftResetWork();
             NotificationUtility.SendSuccessNotification("Vedhæftningen blev oprettet.");
@@ -1940,10 +1944,16 @@
                     var result = await _cardService.Delete(entity.CardId);
                     if(result is not null)
                     {
-                        _cardList.Remove(result);
+                        int index = _cardList.FindIndex(c => c.CardId == result.CardId); // _cardList.Remove(result)
+                        if (index != -1)
+                        {
+                            _cardList.RemoveAt(index);
+                            
+                        }
+
                         //createType = false;
                         //editType = false;
-                        SoftResetWork();
+                        ResetWork();
                         StateHasChanged();
                         NotificationUtility.SendSuccessNotification("Kortet blev slettet.");
                     }
@@ -1974,10 +1984,15 @@
                     if (result is not null)
                     {
                         DeleteFile(result.AttachmentUrl);
-                        _attachmentList.Remove(result);
+                        int index = _attachmentList.FindIndex(c => c.AttachmentId == result.AttachmentId); // _cardList.Remove(result)
+                        if (index != -1)
+                        {
+                            _attachmentList.RemoveAt(index);
+                            
+                        }
                         //createType = false;
                         //editType = false;
-                        SoftResetWork();
+                        ResetWork();
                         StateHasChanged();
                         NotificationUtility.SendSuccessNotification("Vedhæftningen blev slettet.");
                     }
@@ -2007,10 +2022,15 @@
                     var result = await _resultService.Delete(entity.ResultId);
                     if (result is not null)
                     {
-                        _resultList.Remove(result);
+                        int index = _resultList.FindIndex(c => c.ResultId == result.ResultId); // _cardList.Remove(result)
+                        if (index != -1)
+                        {
+                            _resultList.RemoveAt(index);
+
+                        }
                         //createType = false;
                         //editType = false;
-                        SoftResetWork();
+                        ResetWork();
                         StateHasChanged();
                         NotificationUtility.SendSuccessNotification("Resultatet blev slettet.");
                     }
@@ -2039,10 +2059,15 @@
                     var result = await _typeService.Delete(entity.TypeId);
                     if (result is not null)
                     {
-                        _typeList.Remove(result);
+                        int index = _typeList.FindIndex(c => c.TypeId == result.TypeId); // _cardList.Remove(result)
+                        if (index != -1)
+                        {
+                            _typeList.RemoveAt(index);
+
+                        }
                         //createType = false;
                         //editType = false;
-                        SoftResetWork();
+                        ResetWork();
                         StateHasChanged();
                         NotificationUtility.SendSuccessNotification("Typen blev slettet.");
                     }
@@ -2071,10 +2096,15 @@ try
                     var result = await _typeCategoryListService.Delete(entity.TypeCategoryListId);
                     if (result is not null)
                     {
-                        _typeCategoryListList.Remove(result);
+                        int index = _typeCategoryListList.FindIndex(c => c.TypeCategoryListId == result.TypeCategoryListId); // _cardList.Remove(result)
+                        if (index != -1)
+                        {
+                            _typeCategoryListList.RemoveAt(index);
+
+                        }
                         //createType = false;
                         //editType = false;
-                        SoftResetWork();
+                        ResetWork();
                         StateHasChanged();
                         NotificationUtility.SendSuccessNotification("Type kategorien blev slettet.");
                     }
