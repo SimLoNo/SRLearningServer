@@ -16,7 +16,7 @@ namespace SRLearningServer.Components.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ResultDto>> Create(ResultDto entity)
+        public async Task<IActionResult> Create(ResultDto entity)
         {
             try
             {
@@ -34,7 +34,7 @@ namespace SRLearningServer.Components.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<ResultDto>> Deactivate(int id)
+        public async Task<IActionResult> Deactivate(int id)
         {
             try
             {
@@ -52,7 +52,7 @@ namespace SRLearningServer.Components.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<ActionResult<ResultDto>> Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             try
             {
@@ -72,14 +72,14 @@ namespace SRLearningServer.Components.Controllers
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<ResultDto>> Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
             try
             {
                 var result = await _service.Get(id);
                 if (result is null)
                 {
-                    return NoContent();
+                    return NotFound();
                 }
                 return Ok(result);
             }
@@ -91,7 +91,7 @@ namespace SRLearningServer.Components.Controllers
 
 
         [HttpGet]
-        public async Task<ActionResult<List<ResultDto>>> GetAll()
+        public async Task<IActionResult> GetAll()
         {
             try
             {
@@ -111,7 +111,7 @@ namespace SRLearningServer.Components.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult<ResultDto>> Update(ResultDto entity)
+        public async Task<IActionResult> Update(ResultDto entity)
         {
             try
             {
