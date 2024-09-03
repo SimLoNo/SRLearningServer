@@ -15,7 +15,7 @@ namespace SRLearningServer.Components.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<TypeDto>> Create([FromBody] TypeDto type)
+        public async Task<IActionResult> Create([FromBody] TypeDto type)
         {
             try
             {
@@ -33,7 +33,7 @@ namespace SRLearningServer.Components.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<TypeDto>> Deactivate(int id)
+        public async Task<IActionResult> Deactivate(int id)
         {
             try
             {
@@ -51,7 +51,7 @@ namespace SRLearningServer.Components.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<ActionResult<TypeDto>> Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             try
             {
@@ -69,7 +69,7 @@ namespace SRLearningServer.Components.Controllers
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<TypeDto>> Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
             try
             {
@@ -78,7 +78,7 @@ namespace SRLearningServer.Components.Controllers
                 {
                     return Ok(result);
                 }
-                return NoContent();
+                return NotFound();
             }
             catch (Exception ex)
             {
@@ -86,7 +86,7 @@ namespace SRLearningServer.Components.Controllers
             }
         }
         [HttpGet]
-        public async Task<ActionResult<TypeDto>> GetAll()
+        public async Task<IActionResult> GetAll()
         {
             try
             {
@@ -104,7 +104,7 @@ namespace SRLearningServer.Components.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult<TypeDto>> Update([FromBody] TypeDto type)
+        public async Task<IActionResult> Update([FromBody] TypeDto type)
         {
             try
             {
