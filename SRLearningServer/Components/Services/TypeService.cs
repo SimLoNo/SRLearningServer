@@ -27,6 +27,10 @@ namespace SRLearningServer.Components.Services
             {
                 Models.Type type = _dtoToDomainConverter.ConvertToDomainFromDto(entity);
                 type = await _typeRepository.Create(type);
+                if (type is null)
+                {
+                    return null;
+                }
                 return _domainToDtoConverter.ConvertToDtoFromDomain(type, true);
             }
             catch (Exception ex)
@@ -46,6 +50,10 @@ namespace SRLearningServer.Components.Services
             try
             {
                 Models.Type type = await _typeRepository.Deactivate(id);
+                if (type is null)
+                {
+                    return null;
+                }
                 return _domainToDtoConverter.ConvertToDtoFromDomain(type, true);
             }
             catch (Exception ex)
@@ -61,6 +69,10 @@ namespace SRLearningServer.Components.Services
             {
                 //Models.Type type = _dtoToDomainConverter.ConvertToDomainFromDto(entity);
                 Models.Type type = await _typeRepository.Delete(entity);
+                if (type is null)
+                {
+                    return null;
+                }
                 return _domainToDtoConverter.ConvertToDtoFromDomain(type, true);
             }
             catch (Exception ex)
@@ -75,6 +87,10 @@ namespace SRLearningServer.Components.Services
             try
             {
                 Models.Type type = await _typeRepository.Get(id);
+                if(type is null)
+                {
+                    return null;
+                }
                 return _domainToDtoConverter.ConvertToDtoFromDomain(type, true);
             }
             catch (Exception ex)
