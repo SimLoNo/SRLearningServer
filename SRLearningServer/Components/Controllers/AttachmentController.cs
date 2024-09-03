@@ -16,7 +16,7 @@ namespace SRLearningServer.Components.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<AttachmentDto>> Create([FromBody] AttachmentDto card)
+        public async Task<IActionResult> Create([FromBody] AttachmentDto card)
         {
             try
             {
@@ -35,7 +35,7 @@ namespace SRLearningServer.Components.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<AttachmentDto>>> GetAll()
+        public async Task<IActionResult> GetAll()
         {
             try
             {
@@ -54,7 +54,7 @@ namespace SRLearningServer.Components.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<AttachmentDto>> Deactivate(int id)
+        public async Task<IActionResult> Deactivate(int id)
         {
             try
             {
@@ -73,7 +73,7 @@ namespace SRLearningServer.Components.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<ActionResult<AttachmentDto>> Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             try
             {
@@ -91,7 +91,7 @@ namespace SRLearningServer.Components.Controllers
             }
         }
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<AttachmentDto>> GetById(int id)
+        public async Task<IActionResult> GetById(int id)
         {
             try
             {
@@ -110,7 +110,7 @@ namespace SRLearningServer.Components.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult<AttachmentDto>> Update([FromBody] AttachmentDto attachment)
+        public async Task<IActionResult> Update([FromBody] AttachmentDto attachment)
         {
             try
             {
