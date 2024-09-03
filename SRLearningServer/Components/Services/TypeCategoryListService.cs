@@ -31,7 +31,7 @@ namespace SRLearningServer.Components.Services
                 }
 
                 typeCategoryList = await _typeCategoryListRepository.Create(typeCategoryList);
-                if (entity == null)
+                if (typeCategoryList is null)
                 {
                     return null;
                 }

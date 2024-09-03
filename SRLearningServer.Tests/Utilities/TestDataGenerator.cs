@@ -177,5 +177,17 @@ namespace SRLearningServer.Tests.Utilities
             };
             return entity;
         }
+
+        public TypeCategoryList CreateTypeCategoryListFromDto(TypeCategoryListDto dto)
+        {
+            TypeCategoryList entity = new()
+            {
+                TypeCategoryListId = dto.TypeCategoryListId,
+                TypeCategoryListName = dto.TypeCategoryListName,
+                LastUpdated = dto.LastUpdated,
+                Active = dto.Active,
+            };
+            return entity;
+        }
     }
 }
