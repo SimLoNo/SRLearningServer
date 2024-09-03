@@ -144,7 +144,7 @@ namespace SRLearningServer.Components.Services
             catch (Exception ex)
             {
 
-                throw null;
+                return null;
             }
         }
     }
