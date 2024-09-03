@@ -16,7 +16,7 @@ namespace SRLearningServer.Components.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<CardDto>> Create([FromBody] CardDto card)
+        public async Task<IActionResult> Create([FromBody] CardDto card)
         {
             try
             {
@@ -40,7 +40,7 @@ namespace SRLearningServer.Components.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<CardDto>> Deactivate(int id)
+        public async Task<IActionResult> Deactivate(int id)
         {
             try
             {
@@ -59,7 +59,7 @@ namespace SRLearningServer.Components.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<ActionResult<CardDto>> Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             try
             {
@@ -78,7 +78,7 @@ namespace SRLearningServer.Components.Controllers
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<CardDto>> Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
             try
             {
@@ -87,7 +87,7 @@ namespace SRLearningServer.Components.Controllers
                 {
                     return Ok(card);
                 }
-                return NoContent();
+                return NotFound();
             }
             catch (Exception ex)
             {
@@ -97,7 +97,7 @@ namespace SRLearningServer.Components.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> GetAll()
+        public async Task<IActionResult> GetAll()
         {
             try
             {
@@ -116,7 +116,7 @@ namespace SRLearningServer.Components.Controllers
         }
 
         [HttpPost("GetByType")]
-        public async Task<ActionResult<List<CardDto>>> GetByType([FromBody]List<List<TypeDto>> cards)
+        public async Task<IActionResult> GetByType([FromBody]List<List<TypeDto>> cards)
         {
             try
             {
@@ -136,7 +136,7 @@ namespace SRLearningServer.Components.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult<CardDto>> Update([FromBody] CardDto card)
+        public async Task<IActionResult> Update([FromBody] CardDto card)
         {
             try
             {
