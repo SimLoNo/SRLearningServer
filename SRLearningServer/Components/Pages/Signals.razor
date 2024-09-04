@@ -44,12 +44,33 @@
         <RadzenStack>
             <RadzenCard class="rz-background-color-secondary rz-border-primary">
                 <RadzenStack>
-                    <p class="rz-color-on-secondary">@cards[currentCard].CardText</p>
+                    @if (alwaysShowResult == false && showResult == true)
+                    {
+                        <div>
+                            <p class="rz-color-on-secondary">Klik på højre side af billedet for at se næste kort. Klik på venstre side af billedet for at skjule svarene.</p>
+                        </div>
+                    }
+                    else if (alwaysShowResult == true)
+                    {
+                        <div>
+                            <p class="rz-color-on-secondary">Klik på højre side af billedet for at se næste kort. Klik på venstre side af billedet for at gå tilbage.</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div>
+                            <p class="rz-color-on-secondary">Klik på højre side af billedet for at se svarene. Klik på venstre side af billedet for at gå tilbage.</p>
+                        </div>
+                    }
                 </RadzenStack>
                 <RadzenStack class="rz-background-color-primary rz-border-primary" Style="position: relative; display: flex;" JustifyContent="JustifyContent.Center">
                     <RadzenImage Path="@($"{attachmentLocation}{cards[currentCard].Attachment?.AttachmentUrl}")" Style="max-height: 60vh; max-width:100%; object-fit: contain;" />
                     <RadzenButton Text="Go back" Click="@(args => Progress(false))" Style="position: absolute; left: 0; width: 50%; height: 100%; opacity: 0;" />
                     <RadzenButton Text="Progress" Click="@(args => Progress(true))" Style="position: absolute; right: 0; width: 50%; height: 100%; opacity: 0;" />
+                </RadzenStack>
+                
+                <RadzenStack>
+                    <p class="rz-color-on-secondary">@cards[currentCard].CardText</p>
                 </RadzenStack>
                 <RadzenStack>
                     @if (showResult == true || alwaysShowResult == true)
@@ -63,24 +84,6 @@
                             </ul>
 
                             <h5 class="rz-color-on-secondary">@cards[currentCard].CardName</h5>
-                            @if (alwaysShowResult == false && showResult == true)
-                            {
-                                <div>
-                                    <p class="rz-color-on-secondary">Klik på højre side for at se næste kort. Klik på venstre side for at skjule svarene.</p>
-                                </div>
-                            }
-                            else
-                            {
-                                <div>
-                                    <p class="rz-color-on-secondary">Klik på højre side for at se næste kort. Klik på venstre side for at gå tilbage.</p>
-                                </div>
-                            }
-                        </div>
-                    }
-                    else
-                    {
-                        <div>
-                            <p class="rz-color-on-secondary">Klik på højre side for at se svarene. Klik på venstre side for at gå tilbage.</p>
                         </div>
                     }
                 </RadzenStack>
@@ -102,14 +105,8 @@
 
 
 
-@if (cards.Count == 0)
-{
-    <RadzenButton Icon="update" Text="@($"Vis {listName}")" Click="GetSignals"></RadzenButton>
-}
-else
-{
-    <RadzenButton Icon="update" Text="@($"Opdater {listName}")" Click="GetSignals"></RadzenButton>
-}
+
+<RadzenButton Icon="update" Text="@($"{(cards.Count == 0 ? "Vis" : "Opdater")} {listName}")" Click="GetSignals"></RadzenButton>
 <RadzenButton Icon="swap_horiz" Text="@($"Til/fravælg {listName}")" Click="ToggleSignalList"></RadzenButton>
 <RadzenButton Icon="bug_report" Text="Raporter fejl" Click="SendReport"></RadzenButton>
 
@@ -120,7 +117,7 @@ else
         {
             <RadzenCard class="rz-background-color-secondary">
                 <RadzenStack Orientation="Orientation.Vertical" >
-                    <RadzenLabel Text="@($"Vælg hvilke {signal.SignalType.CardTypeName} du vil se.")" Component="EntitySelectionDropDown" />
+                    <RadzenLabel Text="@($"Vælg hvilke {signal.SignalType.CardTypeName} du vil se. Klik derefter på {(cards.Count == 0 ? "Vis" : "Opdater")} {listName}")" Component="EntitySelectionDropDown" />
                     <RadzenDropDown Multiple=true @bind-Value=@signal.SelectedSignalAspects TextProperty="@nameof(TypeDto.CardTypeName)" Style="width:auto" Name="EntitySelectionDropDown" Data=@signal.AllowedSignalAspects TValue="IEnumerable<TypeDto>" AllowClear=true AllowFiltering=false AllowSorting=false SelectAllText="@($"Vælg alle {listName}")" SelectedItemsText="@($"{listName} er valgt")" Placeholder="@($"Ingen {signal.SignalType.CardTypeName}er valgt")" Chips=true MaxSelectedLabels="10">
 
                     </RadzenDropDown>
