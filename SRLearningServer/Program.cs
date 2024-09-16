@@ -79,9 +79,9 @@ builder.Services.AddAzureClientsCore();
                 .ProtectKeysWithAzureKeyVault(new Uri(KeyVaultURI),
                                                 new DefaultAzureCredential());*/
 
-builder.Services.AddTransient<IEmailSender<ApplicationUser>, EmailSender>();
-builder.Services.AddTransient<IBaseEmailSender, BaseEmailSender>();
-builder.Services.Configure<AuthMessageSenderOptions>(builder.Configuration);
+builder.Services.AddTransient<IEmailSender<ApplicationUser>, EmailSenderUtility>();
+builder.Services.AddTransient<IBaseEmailSender, BaseEmailSenderUtility>();
+builder.Services.Configure<AuthMessageSenderOptionsUtility>(builder.Configuration);
 
 builder.Services.ConfigureApplicationCookie(options => {
     options.ExpireTimeSpan = TimeSpan.FromDays(5);

@@ -1,17 +1,13 @@
-﻿using MailKit.Net.Smtp;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
-using MimeKit;
 using SRLearningServer.Components.Interfaces.Services;
 using SRLearningServer.Data;
 
-namespace SRLearningServer.Components.Services
+namespace SRLearningServer.Components.Utilities
 {
-    /*public class EmailSender : BaseEmailSender, IEmailSender<ApplicationUser>
+    public class EmailSenderUtility : BaseEmailSenderUtility, IEmailSender<ApplicationUser>
     {
-        public EmailSender(IOptions<AuthMessageSenderOptions> optionsAccessor) : base(optionsAccessor)
+        public EmailSenderUtility(IOptions<AuthMessageSenderOptionsUtility> optionsAccessor) : base(optionsAccessor)
         {
 
         }
@@ -19,7 +15,7 @@ namespace SRLearningServer.Components.Services
         public Task SendConfirmationLinkAsync(ApplicationUser user, string email, string confirmationLink) => SendEmailAsync(email, "Confirm your email",
         "Please confirm your account by " +
         $"<a href='{confirmationLink}'>clicking here</a>.");
-        public Task SendPasswordResetCodeAsync(ApplicationUser user, string email, string resetCode) => SendEmailAsync(email, "Reset your password", 
+        public Task SendPasswordResetCodeAsync(ApplicationUser user, string email, string resetCode) => SendEmailAsync(email, "Reset your password",
         $"Please reset your password using the following code: {resetCode}");
 
 
@@ -28,7 +24,6 @@ namespace SRLearningServer.Components.Services
         $"Please reset your password by <a href='{resetLink}'>clicking here</a>.");
 
 
-        
-    }*/
 
+    }
 }

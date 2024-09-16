@@ -1,20 +1,19 @@
 ﻿using MailKit.Net.Smtp;
 using Microsoft.Extensions.Options;
 using MimeKit;
-using SRLearningServer.Components.Account.Pages.Manage;
 using SRLearningServer.Components.Interfaces.Services;
-using System;
+using SRLearningServer.Components.Services;
 
-namespace SRLearningServer.Components.Services
+namespace SRLearningServer.Components.Utilities
 {
-    /*public class BaseEmailSender : IBaseEmailSender
+    public class BaseEmailSenderUtility : IBaseEmailSender
     {
-        public BaseEmailSender(IOptions<AuthMessageSenderOptions> optionsAccessor)
+        public BaseEmailSenderUtility(IOptions<AuthMessageSenderOptionsUtility> optionsAccessor)
         {
             Options = optionsAccessor.Value;
         }
 
-        public AuthMessageSenderOptions Options { get; } //set only via Secret Manager
+        public AuthMessageSenderOptionsUtility Options { get; } //set only via Secret Manager
         public async Task SendEmailAsync(string toEmail, string subject, string message)
         {
             if (string.IsNullOrEmpty(Options.SMTPServerUrl))
@@ -56,5 +55,5 @@ namespace SRLearningServer.Components.Services
                 await smtpClient.DisconnectAsync(true);
             }
         }
-    }*/
+    }
 }
