@@ -117,7 +117,7 @@
         selectedRoles = new List<string>();
     }
 
-    private async void OnGetAsync(object e)
+    private async Task OnGetAsync(object e)
     {
         createNewUser = false;
         string id = (string)e;
@@ -137,7 +137,7 @@
         return _roles.Where(r => !SortingRoles.Any(t => t == r)).ToList();
     }
 
-    private async void UpdateUser()
+    private async Task UpdateUser()
     {
         if (createNewUser == true)
         {

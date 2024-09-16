@@ -235,6 +235,25 @@ namespace SRLearningServer.Components.Utilities
                 return $"{returnString} - An error occured in formatting a Type for a report, error: {ex.Message}";
             }
         }
+        public string Format(IEnumerable<TypeDto> entity, string seperator = "<br>")
+        {
+            string returnString = $"List of Type: {seperator}";
+            try
+            {
+                returnString += "<ul>";
+                foreach (var type in entity)
+                {
+                    returnString += Format(type, seperator);
+                }
+                returnString += $"</ul> {seperator}";
+                return returnString;
+            }
+            catch (Exception ex)
+            {
+
+                return $"{returnString} - An error occured in formatting a Type for a report, error: {ex.Message}";
+            }
+        }
 
         public string Format(TypeCategoryListDto entity, string seperator = "<br>")
         {
@@ -284,25 +303,6 @@ namespace SRLearningServer.Components.Utilities
             }
         }
 
-        public string Format(IEnumerable<TypeDto> entity, string seperator = "<br>")
-        {
-            string returnString = $"List of Type: {seperator}";
-            try
-            {
-                returnString += "<ul>";
-                foreach (var type in entity)
-                {
-                    returnString += Format(type, seperator);
-                }
-                returnString += $"</ul> {seperator}";
-                return returnString;
-            }
-            catch (Exception ex)
-            {
-
-                return $"{returnString} - An error occured in formatting a Type for a report, error: {ex.Message}";
-            }
-        }
 
         public async Task GenerateReport(string message)
         {
