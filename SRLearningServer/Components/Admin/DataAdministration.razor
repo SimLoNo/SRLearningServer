@@ -1241,6 +1241,7 @@
         if (result is null)
         {
             errorMessage = "Der blev ikke fundet nogle vedhæftninger.";
+            NotificationUtility.SendErrorNotification($"{errorMessage}");
             return new List<AttachmentDto>();
         }
         return result;
@@ -1252,6 +1253,7 @@
         if (result is null)
         {
             errorMessage = "Der blev ikke fundet nogle resultater.";
+            NotificationUtility.SendErrorNotification($"{errorMessage}");
             return new List<ResultDto>();
         }
         return result;
@@ -1263,6 +1265,7 @@
         if (result is null)
         {
             errorMessage = "Der blev ikke fundet nogle typer.";
+            NotificationUtility.SendErrorNotification($"{errorMessage}");
             return new List<TypeDto>();
         }
         return result;
@@ -1274,6 +1277,7 @@
         if (result is null)
         {
             errorMessage = "Der blev ikke fundet nogle type kategorier.";
+            NotificationUtility.SendErrorNotification($"{errorMessage}");
             return new List<TypeCategoryListDto>();
         }
         return result;
@@ -1286,6 +1290,7 @@
         if (result is null)
         {
             errorMessage = "Der blev ikke fundet nogle kort.";
+            NotificationUtility.SendErrorNotification($"{errorMessage}");
             return new List<CardDto>();
         }
         return result;
@@ -1335,7 +1340,7 @@
         {
             _attachmentList.Add(result);
             //createType = false;
-            CreateFile();
+            await CreateFile();
             SoftResetWork();
             NotificationUtility.SendSuccessNotification("Vedhæftningen blev oprettet.");
             StateHasChanged();
@@ -1369,6 +1374,7 @@
                 selectedFile = null;
                 base64ImageString = "";
                 errorMessage = "Please upload a valid png image file.";
+                NotificationUtility.SendNotification($"{errorMessage}");
             }
         }
     }
@@ -1620,7 +1626,7 @@
                     _cardList[index] = result;
                     //createType = false;
                     SoftResetWork();
-                    SelectCard(result.CardId);
+                    await SelectCard(result.CardId);
                     StateHasChanged();
                     NotificationUtility.SendSuccessNotification("Kortet blev opdateret.");
                 }
@@ -1655,7 +1661,7 @@
                     _typeList[index] = result;
                     //createType = false;
                     SoftResetWork();
-                    SelectType(result.TypeId);
+                    await SelectType(result.TypeId);
                     StateHasChanged();
                     NotificationUtility.SendSuccessNotification("Typen blev opdateret.");
                 }

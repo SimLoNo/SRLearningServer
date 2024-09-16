@@ -115,10 +115,11 @@ else
             {
 
                 errorMessage = $"Fejl i forsendelsen - {ex.Message}";
+                _notificationUtility.SendErrorNotification($"Der skete en fejl i forsendelsen - {errorMessage}");
                 return;
             }
         }
-        _notificationUtility.SendErrorNotification("Besked og valg af kontaktmulighed skal udfyldes");
+        _notificationUtility.SendNotification("Besked og valg af kontaktmulighed skal udfyldes");
         return;
     }
 }

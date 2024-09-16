@@ -15,6 +15,7 @@
 @inject IReportUtility _reportUtility
 @inject IActivitySortingUtility _activitySortingUtility
 @inject IConfiguration _configuration
+@inject INotificationUtility _notificationUtility
 
 <PageTitle>Huskekort - @listName</PageTitle>
 
@@ -176,12 +177,14 @@
                     else
                     {
                         errorMessage = $"Ingen {listName} blev fundet på entitet {signalType.CardTypeName}";
+                        _notificationUtility.SendNotification(errorMessage);
                     }
                 }
             }
             else
             {
                 errorMessage = $"Ingen {listName} blev fundet.";
+                _notificationUtility.SendNotification(errorMessage);
             
             }
         }
@@ -189,6 +192,7 @@
         {
 
             errorMessage = $"Error on getting {listName}: {ex.Message}";
+            _notificationUtility.SendErrorNotification(errorMessage);
         }
         finally
         {
@@ -245,6 +249,7 @@
         {
             cards = new();
             errorMessage = "Ingen signaler med de sendte kriterier blev fundet.";
+            _notificationUtility.SendNotification(errorMessage);
         }
         isLoading = false;
         StateHasChanged();
@@ -322,7 +327,7 @@
                     reportString += "<div>";
                     reportString += $"Det viste kort er: <br>";
                     reportString += _reportUtility.Format(cards[currentCard], "<br>");
-                    reportString += $"Fejlbesked: {errorMessage} <br>";
+                    reportString += $"Fejlbesked: {(!string.IsNullOrEmpty(errorMessage) ? errorMessage : "Ingen errorMessage")} <br>";
                     reportString += "</div>";    
                 }
                 else
@@ -342,17 +347,21 @@
                 {
                     reportString += "<div>";
                     reportString += $"{listName} kategori: {_reportUtility.Format(item.SignalType, "<br>")}";
+                    reportString += "<ul>";
                     reportString += $"{listName} typer: {_reportUtility.Format(item.AllowedSignalAspects, "<br>")}";
+                    reportString += "</ul>";
                     reportString += "</div>";
                 }
                 reportString += "</div>";
                 await _reportUtility.GenerateReport(reportString);
+                _notificationUtility.SendSuccessNotification("Rapporten er sendt.");
 
             }
             catch (Exception ex)
             {
                 
-                throw;
+                errorMessage = $"Error on sending report: {ex.Message}";
+                _notificationUtility.SendErrorNotification(errorMessage);
             }
         }
     }

@@ -132,7 +132,9 @@ namespace SRLearningServer.Components.Utilities
                 returnString += "<ul>";
                 foreach (var card in entity)
                 {
+                    returnString += "<li>";
                     returnString += Format(card, seperator);
+                    returnString += "</li>";
                 }
                 returnString += $"</ul> {seperator}";
                 return returnString;
@@ -149,6 +151,7 @@ namespace SRLearningServer.Components.Utilities
             string returnString = $"Result: {seperator}";
             try
             {
+                returnString += "<ul>";
                 returnString += $"<li>ID: {entity.ResultId} {seperator}</li>";
                 returnString += $"<li>Result Name: {entity.ResultText} {seperator}</li>";
                 returnString += $"<li>Last Updated: {entity.LastUpdated} {seperator}</li>";
@@ -169,6 +172,7 @@ namespace SRLearningServer.Components.Utilities
                     returnString += $"</ul> {seperator}";
                     returnString += "</li>";
                 }
+                returnString += "</ul>";
                 return returnString;
             }
             catch (Exception ex)
@@ -187,7 +191,9 @@ namespace SRLearningServer.Components.Utilities
                 returnString += "<ul>";
                 foreach (var result in entity)
                 {
+                    returnString += "<li>";
                     returnString += Format(result, seperator);
+                    returnString += "</li>";
                 }
                 returnString += $"</ul> {seperator}";
                 return returnString;
@@ -243,7 +249,9 @@ namespace SRLearningServer.Components.Utilities
                 returnString += "<ul>";
                 foreach (var type in entity)
                 {
+                    returnString += "<li>";
                     returnString += Format(type, seperator);
+                    returnString += "</li>";
                 }
                 returnString += $"</ul> {seperator}";
                 return returnString;
@@ -291,7 +299,9 @@ namespace SRLearningServer.Components.Utilities
                 returnString += "<ul>";
                 foreach (var typeCategoryList in entity)
                 {
+                    returnString += "<li>";
                     returnString += Format(typeCategoryList, seperator);
+                    returnString += "</li>";
                 }
                 returnString += $"</ul> {seperator}";
                 return returnString;
