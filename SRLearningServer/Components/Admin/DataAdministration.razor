@@ -2053,7 +2053,7 @@
                         if (index != -1) // Checks if the Card was found in the local list. If so, it removes the data at the indexed location.
                         {
                             _cardList.RemoveAt(index);
-                            
+
                         }
 
                         //createType = false;
@@ -2093,7 +2093,7 @@
                         if (index != -1) // Checks if the Attachment was found in the local list. If so, it removes the data at the indexed location.
                         {
                             _attachmentList.RemoveAt(index);
-                            
+
                         }
                         //createType = false;
                         //editType = false;
@@ -2110,7 +2110,7 @@
             }
             catch (Exception ex)
             {
-                
+
                 NotificationUtility.SendErrorNotification("Der opstod en fejl på sletning af vedhæftningen.");
                 errorMessage = $"Der opstod en fejl på sletning af vedhæftningen {entity.AttachmentName}, fejlbesked: {ex.Message}";
             }
@@ -2151,7 +2151,7 @@
                 NotificationUtility.SendErrorNotification("Der opstod en fejl på sletning af resultatet.");
                 errorMessage = $"Der opstod en fejl på sletning af resultatet {entity.ResultText}, fejlbesked: {ex.Message}";
             }
-            
+
         }
         else if (workingType == "type") // If the workingType is set to Type, it deletes the type.
         {
@@ -2188,7 +2188,7 @@
                 NotificationUtility.SendErrorNotification("Der opstod en fejl på sletning af typen.");
                 errorMessage = $"Der opstod en fejl på sletning af typen {entity.CardTypeName}, fejlbesked: {ex.Message}";
             }
-            
+
         }
         else if (workingType == "typeCategoryList") // If the workingType is set to TypeCategoryList, it deletes the typeCategoryList.
         {
@@ -2225,25 +2225,29 @@
                 NotificationUtility.SendErrorNotification("Der opstod en fejl på sletning af type kategorien.");
                 errorMessage = $"Der opstod en fejl på sletning af type kategorien {entity.TypeCategoryListName}, fejlbesked: {ex.Message}";
             }
-            
+
         }
     }
     #region CheckModels
-
+    /// <summary>
+    /// Checks the Attachment to make sure that all data is as expected by the API, and checks if the relations share the same Active status as the Attachment. If any relations have a different Active status, it prompts the user to decide if they want to continue or stop.
+    /// </summary>
+    /// <param name="entity"></param>
+    /// <returns></returns>
     private async Task<bool> CheckAttachment(AttachmentDto entity){
 
-        List<string> inactiveRelations = new();
-        if (entity.Results == null)
+        List<string> inactiveRelations = new(); // A list of strings to store the names of the relations that have a different Active status than the Attachment.
+        if (entity.Results == null) // If the Attachment does not have any Results, it creates an empty list of Results.
         {
             entity.Results = new List<ResultDto>();
         }
-        if(entity.Cards == null)
+        if(entity.Cards == null) // If the Attachment does not have any Cards, it creates an empty list of Cards.
         {
             entity.Cards = new List<CardDto>();
         }
-        inactiveRelations.AddRange(_activeCheckService.CheckActive(entity.Results, !entity.Active));
-        inactiveRelations.AddRange(_activeCheckService.CheckActive(entity.Cards, !entity.Active));
-        if (inactiveRelations.Count > 0)
+        inactiveRelations.AddRange(_activeCheckService.CheckActive(entity.Results, !entity.Active)); // Adds the names of the Results that have a different Active status than the Attachment to the list of inactiveRelations.
+        inactiveRelations.AddRange(_activeCheckService.CheckActive(entity.Cards, !entity.Active)); // Adds the names of the Cards that have a different Active status than the Attachment to the list of inactiveRelations.
+        if (inactiveRelations.Count > 0) // If any relations have a different Active status than the Attachment, it promts the user to decide if they want to continue or stop.
         {
             var IsConfirmed = await ConfirmDialog($"{(entity.Active == true ? activityCheckFoundInactiveTitle : activityCheckFoundActiveTitle)} relationer", $"Vedhæftningen {(entity.Active == true ? activityCheckFoundInactiveMessage : activityCheckFoundActiveMessage)}: <br> {string.Join("<br>", inactiveRelations)}");
             if (IsConfirmed == true)
@@ -2254,50 +2258,54 @@
         }
         return true;
     }
-
+    /// <summary>
+    /// Checks the Card to make sure that all data is as expected by the API, and checks if the relations share the same Active status as the Card. If any relations have a different Active status, it prompts the user to decide if they want to continue or stop.
+    /// </summary>
+    /// <param name="entity"></param>
+    /// <returns></returns>
     private async Task<bool> CheckCard(CardDto entity)
     {
-        List<string> inactiveRelations = new();
-        if (entity.Results == null)
+        List<string> inactiveRelations = new(); // A list of strings to store the names of the relations that have a different Active status than the Card.
+        if (entity.Results == null) // If the Card does not have any Results, it creates an empty list of Results.
         {
             entity.Results = new List<ResultDto>();
         }
-        if(entity.Types == null)
+        if(entity.Types == null) // If the Card does not have any Types, it creates an empty list of Types.
         {
             entity.Types = new List<TypeDto>();
         }
-        inactiveRelations.AddRange(_activeCheckService.CheckActive(entity.Results, !entity.Active));
-        inactiveRelations.AddRange(_activeCheckService.CheckActive(entity.Types, !entity.Active));
-        if(entity.Attachment is not null)
+        inactiveRelations.AddRange(_activeCheckService.CheckActive(entity.Results, !entity.Active)); // Adds the names of the Results that have a different Active status than the Card to the list of inactiveRelations.
+        inactiveRelations.AddRange(_activeCheckService.CheckActive(entity.Types, !entity.Active)); // Adds the names of the Types that have a different Active status than the Card to the list of inactiveRelations.
+        if(entity.Attachment is not null) // Checks if the Card has an Attachment. If so, it checks if the Attachment has the same Active status as the Card.
         {
-            var inactiveString = _activeCheckService.CheckActive(entity.Attachment, !entity.Active);
-            if (!string.IsNullOrEmpty(inactiveString))
+            var inactiveString = _activeCheckService.CheckActive(entity.Attachment, !entity.Active); // Checks if the Attachment has the same Active status as the Card.
+            if (!string.IsNullOrEmpty(inactiveString)) // If the Attachment has a different Active status than the Card, it adds the name of the Attachment to the list of inactiveRelations.
             {
                 inactiveRelations.Add(inactiveString);
             }
         }
         else
         {
-            if (entity.AttachmentId is null)
+            if (entity.AttachmentId is null) // If both the Attachment is null and Card.AttachmentId is null, it returns false as the Attachment is required.
             {
                 return false;
             }
-            AttachmentDto relatedAttachment = _attachmentList.FirstOrDefault(a => a.AttachmentId == entity.AttachmentId);
+            AttachmentDto relatedAttachment = _attachmentList.FirstOrDefault(a => a.AttachmentId == entity.AttachmentId); // Finds the Attachment in the list of Attachments that has the same AttachmentId as the Card.AttachmentId.
             if (relatedAttachment is not null)
             {
-                var inactiveString = _activeCheckService.CheckActive(relatedAttachment, !entity.Active);
-                if (!string.IsNullOrEmpty(inactiveString))
+                var inactiveString = _activeCheckService.CheckActive(relatedAttachment, !entity.Active); // Checks if the Attachment has the same Active status as the Card.
+                if (!string.IsNullOrEmpty(inactiveString)) // If the Attachment has a different Active status than the Card, it adds the name of the Attachment to the list of inactiveRelations.
                 {
                     inactiveRelations.Add(inactiveString);
                 }
             }
-            else
+            else // If still no Attachment was found, return false.
             {
                 return false;
             }
 
         }
-        if (inactiveRelations.Count > 0)
+        if (inactiveRelations.Count > 0) // If any relations have a different Active status than the Card, it promts the user to decide if they want to continue or stop.
         {
             var IsConfirmed = await ConfirmDialog($"{(entity.Active == true ? activityCheckFoundInactiveTitle : activityCheckFoundActiveTitle)} relationer", $"Kortet {(entity.Active == true ? activityCheckFoundInactiveMessage : activityCheckFoundActiveMessage)}: <br> {string.Join("<br>", inactiveRelations)}");
             if (IsConfirmed == true)
@@ -2308,42 +2316,46 @@
         }
         return true;
     }
-
+    /// <summary>
+    /// Checks the Result to make sure that all data is as expected by the API, and checks if the relations share the same Active status as the Result. If any relations have a different Active status, it prompts the user to decide if they want to continue or stop.
+    /// </summary>
+    /// <param name="entity"></param>
+    /// <returns></returns>
     private async Task<bool> CheckResult(ResultDto entity)
     {
-        List<string> inactiveRelations = new();
-        if (entity.Cards == null)
+        List<string> inactiveRelations = new(); // A list of strings to store the names of the relations that have a different Active status than the Result.
+        if (entity.Cards == null) // If the Result does not have any Cards, it creates an empty list of Cards.
         {
             entity.Cards = new List<CardDto>();
         }
-        inactiveRelations.AddRange(_activeCheckService.CheckActive(entity.Cards, !entity.Active));
+        inactiveRelations.AddRange(_activeCheckService.CheckActive(entity.Cards, !entity.Active)); // Adds the names of the Cards that have a different Active status than the Result to the list of inactiveRelations.
 
-        if (entity.Attachment is not null)
+        if (entity.Attachment is not null) // Checks if the Result has an Attachment. If so, it checks if the Attachment has the same Active status as the Result.
         {
-            var inactiveString = _activeCheckService.CheckActive(entity.Attachment, !entity.Active);
-            if (!string.IsNullOrEmpty(inactiveString))
+            var inactiveString = _activeCheckService.CheckActive(entity.Attachment, !entity.Active); // Checks if the Attachment has the same Active status as the Result.
+            if (!string.IsNullOrEmpty(inactiveString)) // If the Attachment has a different Active status than the Result, it adds the name of the Attachment to the list of inactiveRelations.
             {
                 inactiveRelations.Add(inactiveString);
             }
         }
-        else if(entity.AttachmentId is not null)
+        else if(entity.AttachmentId is not null) // If the Attachment is null but the AttachmentId is not, find the Attachment in the local list and check that.
         {
             AttachmentDto relatedAttachment = _attachmentList.FirstOrDefault(a => a.AttachmentId == entity.AttachmentId);
-            if (relatedAttachment is not null)
+            if (relatedAttachment is not null) // If the Attachment was found, check if it has the same Active status as the Result.
             {
-                var inactiveString = _activeCheckService.CheckActive(relatedAttachment, !entity.Active);
-                if (!string.IsNullOrEmpty(inactiveString))
+                var inactiveString = _activeCheckService.CheckActive(relatedAttachment, !entity.Active); // Checks if the Attachment has the same Active status as the Result.
+                if (!string.IsNullOrEmpty(inactiveString)) // If the Attachment has a different Active status than the Result, it adds the name of the Attachment to the list of inactiveRelations.
                 {
                     inactiveRelations.Add(inactiveString);
                 }
             }
-            else
+            else // If the Attachment was not found, return false.
             {
                 return false;
             }
 
         }
-        if (inactiveRelations.Count > 0)
+        if (inactiveRelations.Count > 0) // If any relations have a different Active status than the Result, it promts the user to decide if they want to continue or stop.
         {
             var IsConfirmed = await ConfirmDialog($"{(entity.Active == true ? activityCheckFoundInactiveTitle : activityCheckFoundActiveTitle)} relationer", $"Resultatet {(entity.Active == true ? activityCheckFoundInactiveMessage : activityCheckFoundActiveMessage)}: <br> {string.Join("<br>", inactiveRelations)}");
             if(IsConfirmed == true)
@@ -2355,21 +2367,25 @@
         return true;
 
     }
-
+    /// <summary>
+    /// Checks the Type to make sure that all data is as expected by the API, and checks if the relations share the same Active status as the Type. If any relations have a different Active status, it prompts the user to decide if they want to continue or stop.
+    /// </summary>
+    /// <param name="entity"></param>
+    /// <returns></returns>
     private async Task<bool> CheckType(TypeDto entity)
     {
-        List<string> inactiveRelations = new();
-        if (entity.Cards == null)
+        List<string> inactiveRelations = new(); // A list of strings to store the names of the relations that have a different Active status than the Type.
+        if (entity.Cards == null) // If the Type does not have any Cards, it creates an empty list of Cards.
         {
             entity.Cards = new List<CardDto>();
         }
-        if (entity.TypeCategoryLists == null)
+        if (entity.TypeCategoryLists == null) // If the Type does not have any TypeCategoryLists, it creates an empty list of TypeCategoryLists.
         {
             entity.TypeCategoryLists = new List<TypeCategoryListDto>();
         }
-        inactiveRelations.AddRange(_activeCheckService.CheckActive(entity.Cards, !entity.Active));
-        inactiveRelations.AddRange(_activeCheckService.CheckActive(entity.TypeCategoryLists, !entity.Active));
-        if (inactiveRelations.Count > 0)
+        inactiveRelations.AddRange(_activeCheckService.CheckActive(entity.Cards, !entity.Active)); // Adds the names of the Cards that have a different Active status than the Type to the list of inactiveRelations.
+        inactiveRelations.AddRange(_activeCheckService.CheckActive(entity.TypeCategoryLists, !entity.Active)); // Adds the names of the TypeCategoryLists that have a different Active status than the Type to the list of inactiveRelations.
+        if (inactiveRelations.Count > 0) // If any relations have a different Active status than the Type, it promts the user to decide if they want to continue or stop.
         {
             var IsConfirmed = await ConfirmDialog($"{(entity.Active == true ? activityCheckFoundInactiveTitle : activityCheckFoundActiveTitle)} relationer", $"Typen {(entity.Active == true ? activityCheckFoundInactiveMessage : activityCheckFoundActiveMessage)}: <br> {string.Join("<br>", inactiveRelations)}");
             if (IsConfirmed == true)
@@ -2380,16 +2396,20 @@
         }
         return true;
     }
-
+    /// <summary>
+    /// Checks the TypeCategoryList to make sure that all data is as expected by the API, and checks if the relations share the same Active status as the TypeCategoryList. If any relations have a different Active status, it prompts the user to decide if they want to continue or stop.
+    /// </summary>
+    /// <param name="entity"></param>
+    /// <returns></returns>
     private async Task<bool> CheckTypeCategoryList(TypeCategoryListDto entity)
     {
-        List<string> inactiveRelations = new();
-        if (entity.Types == null)
+        List<string> inactiveRelations = new(); // A list of strings to store the names of the relations that have a different Active status than the TypeCategoryList.
+        if (entity.Types == null) // If the TypeCategoryList does not have any Types, it creates an empty list of Types.
         {
             entity.Types = new List<TypeDto>();
         }
-        inactiveRelations.AddRange(_activeCheckService.CheckActive(entity.Types, !entity.Active));
-        if (inactiveRelations.Count > 0)
+        inactiveRelations.AddRange(_activeCheckService.CheckActive(entity.Types, !entity.Active)); // Adds the names of the Types that have a different Active status than the TypeCategoryList to the list of inactiveRelations.
+        if (inactiveRelations.Count > 0) // If any relations have a different Active status than the TypeCategoryList, it promts the user to decide if they want to continue or stop.
         {
             var IsConfirmed = await ConfirmDialog($"{(entity.Active == true ? activityCheckFoundInactiveTitle : activityCheckFoundActiveTitle)} relationer", $"Type kategorien {(entity.Active == true ? activityCheckFoundInactiveMessage : activityCheckFoundActiveMessage)}: <br> {string.Join("<br>", inactiveRelations)}");
             if (IsConfirmed == true)
@@ -2402,6 +2422,12 @@
 
     }
     #endregion
+    /// <summary>
+    /// Prompts the user with a Confirmation dialog with a title and a message. The dialog has two buttons, one to continue and one to cancel.
+    /// </summary>
+    /// <param name="title"></param>
+    /// <param name="message"></param>
+    /// <returns></returns>
     private async Task<bool?> ConfirmDialog(string title, string message)
     {
         return await _dialogService.Confirm(message, title, new ConfirmOptions() {OkButtonText = "Fortsæt", CancelButtonText = "Afbryd"});
