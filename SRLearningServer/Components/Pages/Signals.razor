@@ -185,7 +185,7 @@
             {
                 errorMessage = $"Ingen {listName} blev fundet.";
                 _notificationUtility.SendNotification(errorMessage);
-            
+
             }
         }
         catch (Exception ex)
@@ -199,26 +199,30 @@
             isLoading = false;
         }
     }
-
+    /// <summary>
+    /// Toggles between showing and hiding the list of sortable Types in the UI.
+    /// </summary>
     private void ToggleSignalList()
     {
         showSignalList = !showSignalList;
     }
-
+    /*
     private void ToggleAspectList(int signalId)
     {
-        if (expandedSignalId == signalId)
-        {
-            expandedSignalId = null;
-        }
-        else
-        {
-            expandedSignalId = signalId;
-        }
+    if (expandedSignalId == signalId)
+    {
+    expandedSignalId = null;
     }
+    else
+    {
+    expandedSignalId = signalId;
+    }
+    }*/
 
 
-
+    /// <summary>
+    /// Gets the cards from the server based on the selected types.
+    /// </summary>
     private async void GetSignals()
     {
         isLoading = true;
@@ -255,12 +259,17 @@
         StateHasChanged();
 
     }
-
+    /// <summary>
+    /// Toggles between always showing the result of a card and only showing the result on the second stage of progess.
+    /// </summary>
     private void ToggleAlwaysShowResult()
     {
         alwaysShowResult = !alwaysShowResult;
     }
-
+    /// <summary>
+    /// Progess the card based on the direction given in the parameter. True is forward, false is backwards. When going forward, if the card has its result shown, it will advance to the next card, otherwise it will show the result. When going backwards, if the result is shown, and alwaysShowResult is false it will hide the result, otherwise it will go to the previous card.
+    /// </summary>
+    /// <param name="direction"></param>
     private void Progress(bool direction)
     {
         if (direction == true)
@@ -303,7 +312,9 @@
             }
         }
     }
-
+    /// <summary>
+    /// Sends a bug report to the administrators. The report contains the selected types, the card that is currently shown, and the error message if any.
+    /// </summary>
     private async void SendReport()
     {
         var result = await _dialogService.OpenAsync<DialogReportPage>("Rapport");

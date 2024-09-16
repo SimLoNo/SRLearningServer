@@ -95,6 +95,10 @@ else
         }
     }
 
+    /// <summary>
+    /// Sends the email.
+    /// </summary>
+    /// <returns></returns>
     private async Task SendEmail()
     {
         if (!string.IsNullOrEmpty(message) && !string.IsNullOrEmpty(selectedContactOption))

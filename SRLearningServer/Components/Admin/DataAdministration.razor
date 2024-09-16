@@ -1194,30 +1194,43 @@
         }
 
     }
-
+    /// <summary>
+    /// Sets the type of entity to be either created or edited.
+    /// </summary>
+    /// <param name="type"></param>
     private void ChangeTypeToBeCreated(string type)
     {
         workingType = type;
     }
+    /// <summary>
+    /// Sets the UI to create mode.
+    /// </summary>
     private void SetCreateType()
     {
         ResetWork();
         createType = true;
         editType = false;
     }
+    /// <summary>
+    /// Sets the UI to edit mode.
+    /// </summary>
     private void SetEditType()
     {
         ResetWork();
         createType = false;
         editType = true;
     }
-
+    /// <summary>
+    /// Resets the work variables including the workingType, resets the page back as it was when first loaded.
+    /// </summary>
     private void ResetWork()
     {
         workingType = "";
         SoftResetWork();
     }
-
+    /// <summary>
+    /// Resets the work variables, but keeps the workingType. To continue working in the current setting but with new data.
+    /// </summary>
     private void SoftResetWork() 
     {
         card = new();
@@ -1235,6 +1248,10 @@
     }
     #endregion
     #region GetLists
+    /// <summary>
+    /// Gets all the attachments from the database.
+    /// </summary>
+    /// <returns></returns>
     private async Task<List<AttachmentDto>> GetAttachments()
     {
         var result = await _attachmentService.GetAll();
@@ -1246,7 +1263,10 @@
         }
         return result;
     }
-
+    /// <summary>
+    /// Gets all the results from the database.
+    /// </summary>
+    /// <returns></returns>
     private async Task<List<ResultDto>> GetResults()
     {
         var result = await _resultService.GetAll();
@@ -1258,7 +1278,10 @@
         }
         return result;
     }
-
+    /// <summary>
+    /// Gets all the Types from the database.
+    /// </summary>
+    /// <returns></returns>
     private async Task<List<TypeDto>> GetTypes()
     {
         var result = await _typeService.GetAll();
@@ -1271,6 +1294,10 @@
         return result;
     }
 
+    /// <summary>
+    /// Gets all the TypeCategoryLists from the database.
+    /// </summary>
+    /// <returns></returns>
     private async Task<List<TypeCategoryListDto>> GetTypeCategoryLists()
     {
         var result = await _typeCategoryListService.GetAll();
@@ -1284,6 +1311,10 @@
 
     }
 
+    /// <summary>
+    /// Gets all the Cards from the database.
+    /// </summary>
+    /// <returns></returns>
     private async Task<List<CardDto>> GetCards()
     {
         var result = await _cardService.GetAll();
@@ -1297,20 +1328,23 @@
     }
     #endregion
     #region CreateModels
-    private async void CreateCard()
+    /// <summary>
+    /// Creates a new card in the database.
+    /// </summary>
+    private async Task CreateCard()
     {
-        var entity = card;
+        var entity = card; // Sets the card property as the entity used in this method.
 
-        var isValid = await CheckCard(entity);
+        var isValid = await CheckCard(entity); // Checks if all the relations has the same active status as the card. If not gives a promt to the user to decide if they want to continue with the creation or stop.
         if (isValid == false)
         {
             return;
         }
-        var result = await _cardService.Create(entity);
+        var result = await _cardService.Create(entity); // Sends the card to the database to be created.
         if (result is not null)
         {
-            _cardList.Add(result);
-            //createType = false;
+            _cardList.Add(result); // Adds the created card to the local list of cards.
+                                   //createType = false;
             SoftResetWork();
             StateHasChanged();
             NotificationUtility.SendSuccessNotification("Kortet blev oprettet.");
@@ -1319,27 +1353,30 @@
         {
             NotificationUtility.SendErrorNotification("Der opstod en fejl under oprettelsen af kortet.");
         }
+        return;
     }
-
-    private async void CreateAttachment()
+    /// <summary>
+    /// Creates an Attachment in the database.
+    /// </summary>
+    private async Task CreateAttachment()
     {
-        if (selectedFile == null)
+        if (selectedFile == null) // Checks if a file is selected for the Attachment.
         {
             NotificationUtility.SendErrorNotification("Vælg en fil at uploade.");
             errorMessage = "Please select a file to upload.";
             return;
         }
-        var entity = attachment;
-        var isValid = await CheckAttachment(entity);
+        var entity = attachment; // Sets the attachment property as the entity used in this method.
+        var isValid = await CheckAttachment(entity); // Checks if all the relations has the same active status as the Attachment. If not gives a promt to the user to decide if they want to continue with the creation or stop.
         if (isValid == false)
         {
             return;
         }
-        var result = await _attachmentService.Create(entity);
+        var result = await _attachmentService.Create(entity); // Sends the Attachment to the database to be created.
         if (result is not null)
         {
-            _attachmentList.Add(result);
-            //createType = false;
+            _attachmentList.Add(result); // Adds the created Attachment to the local list of Attachments.
+                                         //createType = false;
             await CreateFile();
             SoftResetWork();
             NotificationUtility.SendSuccessNotification("Vedhæftningen blev oprettet.");
@@ -1350,16 +1387,20 @@
             NotificationUtility.SendErrorNotification("Der opstod en fejl under oprettelsen af vedhæftningen.");
         }
     }
-
-    private async Task HandleFileSelected(InputFileChangeEventArgs e)
+    /// <summary>
+    /// Handles the selection of a new file, checking if it is a valid file and then loading it into the UI.
+    /// </summary>
+    /// <param name="fileEvent"></param>
+    /// <returns></returns>
+    private async Task HandleFileSelected(InputFileChangeEventArgs fileEvent)
     {
-        selectedFile = e.File;
-        if (selectedFile != null)
+        selectedFile = fileEvent.File; // Takes the file of the event and puts it into the IBrosweFile selectedFile
+        if (selectedFile != null) // Checks if the file is not null
         {
-            var format = "image/png"; // You can add more formats if needed
+            var format = "image/png"; // Sets the allowed file formats.
             if (selectedFile.ContentType.StartsWith(format))
             {
-                if (string.IsNullOrEmpty(attachment.AttachmentUrl))
+                if (string.IsNullOrEmpty(attachment.AttachmentUrl)) // If the attachment url is empty, it creates a new random file name.
                 {
                     var fileExtension = Path.GetExtension(selectedFile.Name);
                     var randomFileName = $"{Guid.NewGuid()}{fileExtension}";
@@ -1367,9 +1408,9 @@
                 }
 
 
-                await LoadImage(selectedFile);
+                await LoadImage(selectedFile); // Loads the image into the UI
             }
-            else
+            else // If the file is not in the correct format give an error message.
             {
                 selectedFile = null;
                 base64ImageString = "";
@@ -1377,8 +1418,13 @@
                 NotificationUtility.SendNotification($"{errorMessage}");
             }
         }
+        return;
     }
-
+    /// <summary>
+    /// Loads the Attachment image into the UI.
+    /// </summary>
+    /// <param name="imageFile"></param>
+    /// <returns></returns>
     public async Task LoadImage(IBrowserFile imageFile)
     {
         var tempFile = await imageFile.RequestImageFileAsync("image/png", 100, 100);
@@ -1393,20 +1439,23 @@
         StateHasChanged();
 
     }
-
-    private async void CreateResult()
+    /// <summary>
+    /// Creates a new Result in the database.
+    /// </summary>
+    /// <returns></returns>
+    private async Task CreateResult()
     {
-        var entity = result;
-        var isValid = await CheckResult(entity);
+        var entity = result; // Sets the result as the entity used in this method.
+        var isValid = await CheckResult(entity); // Checks if all the relations has the same active status as the Result. If not gives a promt to the user to decide if they want to continue with the creation or stop.
         if (isValid == false)
         {
             return;
         }
-        var resultReceived = await _resultService.Create(entity);
+        var resultReceived = await _resultService.Create(entity); // Sends the Result to the database to be created.
         if (resultReceived is not null)
         {
-            _resultList.Add(resultReceived);
-            //createType = false;
+            _resultList.Add(resultReceived); // Adds the created Result to the local list of Results.
+                                             //createType = false;
             SoftResetWork();
             StateHasChanged();
             NotificationUtility.SendSuccessNotification("Resultatet blev oprettet.");
@@ -1415,21 +1464,26 @@
         {
             NotificationUtility.SendErrorNotification("Der opstod en fejl under oprettelsen af resultatet.");
         }
+        return;
     }
 
-    private async void CreateType()
+    /// <summary>
+    /// Creates a new Type in the database.
+    /// </summary>
+    /// <returns></returns>
+    private async Task CreateType()
     {
-        var entity = type;
-        var isValid = await CheckType(entity);
+        var entity = type; // Sets the type as the entity used in this method.
+        var isValid = await CheckType(entity); // Checks if all the relations has the same active status as the Type. If not gives a promt to the user to decide if they want to continue with the creation or stop.
         if (isValid == false)
         {
             return;
         }
-        var result = await _typeService.Create(entity);
+        var result = await _typeService.Create(entity); // Sends the Type to the database to be created.
         if (result is not null)
         {
-            _typeList.Add(result);
-            //createType = false;
+            _typeList.Add(result); // Adds the created Type to the local list of Types.
+                                   //createType = false;
             SoftResetWork();
             StateHasChanged();
             NotificationUtility.SendSuccessNotification("Typen blev oprettet.");
@@ -1438,21 +1492,25 @@
         {
             NotificationUtility.SendErrorNotification("Der opstod en fejl under oprettelsen af typen.");
         }
+        return;
     }
-
-    private async void CreateTypeCategoryList()
+    /// <summary>
+    /// Creates a new TypeCategoryList in the database.
+    /// </summary>
+    /// <returns></returns>
+    private async Task CreateTypeCategoryList()
     {
-        var entity = typeCategoryList;
-        var isValid = await CheckTypeCategoryList(entity);
+        var entity = typeCategoryList; // Sets the typeCategoryList as the entity used in this method.
+        var isValid = await CheckTypeCategoryList(entity); // Checks if all the relations has the same active status as the TypeCategoryList. If not gives a promt to the user to decide if they want to continue with the creation or stop.
         if (isValid == false)
         {
             return;
         }
-        var result = await _typeCategoryListService.Create(entity);
+        var result = await _typeCategoryListService.Create(entity); // Sends the TypeCategoryList to the database to be created.
         if (result is not null)
         {
-            _typeCategoryListList.Add(result);
-            //createType = false;
+            _typeCategoryListList.Add(result); // Adds the created TypeCategoryList to the local list of TypeCategoryLists.
+                                               //createType = false;
             SoftResetWork();
             StateHasChanged();
             NotificationUtility.SendSuccessNotification("Type kategorien blev oprettet.");
@@ -1461,167 +1519,198 @@
         {
             NotificationUtility.SendErrorNotification("Der opstod en fejl under oprettelsen af type kategorien.");
         }
+        return;
     }
     #endregion
     #region SelectModels
-    private async Task SelectCard(object e) //int entityId
+    /// <summary>
+    /// Gets the selected Card with the given id from the database. And populates the UI with the data.
+    /// </summary>
+    /// <param name="selectedEntity"></param>
+    /// <returns></returns>
+    private async Task SelectCard(object selectedEntity) //int entityId
     {
-        int entityId = (int)e;
-        if (entityId > 0) //int.TryParse(e.Value.ToString(), out int entityId)
+        int entityId = (int)selectedEntity; // Sets the id of the selected Card as the entityId used for this method.
+        if (entityId > 0) // Checks if the id is above 0 and therefore culd exist in the database.
         {   
-            if (entityId > 0)
+            var entity = await _cardService.GetByid(entityId); // Calls the database to get the Card by the given Id.
+            card = new() // Sets the card property as the entity received from the database.
             {
-                var entity = await _cardService.GetByid(entityId);
-                card = new()
-                {
-                    CardId = entity.CardId,
-                    CardName = entity.CardName,
-                    CardText = entity.CardText,
-                    Active = entity.Active,
-                    AttachmentId = entity.AttachmentId,
-                    Attachment = entity.Attachment,
-                    Results = entity.Results,
-                    Types = entity.Types
-                };
-                resultList = FilterResults(card.Results);
-                typeList = FilterTypes(card.Types);
-                StateHasChanged();
-            }
+                CardId = entity.CardId,
+                CardName = entity.CardName,
+                CardText = entity.CardText,
+                Active = entity.Active,
+                AttachmentId = entity.AttachmentId,
+                Attachment = entity.Attachment,
+                Results = entity.Results,
+                Types = entity.Types
+            };
+            resultList = FilterResults(card.Results); // Filters the results list to only show the results that are not already in the selected entity.
+            typeList = FilterTypes(card.Types); // Filters the types list to only show the types that are not already in the selected entity.
+            StateHasChanged();
         }
         return;
     }
-    private async Task SelectType(object e)
+    /// <summary>
+    /// Gets the selected Type with the given id from the database. And populates the UI with the data.
+    /// </summary>
+    /// <param name="selectedEntity"></param>
+    /// <returns></returns>
+    private async Task SelectType(object selectedEntity)
     {
-        int entityId = (int)e;
-        if (true)
+        int entityId = (int)selectedEntity; // Sets the id of the selected Type as the entityId used for this method.
+        if (entityId > 0) // Checks if the id is above 0 and therefore culd exist in the database.
         {
-            if (entityId > 0)
+            var entity = await _typeService.GetById(entityId); // Calls the database to get the Type by the given Id.
+            type = new() // Sets the type property as the entity received from the database.
             {
-                var entity = await _typeService.GetById(entityId);
-                type = new()
-                {
-                    TypeId = entity.TypeId,
-                    CardTypeName = entity.CardTypeName,
-                    Active = entity.Active,
-                    Cards = entity.Cards,
-                    TypeCategoryLists = entity.TypeCategoryLists
-                };
-                cardList = FilterCards(type.Cards);
-                typeCategoryListList = FilterTypeCategories(type.TypeCategoryLists);
-                StateHasChanged();
-            }
+                TypeId = entity.TypeId,
+                CardTypeName = entity.CardTypeName,
+                Active = entity.Active,
+                Cards = entity.Cards,
+                TypeCategoryLists = entity.TypeCategoryLists
+            };
+            cardList = FilterCards(type.Cards); // Filters the cards list to only show the cards that are not already in the selected entity.
+            typeCategoryListList = FilterTypeCategories(type.TypeCategoryLists); // Filters the typeCategoryList list to only show the typeCategoryLists that are not already in the selected entity.
+            StateHasChanged();
         }
         return;
     }
+    /// <summary>
+    /// Gets the selected Result with the given id from the database. And populates the UI with the data.
+    /// </summary>
+    /// <param name="selectedEntity"></param>
+    /// <returns></returns>
+    private async Task SelectResult(object selectedEntity)
+    {
+        int entityId = (int)selectedEntity; // Sets the id of the selected Result as the entityId used for this method.
 
-    private async Task SelectResult(object e)
-    {
-        int entityId = (int)e;
-        if (true)
+        if (entityId > 0) // Checks if the id is above 0 and therefore culd exist in the database.
         {
-            if (entityId > 0)
+            var entity = await _resultService.GetById(entityId); // Calls the database to get the Result by the given Id.
+            result = new() // Sets the result property as the entity received from the database.
             {
-                var entity = await _resultService.GetById(entityId);
-                result = new()
-                {
-                    ResultId = entity.ResultId,
-                    ResultText = entity.ResultText,
-                    Active = entity.Active,
-                    AttachmentId = entity.AttachmentId,
-                    Attachment = entity.Attachment,
-                    Cards = entity.Cards
-                };
-                cardList = FilterCards(result.Cards);
-                StateHasChanged();
-            }
+                ResultId = entity.ResultId,
+                ResultText = entity.ResultText,
+                Active = entity.Active,
+                AttachmentId = entity.AttachmentId,
+                Attachment = entity.Attachment,
+                Cards = entity.Cards
+            };
+            cardList = FilterCards(result.Cards); // Filters the cards list to only show the cards that are not already in the selected entity.
+            StateHasChanged();
+        }
+
+        return;
+    }
+    /// <summary>
+    /// Gets the selected Attachment with the given id from the database. And populates the UI with the data.
+    /// </summary>
+    /// <param name="selectedEntity"></param>
+    /// <returns></returns>
+    private async Task SelectAttachment(object selectedEntity)
+    {
+        int entityId = (int)selectedEntity; // Sets the id of the selected Attachment as the entityId used for this method.
+        if (entityId > 0) // Checks if the id is above 0 and therefore culd exist in the database.
+        {
+            var entity = await _attachmentService.GetById(entityId); // Calls the database to get the Attachment by the given Id.
+            attachment = new() // Sets the attachment property as the entity received from the database.
+            {
+                AttachmentId = entity.AttachmentId,
+                AttachmentName = entity.AttachmentName,
+                AttachmentUrl = entity.AttachmentUrl,
+                Active = entity.Active,
+                Results = entity.Results,
+                Cards = entity.Cards
+            };
+            resultList = FilterResults(attachment.Results); // Filters the results list to only show the results that are not already in the selected entity.
+            cardList = FilterCards(attachment.Cards); // Filters the cards list to only show the cards that are not already in the selected entity.
+            StateHasChanged();
         }
         return;
     }
-
-    private async Task SelectAttachment(object e)
+    /// <summary>
+    /// Gets the selected TypeCategoryList with the given id from the database. And populates the UI with the data.
+    /// </summary>
+    /// <param name="selectedEntity"></param>
+    /// <returns></returns>
+    private async Task SelectTypeCategory(object selectedEntity)
     {
-        int entityId = (int)e;
-        if (true)
+        int entityId = (int)selectedEntity; // Sets the id of the selected TypeCategoryList as the entityId used for this method.
+        if (entityId > 0) // Checks if the id is above 0 and therefore culd exist in the database.
         {
-            if (entityId > 0)
+            var entity = await _typeCategoryListService.GetById(entityId); // Calls the database to get the TypeCategoryList by the given Id.
+            typeCategoryList = new() // Sets the typeCategoryList property as the entity received from the database.
             {
-                var entity = await _attachmentService.GetById(entityId);
-                attachment = new()
-                {
-                    AttachmentId = entity.AttachmentId,
-                    AttachmentName = entity.AttachmentName,
-                    AttachmentUrl = entity.AttachmentUrl,
-                    Active = entity.Active,
-                    Results = entity.Results,
-                    Cards = entity.Cards
-                };
-                resultList = FilterResults(attachment.Results);
-                cardList = FilterCards(attachment.Cards);
-                StateHasChanged();
-            }
-        }
-        return;
-    }
-
-    private async Task SelectTypeCategory(object e)
-    {
-        int entityId = (int)e;
-        if (true)
-        {
-            if (entityId > 0)
-            {
-                var entity = await _typeCategoryListService.GetById(entityId);
-                typeCategoryList = new()
-                {
-                    TypeCategoryListId = entity.TypeCategoryListId,
-                    TypeCategoryListName = entity.TypeCategoryListName,
-                    Active = entity.Active,
-                    Types = entity.Types
-                };
-                typeList = FilterTypes(typeCategoryList.Types);
-                StateHasChanged();
-            }
+                TypeCategoryListId = entity.TypeCategoryListId,
+                TypeCategoryListName = entity.TypeCategoryListName,
+                Active = entity.Active,
+                Types = entity.Types
+            };
+            typeList = FilterTypes(typeCategoryList.Types); // Filters the types list to only show the types that are not already in the selected entity.
+            StateHasChanged();
         }
         return;
     }
 
     #endregion
     #region SortLists
+    /// <summary>
+    /// Filters the results list to only show the results that are not already in the selected entity.
+    /// </summary>
+    /// <param name="results"></param>
+    /// <returns></returns>
     private IEnumerable<ResultDto> FilterResults(IEnumerable<ResultDto> results)
     {
         return _resultList.Where(result => !results.Any(r => r.ResultId == result.ResultId)).ToList();
     }
-
+    /// <summary>
+    /// Filters the types list to only show the types that are not already in the selected entity.
+    /// </summary>
+    /// <param name="types"></param>
+    /// <returns></returns>
     private IEnumerable<TypeDto> FilterTypes(IEnumerable<TypeDto> types)
     {
         return _typeList.Where(type => !types.Any(t => t.TypeId == type.TypeId)).ToList();
     }
-
+    /// <summary>
+    /// Filters the cards list to only show the cards that are not already in the selected entity.
+    /// </summary>
+    /// <param name="cards"></param>
+    /// <returns></returns>
     private IEnumerable<CardDto> FilterCards(IEnumerable<CardDto> cards)
     {
         return _cardList.Where(card => !cards.Any(c => c.CardId == card.CardId)).ToList();
     }
+    /// <summary>
+    /// Filers the typeCategoryList list to only show the typeCategoryLists that are not already in the selected entity.
+    /// </summary>
+    /// <param name="tcls"></param>
+    /// <returns></returns>
     private IEnumerable<TypeCategoryListDto> FilterTypeCategories(IEnumerable<TypeCategoryListDto> tcls)
     {
         return _typeCategoryListList.Where(tcl => !tcls.Any(t => t.TypeCategoryListId == tcl.TypeCategoryListId)).ToList();
     }
     #endregion
     #region UpdateModels
-    private async void UpdateCard()
+    /// <summary>
+    /// Updates the Card loaded in the page in the database.
+    /// </summary>
+    private async Task UpdateCard()
     {
-        var entity = card;
-        if(entity.CardId > 0)
+        var entity = card; // Sets the card property as the entity used in this method.
+        if(entity.CardId > 0) // Checks if the CardId is above 0 as it otherwise could not exist in the database.
         {
-            var isValid = await CheckCard(entity);
+            var isValid = await CheckCard(entity); // Checks if all the relations has the same active status as the Card. If not gives a promt to the user to decide if they want to continue with the creation or stop.
             if (isValid == false)
             {
                 return;
             }
-            var result = await _cardService.Update(entity);
+            var result = await _cardService.Update(entity); // Sends the Card to the database to be updated.
             if (result is not null)
             {
-                int index = _cardList.FindIndex(x => x.CardId == result.CardId);
-                if (index != -1)
+                int index = _cardList.FindIndex(x => x.CardId == result.CardId); // Finds the index of the updated Card in the local list of Cards, to replace it with the updated data.
+                if (index != -1) // Checks if the card was found in the local list. If so, it replaces the data at the indexed location.
                 {
                     _cardList[index] = result;
                     //createType = false;
@@ -1643,20 +1732,20 @@
     }
 
     private async void UpdateType(){
-        var entity = type;
+        var entity = type; // Sets the type property as the entity used in this method.
 
-        if(entity.TypeId > 0)
+        if(entity.TypeId > 0) // Checks if the TypeId is above 0 as it otherwise could not exist in the database.
         {
-            var isValid = await CheckType(entity);
+            var isValid = await CheckType(entity); // Checks if all the relations has the same active status as the Type. If not gives a promt to the user to decide if they want to continue with the creation or stop.
             if (isValid == false)
             {
                 return;
             }
-            var result = await _typeService.Update(entity);
+            var result = await _typeService.Update(entity); // Sends the Type to the database to be updated.
             if (result is not null)
             {
-                int index = _typeList.FindIndex(x => x.TypeId == result.TypeId);
-                if (index != -1)
+                int index = _typeList.FindIndex(x => x.TypeId == result.TypeId); // Finds the index of the updated Type in the local list of Types, to replace it with the updated data.
+                if (index != -1) // Checks if the Type was found in the local list. If so, it replaces the data at the indexed location.
                 {
                     _typeList[index] = result;
                     //createType = false;
@@ -1679,19 +1768,19 @@
     }
 
     private async void UpdateTypeCategoryList(){
-        var entity = typeCategoryList;
-        if(entity.TypeCategoryListId > 0)
+        var entity = typeCategoryList; // Sets the typeCategoryList property as the entity used in this method.
+        if(entity.TypeCategoryListId > 0) // Checks if the TypeCategoryListId is above 0 as it otherwise could not exist in the database.
         {
-            var isValid = await CheckTypeCategoryList(entity);
+            var isValid = await CheckTypeCategoryList(entity); // Checks if all the relations has the same active status as the TypeCategoryList. If not gives a promt to the user to decide if they want to continue with the creation or stop.
             if(isValid == false)
             {
                 return;
             }
-            var result = await _typeCategoryListService.Update(entity);
+            var result = await _typeCategoryListService.Update(entity); // Sends the TypeCategoryList to the database to be updated.
             if (result is not null)
             {
-                int index = _typeCategoryListList.FindIndex(x => x.TypeCategoryListId == result.TypeCategoryListId);
-                if (index != -1)
+                int index = _typeCategoryListList.FindIndex(x => x.TypeCategoryListId == result.TypeCategoryListId); // Finds the index of the updated TypeCategoryList in the local list of TypeCategoryLists, to replace it with the updated data.
+                if (index != -1) // Checks if the TypeCategoryList was found in the local list. If so, it replaces the data at the indexed location.
                 {
                     _typeCategoryListList[index] = result;
                     //createType = false;
@@ -1715,19 +1804,19 @@
 
     private async void UpdateResult()
     {
-        var entity = result;
-        if(entity.ResultId > 0)
+        var entity = result; // Sets the result property as the entity used in this method.
+        if(entity.ResultId > 0) // Checks if the ResultId is above 0 as it otherwise could not exist in the database.
         {
-            var isValid = await CheckResult(entity);
+            var isValid = await CheckResult(entity); // Checks if all the relations has the same active status as the Result. If not gives a promt to the user to decide if they want to continue with the creation or stop.
             if (isValid == false)
             {
                 return;
             }    
-            var resultReceived = await _resultService.Update(entity);
+            var resultReceived = await _resultService.Update(entity); // Sends the Result to the database to be updated.
             if (resultReceived is not null)
             {
-                int index = _resultList.FindIndex(x => x.ResultId == resultReceived.ResultId);
-                if (index != -1)
+                int index = _resultList.FindIndex(x => x.ResultId == resultReceived.ResultId); // Finds the index of the updated Result in the local list of Results, to replace it with the updated data.
+                if (index != -1) // Checks if the Result was found in the local list. If so, it replaces the data at the indexed location.
                 {
                     _resultList[index] = resultReceived;
                     //createType = false;
@@ -1750,23 +1839,23 @@
 
     private async void UpdateAttachment()
     {
-        var entity = attachment;
-        if (entity.AttachmentId > 0)
+        var entity = attachment; // Sets the attachment property as the entity used in this method.
+        if (entity.AttachmentId > 0) // Checks if the AttachmentId is above 0 as it otherwise could not exist in the database.
         {
-            var isValid = await CheckAttachment(entity);
+            var isValid = await CheckAttachment(entity); // Checks if all the relations has the same active status as the Attachment. If not gives a promt to the user to decide if they want to continue with the creation or stop.
             if(isValid == false)
             {
                 return;
             }
-            if (selectedFile is not null)
+            if (selectedFile is not null) // If the selected file is not null, If the attachment already have a file it overwrites it. Otherwise it creates a new file in the directory.
             {
                 await CreateFile();                
             }
-            var result = await _attachmentService.Update(entity);
+            var result = await _attachmentService.Update(entity); // Sends the Attachment to the database to be updated.
             if (result is not null)
             {
-                int index = _attachmentList.FindIndex(x => x.AttachmentId == result.AttachmentId);
-                if (index != -1)
+                int index = _attachmentList.FindIndex(x => x.AttachmentId == result.AttachmentId); // Finds the index of the updated Attachment in the local list of Attachments, to replace it with the updated data.
+                if (index != -1) // Checks if the Attachment was found in the local list. If so, it replaces the data at the indexed location.
                 {
                     _attachmentList[index] = result;
                     //createType = false;
@@ -1794,13 +1883,17 @@
         {
             Directory.CreateDirectory(Path.GetDirectoryName($"{attachmentCreateDirectory}{attachment.AttachmentUrl}")); // Ensure the directory exists
 
-            using (var stream = new FileStream($"{attachmentCreateDirectory}{attachment.AttachmentUrl}", FileMode.Create))
+            using (var stream = new FileStream($"{attachmentCreateDirectory}{attachment.AttachmentUrl}", FileMode.Create)) // If there already is a file with the same name it overwrites it. Otherwise it creates a new one.
             {
                 await selectedFile.OpenReadStream().CopyToAsync(stream);
             }
         }
         return;
     }
+    /// <summary>
+    /// If a file exists with the given name, it is deleted from the directory.
+    /// </summary>
+    /// <param name="name"></param>
     private void DeleteFile(string name)
     {
         if (File.Exists($"{attachmentCreateDirectory}{name}"))
@@ -1808,25 +1901,28 @@
             File.Delete($"{attachmentCreateDirectory}{name}");
         }
     }
-
+    /// <summary>
+    /// Deactivates the selected entity. This method is shared for all entity types.
+    /// </summary>
+    /// <returns></returns>
     private async Task Deactivate()
     {
-        bool isValid = false;
-        if (workingType == "card")
+        bool isValid = false; // I don't remember why I specified the IsValid as false here, it should be set regardless in the code below. TODO check if this is needed.
+        if (workingType == "card") // If the workingType is set to card, it deactivates the card.
         {
-            card.Active = false;
-            isValid = await CheckCard(card);
+            card.Active = false; // Ensures the card is inactive for the CheckCard.
+            isValid = await CheckCard(card); // Checks if all the relations has the same active status as the Card. If not gives a promt to the user to decide if they want to continue with the creation or stop.
             if(isValid == true)
             {
-                var entity = await _cardService.Deactivate(card.CardId);
+                var entity = await _cardService.Deactivate(card.CardId); // Sends the Card to the database to be deactivated.
                 if (entity is null)
                 {
                     NotificationUtility.SendErrorNotification($"Fejl på deaktivering af kort med id:{card.CardId}");
                     errorMessage = $"Fejl på deaktivering af card med id:{card.CardId}";
                     return;
                 }
-                int index = _cardList.FindIndex(x => x.CardId == entity.CardId);
-                if (index != -1)
+                int index = _cardList.FindIndex(x => x.CardId == entity.CardId); // Finds the index of the deactivated Card in the local list of Cards, to replace it with the updated data.
+                if (index != -1) // Checks if the Card was found in the local list. If so, it replaces the data at the indexed location.
                 {
                     _cardList[index] = entity;
                     //createType = false;
@@ -1837,21 +1933,21 @@
             }
 
         }
-        else if (workingType == "attachment")
+        else if (workingType == "attachment") // If the workignType is set to Attachment, it deactivates the Attachment.
         {
-            attachment.Active = false;
-            isValid = await CheckAttachment(attachment);
+            attachment.Active = false; // Ensures the Attachment is inactive for the CheckAttachment.
+            isValid = await CheckAttachment(attachment); // Checks if all the relations has the same active status as the Attachment. If not gives a promt to the user to decide if they want to continue with the creation or stop.
             if (isValid == true)
             {
-                var entity = await _attachmentService.Deactivate(attachment.AttachmentId);
+                var entity = await _attachmentService.Deactivate(attachment.AttachmentId); // Sends the Attachment to the database to be deactivated.
                 if (entity is null)
                 {
                     NotificationUtility.SendErrorNotification($"Fejl på deaktivering af vedhæftning med id:{attachment.AttachmentId}");
                     errorMessage = $"Fejl på deaktivering af vedhæftning med id:{attachment.AttachmentId}";
                     return;
                 }
-                int index = _attachmentList.FindIndex(x => x.AttachmentId == entity.AttachmentId);
-                if (index != -1)
+                int index = _attachmentList.FindIndex(x => x.AttachmentId == entity.AttachmentId); // Finds the index of the deactivated Attachment in the local list of Attachments, to replace it with the updated data.
+                if (index != -1) // Checks if the Attachment was found in the local list. If so, it replaces the data at the indexed location.
                 {
                     _attachmentList[index] = entity;
                     //createType = false;
@@ -1861,21 +1957,21 @@
                 }
             }
         }
-        else if (workingType == "result")
+        else if (workingType == "result") // If the workignType is set to Result, it deactivates the Result.
         {
-            result.Active = false;
-            isValid = await CheckResult(result);
+            result.Active = false; // Ensures the Result is inactive for the CheckResult.
+            isValid = await CheckResult(result); // Checks if all the relations has the same active status as the Result. If not gives a promt to the user to decide if they want to continue with the creation or stop.
             if (isValid == true)
             {
-                var entity = await _resultService.Deactivate(result.ResultId);
+                var entity = await _resultService.Deactivate(result.ResultId); // Sends the Result to the database to be deactivated.
                 if (entity is null)
                 {
                     NotificationUtility.SendErrorNotification($"Fejl på deaktivering af resultat med id:{result.ResultId}");
                     errorMessage = $"Fejl på deaktivering af resultat med id:{result.ResultId}";
                     return;
                 }
-                int index = _resultList.FindIndex(x => x.ResultId == entity.ResultId);
-                if (index != -1)
+                int index = _resultList.FindIndex(x => x.ResultId == entity.ResultId); // Finds the index of the deactivated Result in the local list of Results, to replace it with the updated data.
+                if (index != -1) // Checks if the Result was found in the local list. If so, it replaces the data at the indexed location.
                 {
                     _resultList[index] = entity;
                     //createType = false;
@@ -1885,21 +1981,21 @@
                 }
             }
         }
-        else if (workingType == "type")
+        else if (workingType == "type") // If the workignType is set to Type, it deactivates the Type.
         {
-            type.Active = false;
-            isValid = await CheckType(type);
+            type.Active = false; // Ensures the Type is inactive for the CheckType.
+            isValid = await CheckType(type); // Checks if all the relations has the same active status as the Type. If not gives a promt to the user to decide if they want to continue with the creation or stop.
             if (isValid == true)
             {
-                var entity = await _typeService.Deactivate(type.TypeId);
+                var entity = await _typeService.Deactivate(type.TypeId); // Sends the Type to the database to be deactivated.
                 if (entity is null)
                 {
                     NotificationUtility.SendErrorNotification($"Fejl på deaktivering af type med id:{type.TypeId}");
                     errorMessage = $"Fejl på deaktivering af type med id:{type.TypeId}";
                     return;
                 }
-                int index = _typeList.FindIndex(x => x.TypeId == entity.TypeId);
-                if (index != -1)
+                int index = _typeList.FindIndex(x => x.TypeId == entity.TypeId); // Finds the index of the deactivated Type in the local list of Types, to replace it with the updated data.
+                if (index != -1) // Checks if the Type was found in the local list. If so, it replaces the data at the indexed location.
                 {
                     _typeList[index] = entity;
                     //createType = false;
@@ -1909,21 +2005,21 @@
                 }
             }
         }
-        else if (workingType == "typeCategoryList")
+        else if (workingType == "typeCategoryList") // If the workignType is set to TypeCategoryList, it deactivates the TypeCategoryList.
         {
-            typeCategoryList.Active = false;
-            isValid = await CheckTypeCategoryList(typeCategoryList);
+            typeCategoryList.Active = false; // Ensures the TypeCategoryList is inactive for the CheckTypeCategoryList.
+            isValid = await CheckTypeCategoryList(typeCategoryList); // Checks if all the relations has the same active status as the TypeCategoryList. If not gives a promt to the user to decide if they want to continue with the creation or stop.
             if (isValid == true)
             {
-                var entity = await _typeCategoryListService.Deactivate(typeCategoryList.TypeCategoryListId);
+                var entity = await _typeCategoryListService.Deactivate(typeCategoryList.TypeCategoryListId); // Sends the TypeCategoryList to the database to be deactivated.
                 if (entity is null)
                 {
                     NotificationUtility.SendErrorNotification($"Fejl på deaktivering af type kategori med id:{typeCategoryList.TypeCategoryListId}");
                     errorMessage = $"Fejl på deaktivering af type kategori med id:{typeCategoryList.TypeCategoryListId}";
                     return;
                 }
-                int index = _typeCategoryListList.FindIndex(x => x.TypeCategoryListId == entity.TypeCategoryListId);
-                if (index != -1)
+                int index = _typeCategoryListList.FindIndex(x => x.TypeCategoryListId == entity.TypeCategoryListId); // Finds the index of the deactivated TypeCategoryList in the local list of TypeCategoryLists, to replace it with the updated data.
+                if (index != -1) // Checks if the TypeCategoryList was found in the local list. If so, it replaces the data at the indexed location.
                 {
                     _typeCategoryListList[index] = entity;
                     //createType = false;
@@ -1936,22 +2032,25 @@
         return;
     }
 
-
+    /// <summary>
+    /// Deletes the selected entity. This method is shared for all the entity types.
+    /// </summary>
+    /// <returns></returns>
     private async Task Delete()
     {
-        if (workingType == "card")
+        if (workingType == "card") // If the workingType is set to card, it deletes the card.
         {
-            var entity = card;
+            var entity = card; // Sets the card property as the entity used in this method.
             var isConfirmed = await ConfirmDialog("Slet kort", $"Er du sikker på at du vil slette kortet? <br> ID: {entity.CardId} <br> Navn: {entity.CardName} <br> Tekst: {entity.CardText}");
             if(isConfirmed == true)
             {
                 try
                 {
-                    var result = await _cardService.Delete(entity.CardId);
+                    var result = await _cardService.Delete(entity.CardId); // Sends the Card to the database to be deleted.
                     if(result is not null)
                     {
-                        int index = _cardList.FindIndex(c => c.CardId == result.CardId); // _cardList.Remove(result)
-                        if (index != -1)
+                        int index = _cardList.FindIndex(c => c.CardId == result.CardId); // Finds the index of the deleted Card in the local list of Cards, to remove it from the list.
+                        if (index != -1) // Checks if the Card was found in the local list. If so, it removes the data at the indexed location.
                         {
                             _cardList.RemoveAt(index);
                             
@@ -1978,20 +2077,20 @@
             }
 
         }
-        else if (workingType == "attachment")
+        else if (workingType == "attachment") // If the workingType is set to Attachment, it deletes the attachment.
         {
-            var entity = attachment;
+            var entity = attachment; // Sets the attachment property as the entity used in this method.
             try
             {
                 var isConfirmed = await ConfirmDialog("Slet vedhæftning", $"Er du sikker på at du vil slette kortet? <br> ID: {entity.AttachmentId} <br> Navn: {entity.AttachmentName}");
                 if(isConfirmed == true)
                 {
-                    var result = await _attachmentService.Delete(entity.AttachmentId);
+                    var result = await _attachmentService.Delete(entity.AttachmentId); // Sends the Attachment to the database to be deleted.
                     if (result is not null)
                     {
-                        DeleteFile(result.AttachmentUrl);
-                        int index = _attachmentList.FindIndex(c => c.AttachmentId == result.AttachmentId); // _cardList.Remove(result)
-                        if (index != -1)
+                        DeleteFile(result.AttachmentUrl); // Deletes the file from the directory.
+                        int index = _attachmentList.FindIndex(c => c.AttachmentId == result.AttachmentId); // Finds the index of the deleted Attachment in the local list of Attachments, to remove it from the list.
+                        if (index != -1) // Checks if the Attachment was found in the local list. If so, it removes the data at the indexed location.
                         {
                             _attachmentList.RemoveAt(index);
                             
@@ -2017,19 +2116,19 @@
             }
 
         }
-        else if (workingType == "result")
+        else if (workingType == "result") // If the workingType is set to Result, it deletes the result.
         {
-            var entity = result;
+            var entity = result; // Sets the result property as the entity used in this method.
             try
             {
                 var isConfirmed = await ConfirmDialog("Slet resultat", $"Er du sikker på at du vil slette resultatet? <br> ID: {entity.ResultId} <br> Tekst: {entity.ResultText}");
                 if(isConfirmed == true)
                 {
-                    var result = await _resultService.Delete(entity.ResultId);
+                    var result = await _resultService.Delete(entity.ResultId); // Sends the Result to the database to be deleted.
                     if (result is not null)
                     {
-                        int index = _resultList.FindIndex(c => c.ResultId == result.ResultId); // _cardList.Remove(result)
-                        if (index != -1)
+                        int index = _resultList.FindIndex(c => c.ResultId == result.ResultId); // Finds the index of the deleted Result in the local list of Results, to remove it from the list.
+                        if (index != -1) // Checks if the Result was found in the local list. If so, it removes the data at the indexed location.
                         {
                             _resultList.RemoveAt(index);
 
@@ -2054,19 +2153,19 @@
             }
             
         }
-        else if (workingType == "type")
+        else if (workingType == "type") // If the workingType is set to Type, it deletes the type.
         {
-            var entity = type;
+            var entity = type; // Sets the type property as the entity used in this method.
             try
             {
                 var isConfirmed = await ConfirmDialog("Slet type", $"Er du sikker på at du vil slette typen? <br> ID: {entity.TypeId} <br> Navn: {entity.CardTypeName}");
                 if(isConfirmed == true)
                 {
-                    var result = await _typeService.Delete(entity.TypeId);
+                    var result = await _typeService.Delete(entity.TypeId); // Sends the Type to the database to be deleted.
                     if (result is not null)
                     {
-                        int index = _typeList.FindIndex(c => c.TypeId == result.TypeId); // _cardList.Remove(result)
-                        if (index != -1)
+                        int index = _typeList.FindIndex(c => c.TypeId == result.TypeId); // Finds the index of the deleted Type in the local list of Types, to remove it from the list.
+                        if (index != -1) // Checks if the Type was found in the local list. If so, it removes the data at the indexed location.
                         {
                             _typeList.RemoveAt(index);
 
@@ -2091,19 +2190,19 @@
             }
             
         }
-        else if (workingType == "typeCategoryList")
+        else if (workingType == "typeCategoryList") // If the workingType is set to TypeCategoryList, it deletes the typeCategoryList.
         {
-            var entity = typeCategoryList;
-try
+            var entity = typeCategoryList; // Sets the typeCategoryList property as the entity used in this method.
+            try
             {
                 var isConfirmed = await ConfirmDialog("Slet type kategori", $"Er du sikker på at du vil slette type kategorien? <br> ID: {entity.TypeCategoryListId} <br> Navn: {entity.TypeCategoryListName}");
                 if(isConfirmed == true)
                 {
-                    var result = await _typeCategoryListService.Delete(entity.TypeCategoryListId);
+                    var result = await _typeCategoryListService.Delete(entity.TypeCategoryListId); // Sends the TypeCategoryList to the database to be deleted.
                     if (result is not null)
                     {
-                        int index = _typeCategoryListList.FindIndex(c => c.TypeCategoryListId == result.TypeCategoryListId); // _cardList.Remove(result)
-                        if (index != -1)
+                        int index = _typeCategoryListList.FindIndex(c => c.TypeCategoryListId == result.TypeCategoryListId); // Finds the index of the deleted TypeCategoryList in the local list of TypeCategoryLists, to remove it from the list.
+                        if (index != -1) // Checks if the TypeCategoryList was found in the local list. If so, it removes the data at the indexed location.
                         {
                             _typeCategoryListList.RemoveAt(index);
 
