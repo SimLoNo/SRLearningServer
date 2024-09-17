@@ -26,6 +26,7 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Azure;
 using System.Net.Http.Headers;
 using System.Net.Http;
+using SRLearningServer.Components.Models.WebpageModels;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -115,7 +116,8 @@ builder.Services
     .AddScoped<IActiveCheckService, ActiveCheckService>()
     .AddScoped<IReportUtility, ReportUtility>()
     .AddScoped<IActivitySortingUtility, ActivitySortingUtility>()
-    .AddSingleton<IAuthorizationHandler, IsAdminAuthorizationHandler>();
+    .AddScoped<IAuthorizationHandler, IsAdminAuthorizationHandler>()
+    .AddScoped<ResultListModel>();
 
 // Register HttpClient with the base address of the application
 builder.Services.AddScoped(sp =>

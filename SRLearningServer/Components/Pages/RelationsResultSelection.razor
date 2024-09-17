@@ -1,0 +1,27 @@
+﻿@page "/relationselection/{typeName}"
+@rendermode InteractiveServer
+
+@using SRLearningServer.Components.Models.WebpageModels
+
+@inject ResultListModel _allResults
+@inject IConfiguration _configuration
+
+<PageTitle>Vælg de resultater der er relateret til @typeName</PageTitle>
+@foreach (var result in _allResults.Results)
+{
+    <RadzenCard>
+        <RadzenText Text="@result.ResultText"/>
+        <RadzenImage Path=@($"{attachmentLocation}{result.Attachment?.AttachmentUrl}") />
+    </RadzenCard>
+}
+
+
+@code {
+    [Parameter] public string? typeName { get; set; }
+    private string attachmentLocation = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        attachmentLocation = $"{_configuration["AttachmentReadPath"]}";
+    }
+}

@@ -31,6 +31,12 @@
                     </NavLink>
                 </div>
             }
+            @foreach (var type in relationCards?.Types)
+            {
+                <NavLink class="nav-link" href="@($"relations/{@type.CardTypeName}")">
+                    <RadzenIcon Icon="traffic" />  @type.CardTypeName
+                </NavLink>
+            }
         
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="contact">
@@ -90,6 +96,7 @@
 @code {
     private string? currentUrl;
     private TypeCategoryListDto? memoryCards = new();
+    private TypeCategoryListDto? relationCards = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -102,6 +109,12 @@
             {
                 memoryCardsResults.Types = _activitySortingUtility.SortActiveByStatus(memoryCardsResults.Types);
                 memoryCards = memoryCardsResults;
+            }
+            var relationCardsResults = await _service.GetByName("RelationCards");
+            if (relationCardsResults is not null)
+            {
+                relationCardsResults.Types = _activitySortingUtility.SortActiveByStatus(relationCardsResults.Types);
+                relationCards = relationCardsResults;
             }
         }
         catch (Exception ex)

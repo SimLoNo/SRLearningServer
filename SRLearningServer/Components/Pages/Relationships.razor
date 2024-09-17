@@ -1,5 +1,6 @@
-﻿@page "/memorycards/{listName}"
+﻿@page "/relations/{listName}"
 @rendermode InteractiveServer
+
 @using Microsoft.AspNetCore.Authorization
 @using SRLearningServer.Components.Interfaces.FrontendServices
 @using SRLearningServer.Components.Interfaces.Utilities
@@ -15,25 +16,22 @@
 @inject IActivitySortingUtility _activitySortingUtility
 @inject IConfiguration _configuration
 @inject INotificationUtility _notificationUtility
+@inject ResultListModel _allResults
 
-<PageTitle>Huskekort - @listName</PageTitle>
-
-    <h1>Huskekort - @listName</h1>
-
+<PageTitle>Relationer - @listName</PageTitle>
+<RadzenText Text="@($"Huskekort - {listName}")" />
 
 <RadzenStack class="rz-p-sm-12">
     <RadzenCard class="rz-background-color-primary rz-border-primary">
         <RadzenLabel class="rz-color-on-primary" Text="Vis altid svar" Component="AlwaysShowResult" />
-    <RadzenSwitch @bind-Value=@alwaysShowResult Name="AlwaysShowResult" />
+        <RadzenSwitch @bind-Value=@alwaysShowResult Name="AlwaysShowResult" />
     </RadzenCard>
 </RadzenStack>
 
 <RadzenStack>
     @if (isLoading)
     {
-        <RadzenStack JustifyContent
-        ="JustifyContent.Center" AlignItems
-        ="AlignItems.Center">
+        <RadzenStack JustifyContent="JustifyContent.Center" AlignItems="AlignItems.Center">
             <RadzenProgressBarCircular ShowValue="true" Mode="ProgressBarMode.Indeterminate" Size="ProgressBarCircularSize.Large">
                 <Template>Wait</Template>
             </RadzenProgressBarCircular>
@@ -68,7 +66,7 @@
                     <RadzenButton Text="Go back" Click="@(args => Progress(false))" Style="position: absolute; left: 0; width: 50%; height: 100%; opacity: 0;" />
                     <RadzenButton Text="Progress" Click="@(args => Progress(true))" Style="position: absolute; right: 0; width: 50%; height: 100%; opacity: 0;" />
                 </RadzenStack>
-                
+
                 <RadzenStack>
                     <p class="rz-color-on-secondary">@cards[currentCard].CardText</p>
                 </RadzenStack>
@@ -92,12 +90,13 @@
     }
     else if (!string.IsNullOrEmpty(errorMessage))
     {
-        <p class="error">@errorMessage
+        <p class="error">
+            @errorMessage
         </p>
-    }@* 
+    }@*
     else
     {
-        <RadzenText Text="Ingen signaler at vise."></RadzenText>
+    <RadzenText Text="Ingen signaler at vise."></RadzenText>
     } *@
 
 
@@ -108,15 +107,14 @@
 
 <RadzenButton Icon="update" Text="@($"{(cards.Count == 0 ? "Vis" : "Opdater")} {listName}")" Click="GetSignals"></RadzenButton>
 <RadzenButton Icon="swap_horiz" Text="@($"Til/fravælg {listName}")" Click="ToggleSignalList"></RadzenButton>
-<RadzenButton Icon="bug_report" Text="Raporter fejl" Click="SendReport"></RadzenButton>
 
 <RadzenStack>
-    @if (showSignalList)
+    @if (showTypeList)
     {
-        @foreach (var signal in signalSelection)
+        @foreach (var signal in TypeSelection)
         {
             <RadzenCard class="rz-background-color-secondary">
-                <RadzenStack Orientation="Orientation.Vertical" >
+                <RadzenStack Orientation="Orientation.Vertical">
                     <RadzenLabel Text="@($"Vælg hvilke {signal.SignalType.CardTypeName} du vil se. Klik derefter på {(cards.Count == 0 ? "Vis" : "Opdater")} {listName}")" Component="EntitySelectionDropDown" />
                     <RadzenDropDown Multiple=true @bind-Value=@signal.SelectedSignalAspects TextProperty="@nameof(TypeDto.CardTypeName)" Style="width:auto" Name="EntitySelectionDropDown" Data=@signal.AllowedSignalAspects TValue="IEnumerable<TypeDto>" AllowClear=true AllowFiltering=false AllowSorting=false SelectAllText="@($"Vælg alle {listName}")" SelectedItemsText="@($"{listName} er valgt")" Placeholder="@($"Ingen {signal.SignalType.CardTypeName}er valgt")" Chips=true MaxSelectedLabels="10">
 
@@ -131,22 +129,19 @@
 
 
 @code {
-    [Parameter]
-
-    public string? listName { get; set;}
+    [Parameter] public string? listName { get; set; }
     private int currentCard = 0;
     private List<CardDto> cards = new();
-    private TypeCategoryListDto signals = new();
-    private List<SignalModel> signalSelection = new();
+    private TypeCategoryListDto typeCategoryList = new();
+    private List<SignalModel> TypeSelection = new();
+    //private List<ResultDto> allResults = new();
     private string errorMessage = "";
     private bool isLoading = false;
-    private bool showSignalList = false;
-    private int? expandedSignalId = null;
+    private bool showTypeList = false;
     private bool showResult = false;
     private bool alwaysShowResult = false;
 
     string attachmentLocation = "";
-
 
     protected override async Task OnInitializedAsync()
     {
@@ -154,28 +149,27 @@
         try
         {
             attachmentLocation = $"{_configuration["AttachmentReadPath"]}";
-            signals = await _typeCategoryListService.GetByName(listName);
-            signals = _activitySortingUtility.SortActiveByStatus(signals);
-            if (signals is not null)
+            typeCategoryList = await _typeCategoryListService.GetByName(listName);
+            typeCategoryList = _activitySortingUtility.SortActiveByStatus(typeCategoryList);
+            if (typeCategoryList is not null)
             {
-                foreach (TypeDto signalType in signals.Types)
+                foreach (TypeDto relationType in typeCategoryList.Types)
                 {
-                    TypeCategoryListDto aspects = await _typeCategoryListService.GetByName($"{signalType.CardTypeName}Liste");
-                    aspects = _activitySortingUtility.SortActiveByStatus(aspects);
-                    if (aspects is not null)
+                    TypeCategoryListDto subRelationType = await _typeCategoryListService.GetByName($"{relationType.CardTypeName}Liste");
+                    subRelationType = _activitySortingUtility.SortActiveByStatus(subRelationType);
+                    if (subRelationType is not null)
                     {
                         SignalModel signal = new SignalModel()
-                            {
-                                SignalType = signalType,
-                                AllowedSignalAspects = new List<TypeDto>(aspects.Types),
-                                SelectedSignalAspects = new List<TypeDto>(aspects.Types)
-                            };
-
-                        signalSelection.Add(signal);
+                        {
+                            SignalType = relationType,
+                            AllowedSignalAspects = new List<TypeDto>(subRelationType.Types),
+                            SelectedSignalAspects = new List<TypeDto>(subRelationType.Types)
+                        };
+                        TypeSelection.Add(signal);
                     }
                     else
                     {
-                        errorMessage = $"Ingen {listName} blev fundet på entitet {signalType.CardTypeName}";
+                        errorMessage = $"Ingen {listName} blev fundet på entitet {relationType.CardTypeName}";
                         _notificationUtility.SendNotification(errorMessage);
                     }
                 }
@@ -189,7 +183,6 @@
         }
         catch (Exception ex)
         {
-
             errorMessage = $"Error on getting {listName}: {ex.Message}";
             _notificationUtility.SendErrorNotification(errorMessage);
         }
@@ -198,27 +191,14 @@
             isLoading = false;
         }
     }
+
     /// <summary>
     /// Toggles between showing and hiding the list of sortable Types in the UI.
     /// </summary>
     private void ToggleSignalList()
     {
-        showSignalList = !showSignalList;
+        showTypeList = !showTypeList;
     }
-    /*
-    private void ToggleAspectList(int signalId)
-    {
-    if (expandedSignalId == signalId)
-    {
-    expandedSignalId = null;
-    }
-    else
-    {
-    expandedSignalId = signalId;
-    }
-    }*/
-
-
     /// <summary>
     /// Gets the cards from the server based on the selected types.
     /// </summary>
@@ -227,19 +207,18 @@
         isLoading = true;
         errorMessage = "";
         showResult = false;
-        showSignalList = false;
-        expandedSignalId = null;
+        showTypeList = false;
         currentCard = 0;
         List<List<TypeDto>> signalAspects = new();
-        foreach (SignalModel signal in signalSelection)
+        foreach (SignalModel typeModel in TypeSelection)
         {
-            if (signal.SelectedSignalAspects is not null)
+            if (typeModel.SelectedSignalAspects is not null)
             {
-                foreach (TypeDto aspect in signal.SelectedSignalAspects)
+                foreach (TypeDto aspect in typeModel.SelectedSignalAspects)
                 {
 
                     List<TypeDto> Selection = new();
-                    Selection.Add(signal.SignalType);
+                    Selection.Add(typeModel.SignalType);
                     Selection.Add(aspect);
                     signalAspects.Add(Selection);
 
@@ -254,6 +233,11 @@
             errorMessage = "Ingen signaler med de sendte kriterier blev fundet.";
             _notificationUtility.SendNotification(errorMessage);
         }
+        foreach (CardDto card in cards)
+        {
+            _allResults.Results.AddRange(card.Results);
+        }
+        _allResults.Results = _allResults.Results.Distinct().ToList();
         isLoading = false;
         StateHasChanged();
 
@@ -273,7 +257,7 @@
     {
         if (direction == true)
         {
-            if(showResult == true || alwaysShowResult == true)
+            if (showResult == true || alwaysShowResult == true)
             {
                 showResult = false;
                 if (currentCard < cards.Count - 1)
@@ -311,74 +295,4 @@
             }
         }
     }
-    /// <summary>
-    /// Sends a bug report to the administrators. The report contains the selected types, the card that is currently shown, and the error message if any.
-    /// </summary>
-    private async void SendReport()
-    {
-        var result = await _dialogService.OpenAsync<DialogReportPage>("Rapport");
-        string reportString = $"Rapport angivet for {listName}. <br>";
-        if (result is not null)
-        {
-            try
-            {
-                reportString += $"Bruger besked: {result} <br>";
-                reportString += $"Brugerens valgte {listName}: <br>";
-                foreach (var item in signalSelection)
-                {
-                    reportString += "<div>";
-                    reportString += $"{listName}: {item.SignalType.CardTypeName} <br>";
-                    reportString += _reportUtility.Format(item.SelectedSignalAspects, "<br>");
-                    reportString += "</div>";
-
-                }
-                if (cards is not null && cards.Count() > currentCard)
-                {
-                    reportString += "<div>";
-                    reportString += $"Det viste kort er: <br>";
-                    reportString += _reportUtility.Format(cards[currentCard], "<br>");
-                    reportString += $"Fejlbesked: {(!string.IsNullOrEmpty(errorMessage) ? errorMessage : "Ingen errorMessage")} <br>";
-                    reportString += "</div>";    
-                }
-                else
-                {
-                    reportString += "<div>";
-                    reportString += $"Der er ingen kort at vise. <br>";
-                    reportString += $"cards længde: {cards.Count} <br>";
-                    reportString += $"currentCard værdi: {currentCard} <br>";
-                    reportString += $"Fejlbesked: {errorMessage} <br>";
-                    reportString += "</div>";
-                }
-
-                reportString += "<div>";
-                reportString += $"SIDE DATA: <br>";
-                reportString += $"Følgende {listName} er hentet fra serveren: <br>";
-                foreach (var item in signalSelection)
-                {
-                    reportString += "<div>";
-                    reportString += $"{listName} kategori: {_reportUtility.Format(item.SignalType, "<br>")}";
-                    reportString += "<ul>";
-                    reportString += $"{listName} typer: {_reportUtility.Format(item.AllowedSignalAspects, "<br>")}";
-                    reportString += "</ul>";
-                    reportString += "</div>";
-                }
-                reportString += "</div>";
-                await _reportUtility.GenerateReport(reportString);
-                _notificationUtility.SendSuccessNotification("Rapporten er sendt.");
-
-            }
-            catch (Exception ex)
-            {
-                
-                errorMessage = $"Error on sending report: {ex.Message}";
-                _notificationUtility.SendErrorNotification(errorMessage);
-            }
-        }
-    }
-
 }
-
-
-
-
-
