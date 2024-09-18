@@ -209,6 +209,7 @@
         isLoading = true;
         try
         {
+            _allResults.SelectedResultIds.Clear();
             attachmentLocation = $"{_configuration["AttachmentReadPath"]}";
             typeCategoryList = await _typeCategoryListService.GetByName(listName);
             typeCategoryList = _activitySortingUtility.SortActiveByStatus(typeCategoryList);

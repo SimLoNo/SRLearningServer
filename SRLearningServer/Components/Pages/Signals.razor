@@ -15,6 +15,7 @@
 @inject IActivitySortingUtility _activitySortingUtility
 @inject IConfiguration _configuration
 @inject INotificationUtility _notificationUtility
+@inject ResultListModel _allResults
 
 <PageTitle>Huskekort - @listName</PageTitle>
 <RadzenRow>
@@ -76,21 +77,82 @@
                 <RadzenStack>
                     <p class="rz-color-on-secondary">@cards[currentCard].CardText</p>
                 </RadzenStack>
-                <RadzenStack>
-                    @if (showResult == true || alwaysShowResult == true)
+                @if (showResult != true && alwaysShowResult != true)
+                {
+                    <RadzenRow>
+                        <RadzenButton Icon="add" Text="Vælg svar" Click="SelectResults"></RadzenButton>
+                    </RadzenRow>
+                }
+                <RadzenColumn JustifyContent="JustifyContent.Normal" AlignItems="AlignItems.Normal" Gap="1rem">
+                    @if (alwaysShowResult == true)
                     {
-                        <div>
-                            <ul>
-                                @foreach (var result in cards[currentCard].Results)
-                                {
-                                    <li class="rz-color-on-secondary">@result.ResultText</li>
-                                }
-                            </ul>
+                        @foreach (var result in cards[currentCard].Results)
+                        {
+                            <RadzenRow>
+                                <RadzenCard class="rz-background-color-primary rz-border-primary">
+                                    <RadzenText class="rz-color-on-secondary" Text="@result.ResultText" />
+                                </RadzenCard>
+                            </RadzenRow>
+                        }
 
-                            <h5 class="rz-color-on-secondary">@cards[currentCard].CardName</h5>
-                        </div>
                     }
-                </RadzenStack>
+                    else if (showResult == true)
+                    {
+                        foreach (var item in _allResults.SelectedResultIds)
+                        {
+                            @if (cards[currentCard].Results.Any(r => r.ResultId == item))
+                            {
+                                <RadzenRow>
+                                    <RadzenCard class="rz-background-color-success rz-border-primary">
+                                        <RadzenText class="rz-color-on-secondary" Text="@($"{_allResults.Results.First(r => r.ResultId == item).ResultText}")" />
+                                        <RadzenText class="rz-color-on-secondary" Text="(Korrekt)" />
+                                    </RadzenCard>
+                                </RadzenRow>
+                            }
+                            else
+                            {
+                            <RadzenRow>
+                                <RadzenCard class="rz-background-color-danger rz-border-primary">
+                                    <RadzenText class="rz-color-on-secondary" Text="@($"{_allResults.Results.First(r => r.ResultId == item).ResultText}")" />
+                                    <RadzenText class="rz-color-on-secondary" Text="(Forkert)" />
+                                </RadzenCard>
+                            </RadzenRow>
+                            }
+                        }
+                        foreach (var result in cards[currentCard].Results)
+                        {
+                            if (!_allResults.SelectedResultIds.Contains(result.ResultId))
+                            {
+                                <RadzenRow>
+                                    <RadzenCard class="rz-background-color-warning rz-border-primary">
+                                        <RadzenText class="rz-color-on-secondary" Text="@($"{result.ResultText}")" />
+                                        <RadzenText class="rz-color-on-secondary" Text="(Manglede)" />
+                                    </RadzenCard>
+                                </RadzenRow>
+                            }
+
+                        }
+                    }
+                    else
+                    {
+                        foreach (var item in _allResults.SelectedResultIds)
+                        {
+                            <RadzenCard class="rz-background-color-primary rz-border-primary">
+                                <RadzenText class="rz-color-on-secondary" Text="@($"{_allResults.Results.First(r => r.ResultId == item).ResultText}")" />
+                            </RadzenCard>
+                        }
+
+
+                    }
+
+                </RadzenColumn>
+                @if (showResult == true || alwaysShowResult == true)
+                {
+                    <RadzenRow>
+                        <RadzenText class="rz-color-on-secondary" Text="@cards[currentCard].CardName" TextStyle="TextStyle.H5" />
+                    </RadzenRow>
+                }
+                
             </RadzenCard>
         </RadzenStack>
     }
@@ -157,6 +219,7 @@
         isLoading = true;
         try
         {
+            _allResults.SelectedResultIds.Clear();
             attachmentLocation = $"{_configuration["AttachmentReadPath"]}";
             signals = await _typeCategoryListService.GetByName(listName);
             signals = _activitySortingUtility.SortActiveByStatus(signals);
@@ -258,6 +321,11 @@
             errorMessage = "Ingen signaler med de sendte kriterier blev fundet.";
             _notificationUtility.SendNotification(errorMessage);
         }
+        foreach (CardDto card in cards)
+        {
+            _allResults.Results.AddRange(card.Results);
+        }
+        _allResults.Results = _allResults.Results.DistinctBy(r => r.ResultId).ToList();
         isLoading = false;
         StateHasChanged();
 
@@ -289,6 +357,8 @@
                 {
                     currentCard = 0;
                 }
+
+                _allResults.SelectedResultIds.Clear();
             }
             else
             {
@@ -307,6 +377,8 @@
                 {
                     currentCard = cards.Count - 1;
                 }
+
+                _allResults.SelectedResultIds.Clear();
                 showResult = true;
             }
             else
@@ -314,6 +386,12 @@
                 showResult = false;
             }
         }
+    }
+
+    private async void SelectResults()
+    {
+        var result = await _dialogService.OpenAsync<RelationsResultSelection>($"{listName}");
+        StateHasChanged();
     }
     /// <summary>
     /// Sends a bug report to the administrators. The report contains the selected types, the card that is currently shown, and the error message if any.

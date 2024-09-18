@@ -5,33 +5,38 @@
 
 @inject ResultListModel _allResults
 @inject IConfiguration _configuration
+@inject HttpClient _http
 
 <PageTitle>Vælg de resultater der er relateret til @typeName</PageTitle>
-@foreach (var result in _allResults.Results)
+    @foreach (var result in _allResults.Results)
 {
     <RadzenRow JustifyContent="JustifyContent.Normal" AlignItems="AlignItems.Normal" Gap="1rem">
-    @if (_allResults.SelectedResultIds.Exists(r => r == result.ResultId))
-    {
-        <RadzenButton Click="@(args=>ToggleResultSelected(result.ResultId))">
-            <RadzenCard class="rz-background-color-success rz-border-primary">
-                <RadzenText Text="@($"{result.ResultText} (Valgt)")" />
-                <RadzenImage Path=@($"{attachmentLocation}{result.Attachment?.AttachmentUrl}") />
-            </RadzenCard>
-        </RadzenButton>
-    }
-    else
-    {
-        <RadzenButton Click="@(args=>ToggleResultSelected(result.ResultId))">
-            <RadzenCard class="rz-background-color-primary rz-border-primary">
-                <RadzenText Text="@result.ResultText" />
-                <RadzenImage Path=@($"{attachmentLocation}{result.Attachment?.AttachmentUrl}") />
-            </RadzenCard>
-        </RadzenButton>
-    }
-    </RadzenRow>
-    
+        @if (_allResults.SelectedResultIds.Exists(r => r == result.ResultId))
+        {
+            <RadzenButton Click="@(async args => ToggleResultSelected(result.ResultId))">
+                <RadzenCard class="rz-background-color-success rz-border-primary">
+                    <RadzenText Text="@($"{result.ResultText} (Valgt)")" />
+                    @if (FileExists($"{attachmentLocation}{result.Attachment?.AttachmentUrl}"))
+                    {
+                        <RadzenImage Path=@($"{attachmentLocation}{result.Attachment?.AttachmentUrl}") />
+                    }
+                </RadzenCard>
+            </RadzenButton>
+        }
+        else
+        {
+            <RadzenButton Click="@(async args => ToggleResultSelected(result.ResultId))">
+                <RadzenCard class="rz-background-color-primary rz-border-primary">
+                    <RadzenText Text="@result.ResultText" />
+                    @if (FileExists($"{attachmentLocation}{result.Attachment?.AttachmentUrl}"))
+                    {
+                        <RadzenImage Path=@($"{attachmentLocation}{result.Attachment?.AttachmentUrl}") />
+                    }
+                </RadzenCard>
+            </RadzenButton>
+        }
+        </RadzenRow>
 }
-
 
 @code {
     [Parameter] public string? typeName { get; set; }
@@ -40,6 +45,7 @@
     protected override async Task OnInitializedAsync()
     {
         attachmentLocation = $"{_configuration["AttachmentReadPath"]}";
+        await Task.CompletedTask; // Ensure the method is awaited
     }
 
     private void ToggleResultSelected(int ResultId)
@@ -52,6 +58,19 @@
         else
         {
             _allResults.SelectedResultIds.Add(ResultId);
+        }
+    }
+
+    private bool FileExists(string filePath)
+    {
+        try
+        {
+            var response = _http.Send(new HttpRequestMessage(HttpMethod.Head, filePath));
+            return response.IsSuccessStatusCode;
+        }
+        catch
+        {
+            return false;
         }
     }
 }
