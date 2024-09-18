@@ -27,15 +27,17 @@
             {
                 <div class="nav-item px-3">
                     <NavLink class="nav-link" href="@($"memorycards/{@type.CardTypeName}")">
-                        <RadzenIcon Icon="traffic" />  @type.CardTypeName
+                        <RadzenIcon Icon="note_stack" />  @type.CardTypeName
                     </NavLink>
                 </div>
             }
             @foreach (var type in relationCards?.Types)
             {
-                <NavLink class="nav-link" href="@($"relations/{@type.CardTypeName}")">
-                    <RadzenIcon Icon="traffic" />  @type.CardTypeName
-                </NavLink>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="@($"relations/{@type.CardTypeName}")">
+                        <RadzenIcon Icon="move_down" />  @type.CardTypeName
+                    </NavLink>
+                </div>
             }
         
         <div class="nav-item px-3">

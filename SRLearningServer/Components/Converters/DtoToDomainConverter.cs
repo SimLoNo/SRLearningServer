@@ -161,12 +161,12 @@ namespace SRLearningServer.Components.Converters
                         LastUpdated = dto.LastUpdated,
                         Active = dto.Active
                     };
-                    if (dto.Attachment is not null)
+                    /*if (dto.Attachment is not null)
                     {
                         //result.Attachment = ConvertToDomainFromDto(dto.Attachment);
                         result.AttachmentId = dto.Attachment.AttachmentId;
-                    }
-                    else if (dto.AttachmentId is not null)
+                    }*/
+                    if (dto.AttachmentId is not null)
                     {
                         result.AttachmentId = dto.AttachmentId;
                     }

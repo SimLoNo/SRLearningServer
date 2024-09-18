@@ -17,8 +17,11 @@
 @inject INotificationUtility _notificationUtility
 
 <PageTitle>Huskekort - @listName</PageTitle>
-
-    <h1>Huskekort - @listName</h1>
+<RadzenRow>
+    <RadzenIcon Icon="note_stack" IconStyle="IconStyle.Dark" Style="font-size:2rem" />
+    <RadzenText Text="@($"Huskekort - ")" TextStyle="TextStyle.H4"/>
+    <RadzenText Text="@($"{listName}")" TextStyle="TextStyle.H4" />
+</RadzenRow>
 
 
 <RadzenStack class="rz-p-sm-12">
@@ -44,6 +47,7 @@
         <RadzenStack>
             <RadzenCard class="rz-background-color-secondary rz-border-primary">
                 <RadzenStack>
+                    <RadzenText class="rz-color-on-secondary" Text="@($"Kort: {currentCard+1} af {cards.Count}")" />
                     @if (alwaysShowResult == false && showResult == true)
                     {
                         <div>

@@ -101,7 +101,7 @@ namespace SRLearningServer.Components.Converters
                         }
                         if (!card.Results.IsNullOrEmpty())
                         {
-                            newDto.Results = ConvertToDtoFromDomain(card.Results, false);
+                            newDto.Results = ConvertToDtoFromDomain(card.Results, true);
                         }
                         if (card.Attachment is not null)
                         {

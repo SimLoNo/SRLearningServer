@@ -102,6 +102,7 @@ namespace SRLearningServer.Components.Repositories
                         .Where(c => c.Active && typeIds.All(id => c.Types.Any(t => t.TypeId == id)))
                         .Include(c => c.Types)
                         .Include(c => c.Results)
+                        .ThenInclude(r => r.Attachment)
                         .Include(c => c.Attachment)
                         .ToListAsync();
 

@@ -9,10 +9,27 @@
 <PageTitle>Vælg de resultater der er relateret til @typeName</PageTitle>
 @foreach (var result in _allResults.Results)
 {
-    <RadzenCard>
-        <RadzenText Text="@result.ResultText"/>
-        <RadzenImage Path=@($"{attachmentLocation}{result.Attachment?.AttachmentUrl}") />
-    </RadzenCard>
+    <RadzenRow JustifyContent="JustifyContent.Normal" AlignItems="AlignItems.Normal" Gap="1rem">
+    @if (_allResults.SelectedResultIds.Exists(r => r == result.ResultId))
+    {
+        <RadzenButton Click="@(args=>ToggleResultSelected(result.ResultId))">
+            <RadzenCard class="rz-background-color-success rz-border-primary">
+                <RadzenText Text="@($"{result.ResultText} (Valgt)")" />
+                <RadzenImage Path=@($"{attachmentLocation}{result.Attachment?.AttachmentUrl}") />
+            </RadzenCard>
+        </RadzenButton>
+    }
+    else
+    {
+        <RadzenButton Click="@(args=>ToggleResultSelected(result.ResultId))">
+            <RadzenCard class="rz-background-color-primary rz-border-primary">
+                <RadzenText Text="@result.ResultText" />
+                <RadzenImage Path=@($"{attachmentLocation}{result.Attachment?.AttachmentUrl}") />
+            </RadzenCard>
+        </RadzenButton>
+    }
+    </RadzenRow>
+    
 }
 
 
@@ -23,5 +40,18 @@
     protected override async Task OnInitializedAsync()
     {
         attachmentLocation = $"{_configuration["AttachmentReadPath"]}";
+    }
+
+    private void ToggleResultSelected(int ResultId)
+    {
+        int entityId = (int)ResultId;
+        if (_allResults.SelectedResultIds.Exists(r => r == ResultId))
+        {
+            _allResults.SelectedResultIds.Remove(ResultId);
+        }
+        else
+        {
+            _allResults.SelectedResultIds.Add(ResultId);
+        }
     }
 }
