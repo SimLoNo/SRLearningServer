@@ -91,6 +91,10 @@
                             <RadzenRow>
                                 <RadzenCard class="rz-background-color-primary rz-border-primary">
                                     <RadzenText class="rz-color-on-secondary" Text="@result.ResultText" />
+                                    @if (result.Attachment is not null)
+                                    {
+                                        <RadzenImage Path=@($"{attachmentLocation}{result.Attachment?.AttachmentUrl}") />
+                                    }
                                 </RadzenCard>
                             </RadzenRow>
                         }
@@ -106,6 +110,10 @@
                                     <RadzenCard class="rz-background-color-success rz-border-primary">
                                         <RadzenText class="rz-color-on-secondary" Text="@($"{_allResults.Results.First(r => r.ResultId == item).ResultText}")" />
                                         <RadzenText class="rz-color-on-secondary" Text="(Korrekt)" />
+                                        @if (_allResults.Results.First(r => r.ResultId == item).Attachment is not null)
+                                        {
+                                            <RadzenImage Path=@($"{attachmentLocation}{_allResults.Results.First(r => r.ResultId == item).Attachment?.AttachmentUrl}") />
+                                        }
                                     </RadzenCard>
                                 </RadzenRow>
                             }
@@ -115,6 +123,10 @@
                                 <RadzenCard class="rz-background-color-danger rz-border-primary">
                                     <RadzenText class="rz-color-on-secondary" Text="@($"{_allResults.Results.First(r => r.ResultId == item).ResultText}")" />
                                     <RadzenText class="rz-color-on-secondary" Text="(Forkert)" />
+                                        @if (_allResults.Results.First(r => r.ResultId == item).Attachment is not null)
+                                        {
+                                            <RadzenImage Path=@($"{attachmentLocation}{_allResults.Results.First(r => r.ResultId == item).Attachment?.AttachmentUrl}") />
+                                        }
                                 </RadzenCard>
                             </RadzenRow>
                             }
@@ -127,6 +139,10 @@
                                     <RadzenCard class="rz-background-color-warning rz-border-primary">
                                         <RadzenText class="rz-color-on-secondary" Text="@($"{result.ResultText}")" />
                                         <RadzenText class="rz-color-on-secondary" Text="(Manglede)" />
+                                        @if (result.Attachment is not null)
+                                        {
+                                            <RadzenImage Path=@($"{attachmentLocation}{result.Attachment?.AttachmentUrl}") />
+                                        }
                                     </RadzenCard>
                                 </RadzenRow>
                             }
@@ -139,6 +155,10 @@
                         {
                             <RadzenCard class="rz-background-color-primary rz-border-primary">
                                 <RadzenText class="rz-color-on-secondary" Text="@($"{_allResults.Results.First(r => r.ResultId == item).ResultText}")" />
+                                @if (_allResults.Results.First(r => r.ResultId == item).Attachment is not null)
+                                {
+                                    <RadzenImage Path=@($"{attachmentLocation}{_allResults.Results.First(r => r.ResultId == item).Attachment?.AttachmentUrl}") />
+                                }
                             </RadzenCard>
                         }
 
@@ -219,6 +239,7 @@
         isLoading = true;
         try
         {
+            _allResults.Results.Clear();
             _allResults.SelectedResultIds.Clear();
             attachmentLocation = $"{_configuration["AttachmentReadPath"]}";
             signals = await _typeCategoryListService.GetByName(listName);
