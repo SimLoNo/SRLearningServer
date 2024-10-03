@@ -37,7 +37,7 @@ else
                     <RadzenText TextStyle="TextStyle.Subtitle2" Text="Kontakt muligheder" />
                         <RadzenDropDownDataGrid @bind-Value=@selectedContactOption Data=@contactOptionsList.Types TValue=string ValueProperty="@nameof(TypeDto.CardTypeName)" AllowClear=true>
                             <Template  >
-                                <RadzenText Style="max-width: 100%;"  Text=@context.CardTypeName  />
+                                <RadzenText Style="max-width: 100%;" class="rz-text-wrap" TextAlign="TextAlign.Left" Text=@context.CardTypeName />
                             </Template>
                     </RadzenDropDownDataGrid>
                     </RadzenColumn>
