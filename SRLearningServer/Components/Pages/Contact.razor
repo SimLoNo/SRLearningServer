@@ -10,8 +10,7 @@
 @inject IReportUtility _reportUtility
 @inject INotificationUtility _notificationUtility
 
-@*@attribute [AllowAnonymous]*@
-@attribute [Authorize(Roles = "User")]
+@attribute [AllowAnonymous]
 @if(isLoading)
 {
     <RadzenCard Style="width: 100%;" >
@@ -80,7 +79,7 @@ else
         isLoading = true;
         try
         {
-            contactOptionsList = await _service.GetByName(contactOptionsListName);
+            //contactOptionsList = await _service.GetByName(contactOptionsListName);
 
         }
         catch (Exception ex)

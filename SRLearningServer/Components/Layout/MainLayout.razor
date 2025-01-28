@@ -1,6 +1,8 @@
-﻿@inherits LayoutComponentBase
+﻿@using Microsoft.AspNetCore.Authorization
+@inherits LayoutComponentBase
 <RadzenComponents @rendermode="InteractiveServer" />
 
+@attribute [AllowAnonymous]
 <div class="page">
     <div class="sidebar">
         <NavMenu />

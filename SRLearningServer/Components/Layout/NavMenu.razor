@@ -17,7 +17,6 @@
 
 <div class="nav-scrollable rz-background-color-primary" onclick="document.querySelector('.navbar-toggler').click()">
     <nav class="flex-column">
-        <AuthorizeView>
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
                 <RadzenIcon Icon="home" /> Home
@@ -46,7 +45,6 @@
             </NavLink>
         </div>
         
-        </AuthorizeView>
         <AuthorizeView Roles="Admin">
             <Authorized>
                 <div class="nav-item px-3">

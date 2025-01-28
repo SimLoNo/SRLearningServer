@@ -5,8 +5,7 @@
 @using SRLearningServer.Components.Interfaces.Utilities
 @using SRLearningServer.Components.Models.DTO
 @using SRLearningServer.Components.Models.WebpageModels
-@*@attribute [AllowAnonymous]*@
-@attribute [Authorize(Roles = "User")]
+@attribute [AllowAnonymous]
 
 @inject IFrontendCardService _cardService
 @inject IFrontendTypeCategoryListService _typeCategoryListService
